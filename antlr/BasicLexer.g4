@@ -1,24 +1,41 @@
 lexer grammar BasicLexer;
 
-//binary operators
+//binary operators 
+
+DIV : '/' ;
+MUL : '*' ;
+MOD : '%' ;
 PLUS : '+' ;
 MINUS : '-' ;
-MUL : '*' ;
-DIV : '/' ;
-MOD : '%' ;
+GRT : '>' ;
+GRTEQ : '>=' ;
+SMT : '<' ;
+SMTEQ : '<=' ;
+EQEQ : '==' ;
+NOTEQ : '!=' ;
 AND : '&&' ;
 OR : '||' ;
-GRT : '>' ;
-SMT : '<' ;
-GRTEQ : '>=' ;
-SMTEQ : '<=' ;
-NOTEQ : '!=' ;
+NOT : '!' ;
+LEN : 'len' ;
+ORD : 'ord' ;
+CHR : 'chr' ;
+WS : [ \t\n\r\ ] -> skip ;
+
+fragment EOL : '\r'? '\n' ;
+
+EQ : '=' ;
+//brackets
+OPEN_PARENTHESES : '(' ;
+CLOSE_PARENTHESES : ')' ;
+OPEN_SQUAREB : '[' ;
+CLOSE_SQUAREB : ']' ;
 
 //terminals
 BEGIN : 'begin' ;
 END : 'end' ;
-IS : 'is' ;
+SKIP : 'skip' ;
 READ : 'read' ;
+IS : 'is' ;
 FREE : 'free' ;
 RETURN : 'return' ;
 EXIT : 'exit' ;
@@ -28,6 +45,7 @@ IF : 'if' ;
 THEN : 'then' ;
 ELSE : 'else' ;
 FI : 'fi' ;
+DO : 'do' ;
 DONE : 'done' ;
 SEMICOLON : ';' ;
 COMMA : ',' ;
@@ -35,38 +53,27 @@ NEWPAIR : 'newpair' ;
 CALL : 'call' ;
 FST : 'fst' ;
 SND : 'snd' ;
-INT : 'int' ;
-BOOL : 'bool' ;
-CHAR : 'char' ;
-STRING : 'string' ;
 PAIR : 'pair' ;
 NULL : 'null' ;
 HASHTAG : '#' ;
 QUOTATION : '"' ;
-SPACE : ' ' ;
+WHILE : 'while' ;
 
-//unary operators
-NOT : '!' ;
-ORD : 'ord' ;
-CHR : 'chr' ;
-LEN : 'len' ;
-
-//brackets
-OPEN_PARENTHESES : '(' ;
-CLOSE_PARENTHESES : ')' ;
-OPEN_SQUAREB : '[' ;
-CLOSE_SQUAREB : ']' ;
 
 //bools
-TRUE : 'true' ;
-FALSE : 'false' ;
+BOOL_LITER : 'true' | 'false' ;
 
 //numbers
-fragment DIGIT : '0'..'9' ; 
-
+BASE_TYPE : 'int' | 'bool' | 'char' | 'string' ;
+INT_LITER : ('+'|'-')?[0-9]+ ;
 INTEGER : DIGIT+ ;
-//CHARACTER : ~('\\'|'''|'"');
-
+fragment CHARACTER : ~('/' | '`' | '"')+ | '\\' ;
+CHAR_LITER : '\'' (CHARACTER|ESCAPED_CHAR) '\'' ;
+STR_LITER : '\"' (CHARACTER|ESCAPED_CHAR)+ '\"' ;
+fragment ESCAPED_CHAR: '\\0' | '\\b' | '\\t' | '\\n' | '\\f' | '\\r' | '\\' | '\\\\' | '\\\"' | '\\\'' ; 
+IDENT : [_|a-z|A-Z][_|a-z|A-Z|DIGIT]* ;
+fragment DIGIT : '0'..'9' ; 
+PAIR_LITER : 'null' ;
 
 
 
