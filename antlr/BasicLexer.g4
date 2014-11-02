@@ -54,11 +54,8 @@ CALL : 'call' ;
 FST : 'fst' ;
 SND : 'snd' ;
 PAIR : 'pair' ;
-NULL : 'null' ;
-HASHTAG : '#' ;
-QUOTATION : '"' ;
 WHILE : 'while' ;
-
+COMMENT : '#' ~( '\r' | '\n' )* -> skip ; 
 
 //bools
 BOOL_LITER : 'true' | 'false' ;
@@ -67,11 +64,11 @@ BOOL_LITER : 'true' | 'false' ;
 BASE_TYPE : 'int' | 'bool' | 'char' | 'string' ;
 INT_LITER : ('+'|'-')?[0-9]+ ;
 INTEGER : DIGIT+ ;
-fragment CHARACTER : ~('/' | '`' | '"')+ | '\\' ;
+fragment CHARACTER : ~('/' | '`' | '"') ;
 CHAR_LITER : '\'' (CHARACTER|ESCAPED_CHAR) '\'' ;
-STR_LITER : '\"' (CHARACTER|ESCAPED_CHAR)+ '\"' ;
+STR_LITER : '\"' (CHARACTER|ESCAPED_CHAR)* '\"' ;
 fragment ESCAPED_CHAR: '\\0' | '\\b' | '\\t' | '\\n' | '\\f' | '\\r' | '\\' | '\\\\' | '\\\"' | '\\\'' ; 
-IDENT : [_|a-z|A-Z][_|a-z|A-Z|DIGIT]* ;
+IDENT : ('_'|'a'..'z'|'A'..'Z')('_'|'a'..'z'|'A'..'Z'|DIGIT)* ;
 fragment DIGIT : '0'..'9' ; 
 PAIR_LITER : 'null' ;
 
