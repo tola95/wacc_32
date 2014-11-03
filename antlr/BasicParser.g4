@@ -45,11 +45,10 @@ arraytype : BASE_TYPE OPEN_SQUAREB CLOSE_SQUAREB | arraytype OPEN_SQUAREB CLOSE_
 
 pairtype : PAIR OPEN_PARENTHESES pairelemtype COMMA pairelemtype CLOSE_PARENTHESES ;
 
-pairelemtype : BASE_TYPE | PAIR ;
+pairelemtype : BASE_TYPE | PAIR | arraytype;
 
 expr: expr binaryOper expr
     | INT_LITER
-    | OPEN_PARENTHESES expr CLOSE_PARENTHESES
     | BOOL_LITER
     | CHAR_LITER
     | STR_LITER
@@ -57,7 +56,6 @@ expr: expr binaryOper expr
     | IDENT
     | arrayelem
     | unaryoper expr
-    | expr binaryOper expr
     | OPEN_PARENTHESES expr CLOSE_PARENTHESES
     ;
 
