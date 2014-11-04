@@ -1,6 +1,8 @@
 // Generated from ./BasicParser.g4 by ANTLR 4.4
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class provides an empty implementation of {@link BasicParserVisitor},
@@ -11,20 +13,34 @@ import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
  * operations with no return type.
  */
 public class BasicParserBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements BasicParserVisitor<T> {
+	/** "memory" for our interpreter; variable/value pairs go here */
+	Map<String, Integer> memory = new HashMap<String, Integer>();
+	
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */ 
+	
+	@Override 
+	public T visitArglist(@NotNull BasicParser.ArglistContext ctx) { 	 
+		String argName = ctx.getText();
+		if (!memory.containsKey(argName)) {
+		   System.out.println("No such argument exists");	
+		} 
+		return visitChildren(ctx); 
+	}
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitArglist(@NotNull BasicParser.ArglistContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitAssignlhs(@NotNull BasicParser.AssignlhsContext ctx) { return visitChildren(ctx); }
+	@Override 
+	public T visitAssignlhs(@NotNull BasicParser.AssignlhsContext ctx) { 
+		return visitChildren(ctx); 
+	}
 	/**
 	 * {@inheritDoc}
 	 *
