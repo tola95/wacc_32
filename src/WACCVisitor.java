@@ -11,6 +11,8 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 
 public class WACCVisitor extends BasicParserBaseVisitor<Type>{
+	
+//	private Map<String, List<>> = new HashMap<>();
 
 	@Override
 	public Type visit(@NotNull ParseTree arg0) {
@@ -57,8 +59,15 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 
 	@Override
 	public Type visitAssignlhs(BasicParser.AssignlhsContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
+		if (ctx.getStart().getType() == 55) {
+			return Type.IDENT;
+		} else if (ctx.getChild(0) instanceof BasicParser.ArrayelemContext) {
+			return visit(ctx.arrayelem());
+		} else if (ctx.getChild(0) instanceof BasicParser.PairelemContext) {
+			return visit(ctx.pairelem());
+		} else {
+			return Type.ERROR;
+		}
 	}
 
 	@Override
@@ -283,7 +292,21 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 
 	@Override
 	public Type visitAssignrhs(BasicParser.AssignrhsContext ctx) {
-		// TODO Auto-generated method stub
+		if (ctx.getChild(0) instanceof BasicParser.ExprContext) {
+			return visit(ctx.expr(0));
+		} else if (ctx.getChild(0) instanceof BasicParser.ArrayliterContext) {
+			return visit(ctx.arrayliter());
+		} else if (ctx.getChild(0) instanceof BasicParser.PairelemContext) {
+			return visit(ctx.pairelem());
+		} else if (ctx.getStart().getType() == 42) {
+			visitExpr(ctx.expr(0));
+			visitExpr(ctx.expr(1));
+		} else if (ctx.getStart().getType() == 43) {
+			//Will do when I implement Symbol Table
+			
+		} else {
+			return Type.ERROR;
+		}
 		return null;
 	}
 
