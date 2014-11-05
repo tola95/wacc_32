@@ -16,14 +16,14 @@ public class BasicParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		PRINT=32, NEWPAIR=42, STR_LITER=54, PAIR_LITER=56, DO=38, CHR=17, MINUS=5, 
-		SEMICOLON=40, ELSE=36, IF=34, BOOL_LITER=49, INTEGER=52, DONE=39, MUL=2, 
-		FST=44, IS=28, EQ=19, READ=27, NOT=14, AND=12, GRTEQ=7, END=25, THEN=35, 
-		SMT=8, EXIT=31, PLUS=4, CLOSE_PARENTHESES=21, ORD=16, CALL=43, FI=37, 
-		PRINTLN=33, OPEN_PARENTHESES=20, GRT=6, CLOSE_SQUAREB=23, SND=45, BEGIN=24, 
-		FREE=29, COMMENT=48, RETURN=30, SMTEQ=9, SKIP=26, WS=18, COMMA=41, MOD=3, 
-		OR=13, CHAR_LITER=53, INT_LITER=51, NOTEQ=11, DIV=1, LEN=15, IDENT=55, 
-		EQEQ=10, OPEN_SQUAREB=22, WHILE=47, BASE_TYPE=50, PAIR=46;
+		FST=44, WHILE=47, MOD=3, DO=38, NOT=14, OPEN_SQUAREB=22, AND=12, ORD=16, 
+		IF=34, FREE=29, CLOSE_PARENTHESES=21, SMTEQ=9, THEN=35, COMMA=41, IS=28, 
+		DONE=39, PRINTLN=33, BEGIN=24, RETURN=30, CHAR_LITER=53, BOOL_LITER=49, 
+		IDENT=55, PLUS=4, PAIR=46, STR_LITER=54, EQ=19, COMMENT=48, GRT=6, NEWPAIR=42, 
+		SMT=8, EQEQ=10, INTEGER=52, EXIT=31, SND=45, ELSE=36, PAIR_LITER=56, SEMICOLON=40, 
+		CLOSE_SQUAREB=23, MINUS=5, MUL=2, PRINT=32, CHR=17, FI=37, SKIP=26, GRTEQ=7, 
+		NOTEQ=11, WS=18, READ=27, BASE_TYPE=50, OR=13, INT_LITER=51, OPEN_PARENTHESES=20, 
+		LEN=15, CALL=43, DIV=1, END=25;
 	public static final String[] tokenNames = {
 		"<INVALID>", "'/'", "'*'", "'%'", "'+'", "'-'", "'>'", "'>='", "'<'", 
 		"'<='", "'=='", "'!='", "'&&'", "'||'", "'!'", "'len'", "'ord'", "'chr'", 
@@ -69,14 +69,14 @@ public class BasicParser extends Parser {
 		public List<FuncContext> func() {
 			return getRuleContexts(FuncContext.class);
 		}
+		public StatContext stat() {
+			return getRuleContext(StatContext.class,0);
+		}
 		public FuncContext func(int i) {
 			return getRuleContext(FuncContext.class,i);
 		}
 		public TerminalNode BEGIN() { return getToken(BasicParser.BEGIN, 0); }
 		public TerminalNode END() { return getToken(BasicParser.END, 0); }
-		public StatContext stat() {
-			return getRuleContext(StatContext.class,0);
-		}
 		public ProgramContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -127,20 +127,20 @@ public class BasicParser extends Parser {
 	}
 
 	public static class FuncContext extends ParserRuleContext {
-		public TerminalNode CLOSE_PARENTHESES() { return getToken(BasicParser.CLOSE_PARENTHESES, 0); }
 		public ParamlistContext paramlist() {
 			return getRuleContext(ParamlistContext.class,0);
 		}
-		public TerminalNode IS() { return getToken(BasicParser.IS, 0); }
-		public TerminalNode END() { return getToken(BasicParser.END, 0); }
+		public TerminalNode CLOSE_PARENTHESES() { return getToken(BasicParser.CLOSE_PARENTHESES, 0); }
+		public TerminalNode OPEN_PARENTHESES() { return getToken(BasicParser.OPEN_PARENTHESES, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
 		public StatContext stat() {
 			return getRuleContext(StatContext.class,0);
 		}
+		public TerminalNode IS() { return getToken(BasicParser.IS, 0); }
 		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
-		public TerminalNode OPEN_PARENTHESES() { return getToken(BasicParser.OPEN_PARENTHESES, 0); }
+		public TerminalNode END() { return getToken(BasicParser.END, 0); }
 		public FuncContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -282,43 +282,43 @@ public class BasicParser extends Parser {
 	}
 
 	public static class StatContext extends ParserRuleContext {
-		public TerminalNode ELSE() { return getToken(BasicParser.ELSE, 0); }
-		public TerminalNode SEMICOLON() { return getToken(BasicParser.SEMICOLON, 0); }
-		public TerminalNode IF() { return getToken(BasicParser.IF, 0); }
-		public TerminalNode FREE() { return getToken(BasicParser.FREE, 0); }
-		public TerminalNode READ() { return getToken(BasicParser.READ, 0); }
-		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
-		public TerminalNode FI() { return getToken(BasicParser.FI, 0); }
-		public TerminalNode DONE() { return getToken(BasicParser.DONE, 0); }
-		public TerminalNode RETURN() { return getToken(BasicParser.RETURN, 0); }
-		public TerminalNode DO() { return getToken(BasicParser.DO, 0); }
-		public TerminalNode SKIP() { return getToken(BasicParser.SKIP, 0); }
-		public StatContext stat(int i) {
-			return getRuleContext(StatContext.class,i);
-		}
-		public TerminalNode BEGIN() { return getToken(BasicParser.BEGIN, 0); }
-		public TypeContext type() {
-			return getRuleContext(TypeContext.class,0);
-		}
-		public AssignlhsContext assignlhs() {
-			return getRuleContext(AssignlhsContext.class,0);
-		}
-		public TerminalNode PRINT() { return getToken(BasicParser.PRINT, 0); }
+		public TerminalNode THEN() { return getToken(BasicParser.THEN, 0); }
 		public AssignrhsContext assignrhs() {
 			return getRuleContext(AssignrhsContext.class,0);
 		}
-		public TerminalNode THEN() { return getToken(BasicParser.THEN, 0); }
-		public List<StatContext> stat() {
-			return getRuleContexts(StatContext.class);
-		}
+		public TerminalNode PRINT() { return getToken(BasicParser.PRINT, 0); }
+		public TerminalNode SEMICOLON() { return getToken(BasicParser.SEMICOLON, 0); }
+		public TerminalNode FI() { return getToken(BasicParser.FI, 0); }
+		public TerminalNode DONE() { return getToken(BasicParser.DONE, 0); }
+		public TerminalNode SKIP() { return getToken(BasicParser.SKIP, 0); }
+		public TerminalNode EQ() { return getToken(BasicParser.EQ, 0); }
 		public TerminalNode WHILE() { return getToken(BasicParser.WHILE, 0); }
-		public TerminalNode EXIT() { return getToken(BasicParser.EXIT, 0); }
+		public TerminalNode IF() { return getToken(BasicParser.IF, 0); }
+		public StatContext stat(int i) {
+			return getRuleContext(StatContext.class,i);
+		}
+		public TerminalNode DO() { return getToken(BasicParser.DO, 0); }
+		public TerminalNode ELSE() { return getToken(BasicParser.ELSE, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public TerminalNode PRINTLN() { return getToken(BasicParser.PRINTLN, 0); }
+		public TerminalNode READ() { return getToken(BasicParser.READ, 0); }
+		public TypeContext type() {
+			return getRuleContext(TypeContext.class,0);
+		}
+		public TerminalNode RETURN() { return getToken(BasicParser.RETURN, 0); }
+		public List<StatContext> stat() {
+			return getRuleContexts(StatContext.class);
+		}
+		public TerminalNode FREE() { return getToken(BasicParser.FREE, 0); }
+		public TerminalNode EXIT() { return getToken(BasicParser.EXIT, 0); }
+		public AssignlhsContext assignlhs() {
+			return getRuleContext(AssignlhsContext.class,0);
+		}
+		public TerminalNode BEGIN() { return getToken(BasicParser.BEGIN, 0); }
+		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
 		public TerminalNode END() { return getToken(BasicParser.END, 0); }
-		public TerminalNode EQ() { return getToken(BasicParser.EQ, 0); }
+		public TerminalNode PRINTLN() { return getToken(BasicParser.PRINTLN, 0); }
 		public StatContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -518,24 +518,24 @@ public class BasicParser extends Parser {
 		public PairelemContext pairelem() {
 			return getRuleContext(PairelemContext.class,0);
 		}
-		public TerminalNode NEWPAIR() { return getToken(BasicParser.NEWPAIR, 0); }
-		public TerminalNode CLOSE_PARENTHESES() { return getToken(BasicParser.CLOSE_PARENTHESES, 0); }
-		public List<ExprContext> expr() {
-			return getRuleContexts(ExprContext.class);
-		}
-		public ExprContext expr(int i) {
-			return getRuleContext(ExprContext.class,i);
-		}
-		public TerminalNode COMMA() { return getToken(BasicParser.COMMA, 0); }
 		public TerminalNode CALL() { return getToken(BasicParser.CALL, 0); }
-		public ArglistContext arglist() {
-			return getRuleContext(ArglistContext.class,0);
-		}
 		public ArrayliterContext arrayliter() {
 			return getRuleContext(ArrayliterContext.class,0);
 		}
-		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
+		public List<ExprContext> expr() {
+			return getRuleContexts(ExprContext.class);
+		}
+		public TerminalNode CLOSE_PARENTHESES() { return getToken(BasicParser.CLOSE_PARENTHESES, 0); }
+		public TerminalNode COMMA() { return getToken(BasicParser.COMMA, 0); }
 		public TerminalNode OPEN_PARENTHESES() { return getToken(BasicParser.OPEN_PARENTHESES, 0); }
+		public ExprContext expr(int i) {
+			return getRuleContext(ExprContext.class,i);
+		}
+		public TerminalNode NEWPAIR() { return getToken(BasicParser.NEWPAIR, 0); }
+		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
+		public ArglistContext arglist() {
+			return getRuleContext(ArglistContext.class,0);
+		}
 		public AssignrhsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -631,10 +631,10 @@ public class BasicParser extends Parser {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(BasicParser.COMMA); }
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
-		public List<TerminalNode> COMMA() { return getTokens(BasicParser.COMMA); }
 		public TerminalNode COMMA(int i) {
 			return getToken(BasicParser.COMMA, i);
 		}
@@ -688,8 +688,8 @@ public class BasicParser extends Parser {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public TerminalNode SND() { return getToken(BasicParser.SND, 0); }
 		public TerminalNode FST() { return getToken(BasicParser.FST, 0); }
+		public TerminalNode SND() { return getToken(BasicParser.SND, 0); }
 		public PairelemContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -729,10 +729,10 @@ public class BasicParser extends Parser {
 	}
 
 	public static class TypeContext extends ParserRuleContext {
-		public TerminalNode BASE_TYPE() { return getToken(BasicParser.BASE_TYPE, 0); }
 		public ArraytypeContext arraytype() {
 			return getRuleContext(ArraytypeContext.class,0);
 		}
+		public TerminalNode BASE_TYPE() { return getToken(BasicParser.BASE_TYPE, 0); }
 		public PairtypeContext pairtype() {
 			return getRuleContext(PairtypeContext.class,0);
 		}
@@ -785,15 +785,15 @@ public class BasicParser extends Parser {
 	}
 
 	public static class ArraytypeContext extends ParserRuleContext {
-		public TerminalNode OPEN_SQUAREB() { return getToken(BasicParser.OPEN_SQUAREB, 0); }
-		public TerminalNode BASE_TYPE() { return getToken(BasicParser.BASE_TYPE, 0); }
 		public ArraytypeContext arraytype() {
 			return getRuleContext(ArraytypeContext.class,0);
 		}
+		public TerminalNode CLOSE_SQUAREB() { return getToken(BasicParser.CLOSE_SQUAREB, 0); }
+		public TerminalNode BASE_TYPE() { return getToken(BasicParser.BASE_TYPE, 0); }
 		public PairtypeContext pairtype() {
 			return getRuleContext(PairtypeContext.class,0);
 		}
-		public TerminalNode CLOSE_SQUAREB() { return getToken(BasicParser.CLOSE_SQUAREB, 0); }
+		public TerminalNode OPEN_SQUAREB() { return getToken(BasicParser.OPEN_SQUAREB, 0); }
 		public ArraytypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -876,16 +876,16 @@ public class BasicParser extends Parser {
 	}
 
 	public static class PairtypeContext extends ParserRuleContext {
-		public TerminalNode CLOSE_PARENTHESES() { return getToken(BasicParser.CLOSE_PARENTHESES, 0); }
 		public List<PairelemtypeContext> pairelemtype() {
 			return getRuleContexts(PairelemtypeContext.class);
 		}
+		public TerminalNode CLOSE_PARENTHESES() { return getToken(BasicParser.CLOSE_PARENTHESES, 0); }
+		public TerminalNode COMMA() { return getToken(BasicParser.COMMA, 0); }
+		public TerminalNode OPEN_PARENTHESES() { return getToken(BasicParser.OPEN_PARENTHESES, 0); }
+		public TerminalNode PAIR() { return getToken(BasicParser.PAIR, 0); }
 		public PairelemtypeContext pairelemtype(int i) {
 			return getRuleContext(PairelemtypeContext.class,i);
 		}
-		public TerminalNode PAIR() { return getToken(BasicParser.PAIR, 0); }
-		public TerminalNode COMMA() { return getToken(BasicParser.COMMA, 0); }
-		public TerminalNode OPEN_PARENTHESES() { return getToken(BasicParser.OPEN_PARENTHESES, 0); }
 		public PairtypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -923,11 +923,11 @@ public class BasicParser extends Parser {
 	}
 
 	public static class PairelemtypeContext extends ParserRuleContext {
-		public TerminalNode BASE_TYPE() { return getToken(BasicParser.BASE_TYPE, 0); }
 		public ArraytypeContext arraytype() {
 			return getRuleContext(ArraytypeContext.class,0);
 		}
 		public TerminalNode PAIR() { return getToken(BasicParser.PAIR, 0); }
+		public TerminalNode BASE_TYPE() { return getToken(BasicParser.BASE_TYPE, 0); }
 		public PairelemtypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -977,28 +977,28 @@ public class BasicParser extends Parser {
 	}
 
 	public static class ExprContext extends ParserRuleContext {
-		public ExprContext expr(int i) {
-			return getRuleContext(ExprContext.class,i);
-		}
-		public TerminalNode INT_LITER() { return getToken(BasicParser.INT_LITER, 0); }
-		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
-		public TerminalNode OPEN_PARENTHESES() { return getToken(BasicParser.OPEN_PARENTHESES, 0); }
-		public BinaryOperContext binaryOper() {
-			return getRuleContext(BinaryOperContext.class,0);
-		}
-		public TerminalNode BOOL_LITER() { return getToken(BasicParser.BOOL_LITER, 0); }
-		public TerminalNode CLOSE_PARENTHESES() { return getToken(BasicParser.CLOSE_PARENTHESES, 0); }
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
-		public TerminalNode CHAR_LITER() { return getToken(BasicParser.CHAR_LITER, 0); }
+		public TerminalNode INT_LITER() { return getToken(BasicParser.INT_LITER, 0); }
+		public TerminalNode CLOSE_PARENTHESES() { return getToken(BasicParser.CLOSE_PARENTHESES, 0); }
+		public TerminalNode OPEN_PARENTHESES() { return getToken(BasicParser.OPEN_PARENTHESES, 0); }
+		public ExprContext expr(int i) {
+			return getRuleContext(ExprContext.class,i);
+		}
+		public TerminalNode PAIR_LITER() { return getToken(BasicParser.PAIR_LITER, 0); }
 		public UnaryoperContext unaryoper() {
 			return getRuleContext(UnaryoperContext.class,0);
 		}
-		public TerminalNode STR_LITER() { return getToken(BasicParser.STR_LITER, 0); }
-		public TerminalNode PAIR_LITER() { return getToken(BasicParser.PAIR_LITER, 0); }
 		public ArrayelemContext arrayelem() {
 			return getRuleContext(ArrayelemContext.class,0);
+		}
+		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
+		public TerminalNode CHAR_LITER() { return getToken(BasicParser.CHAR_LITER, 0); }
+		public TerminalNode STR_LITER() { return getToken(BasicParser.STR_LITER, 0); }
+		public TerminalNode BOOL_LITER() { return getToken(BasicParser.BOOL_LITER, 0); }
+		public BinaryOperContext binaryOper() {
+			return getRuleContext(BinaryOperContext.class,0);
 		}
 		public ExprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1114,11 +1114,11 @@ public class BasicParser extends Parser {
 	}
 
 	public static class UnaryoperContext extends ParserRuleContext {
-		public TerminalNode NOT() { return getToken(BasicParser.NOT, 0); }
-		public TerminalNode ORD() { return getToken(BasicParser.ORD, 0); }
 		public TerminalNode LEN() { return getToken(BasicParser.LEN, 0); }
 		public TerminalNode MINUS() { return getToken(BasicParser.MINUS, 0); }
+		public TerminalNode NOT() { return getToken(BasicParser.NOT, 0); }
 		public TerminalNode CHR() { return getToken(BasicParser.CHR, 0); }
+		public TerminalNode ORD() { return getToken(BasicParser.ORD, 0); }
 		public UnaryoperContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1157,19 +1157,19 @@ public class BasicParser extends Parser {
 	}
 
 	public static class BinaryOperContext extends ParserRuleContext {
-		public TerminalNode SMT() { return getToken(BasicParser.SMT, 0); }
-		public TerminalNode MOD() { return getToken(BasicParser.MOD, 0); }
-		public TerminalNode GRT() { return getToken(BasicParser.GRT, 0); }
-		public TerminalNode GRTEQ() { return getToken(BasicParser.GRTEQ, 0); }
-		public TerminalNode OR() { return getToken(BasicParser.OR, 0); }
 		public TerminalNode MUL() { return getToken(BasicParser.MUL, 0); }
 		public TerminalNode EQEQ() { return getToken(BasicParser.EQEQ, 0); }
-		public TerminalNode SMTEQ() { return getToken(BasicParser.SMTEQ, 0); }
 		public TerminalNode AND() { return getToken(BasicParser.AND, 0); }
-		public TerminalNode PLUS() { return getToken(BasicParser.PLUS, 0); }
+		public TerminalNode OR() { return getToken(BasicParser.OR, 0); }
 		public TerminalNode MINUS() { return getToken(BasicParser.MINUS, 0); }
-		public TerminalNode DIV() { return getToken(BasicParser.DIV, 0); }
 		public TerminalNode NOTEQ() { return getToken(BasicParser.NOTEQ, 0); }
+		public TerminalNode GRTEQ() { return getToken(BasicParser.GRTEQ, 0); }
+		public TerminalNode SMT() { return getToken(BasicParser.SMT, 0); }
+		public TerminalNode DIV() { return getToken(BasicParser.DIV, 0); }
+		public TerminalNode PLUS() { return getToken(BasicParser.PLUS, 0); }
+		public TerminalNode GRT() { return getToken(BasicParser.GRT, 0); }
+		public TerminalNode SMTEQ() { return getToken(BasicParser.SMTEQ, 0); }
+		public TerminalNode MOD() { return getToken(BasicParser.MOD, 0); }
 		public BinaryOperContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1208,12 +1208,12 @@ public class BasicParser extends Parser {
 	}
 
 	public static class ArrayelemContext extends ParserRuleContext {
-		public TerminalNode OPEN_SQUAREB() { return getToken(BasicParser.OPEN_SQUAREB, 0); }
+		public TerminalNode CLOSE_SQUAREB() { return getToken(BasicParser.CLOSE_SQUAREB, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public TerminalNode CLOSE_SQUAREB() { return getToken(BasicParser.CLOSE_SQUAREB, 0); }
 		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
+		public TerminalNode OPEN_SQUAREB() { return getToken(BasicParser.OPEN_SQUAREB, 0); }
 		public ArrayelemContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1249,8 +1249,8 @@ public class BasicParser extends Parser {
 	}
 
 	public static class ArrayliterContext extends ParserRuleContext {
-		public TerminalNode OPEN_SQUAREB() { return getToken(BasicParser.OPEN_SQUAREB, 0); }
 		public TerminalNode CLOSE_SQUAREB() { return getToken(BasicParser.CLOSE_SQUAREB, 0); }
+		public TerminalNode OPEN_SQUAREB() { return getToken(BasicParser.OPEN_SQUAREB, 0); }
 		public ArglistContext arglist() {
 			return getRuleContext(ArglistContext.class,0);
 		}
@@ -1296,10 +1296,10 @@ public class BasicParser extends Parser {
 	}
 
 	public static class ProgContext extends ParserRuleContext {
+		public TerminalNode EOF() { return getToken(BasicParser.EOF, 0); }
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
-		public TerminalNode EOF() { return getToken(BasicParser.EOF, 0); }
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
@@ -1356,12 +1356,6 @@ public class BasicParser extends Parser {
 		}
 		return true;
 	}
-	private boolean stat_sempred(StatContext _localctx, int predIndex) {
-		switch (predIndex) {
-		case 0: return precpred(_ctx, 1);
-		}
-		return true;
-	}
 	private boolean arraytype_sempred(ArraytypeContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 1: return precpred(_ctx, 2);
@@ -1371,6 +1365,12 @@ public class BasicParser extends Parser {
 	private boolean expr_sempred(ExprContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 2: return precpred(_ctx, 10);
+		}
+		return true;
+	}
+	private boolean stat_sempred(StatContext _localctx, int predIndex) {
+		switch (predIndex) {
+		case 0: return precpred(_ctx, 1);
 		}
 		return true;
 	}

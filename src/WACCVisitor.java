@@ -8,31 +8,30 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import BasicParser.ExprContext;
 
 
-public class SemanticChecker extends BasicParserBaseVisitor<Type>{
+public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 
 	@Override
-	public T visit(@NotNull ParseTree arg0) {
+	public Type visit(@NotNull ParseTree arg0) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitChildren(@NotNull RuleNode arg0) {
+	public Type visitChildren(@NotNull RuleNode arg0) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitErrorNode(@NotNull ErrorNode arg0) {
+	public Type visitErrorNode(@NotNull ErrorNode arg0) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitTerminal(@NotNull TerminalNode arg0) {
+	public Type visitTerminal(@NotNull TerminalNode arg0) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -91,15 +90,79 @@ public class SemanticChecker extends BasicParserBaseVisitor<Type>{
 		   
 		   case 55 : t = Type.IDENT;
 		   
-		   default : t = visitCompoundExpr(ctx);
+		   case 20 : t = visitExpr(ctx.expr(0)); // case { expr }
+		   
+		   default : t = visitCompoundExpr(ctx); 
 		}
 		return t;
 	}
 
 	private Type visitCompoundExpr(BasicParser.ExprContext ctx) {
-		BasicParser.ExprContext expr1 = ctx.expr(0);
-		BasicParser.ExprContext expr2 = ctx.expr(1);
-	//	if ()
+		if (!ctx.binaryOper().isEmpty()) {  //case expr binOp expr
+		    Type expr1 = visit(ctx.expr(0));
+		    Type expr2 = visit(ctx.expr(1));
+		    if (!expr1.equals(expr2) && checkIfExprAllowed(expr1, ctx)) {
+		        	return Type.ERROR;
+		    } else {
+		        	return expr1;
+		    }
+		} else if(!ctx.arrayelem().isEmpty()) { 
+			return visitArrayelem(ctx);
+		} else if(!ctx.unaryoper().isEmpty()) {
+			Type expr1 = visit(ctx.expr(0));
+			if (this.checkIfExprAllowed(expr1, ctx)) {
+				return expr1;
+			} else {
+				return Type.ERROR;
+			}
+		} else {
+			return Type.ERROR;
+		}
+	
+	}
+
+	private boolean checkIfExprAllowed(Type expr1, BasicParser.ExprContext ctx) {
+		
+		switch (ctx.binaryOper().getStart().getType()) {
+		
+		case 1 :
+			
+		case 2 : 
+			
+		case 3 :	
+			
+		case 4 :
+			
+		case 5 :
+			
+		case 6 :
+			
+		case 7 :
+			
+		case 8 :
+			
+		case 14:
+			
+		case 15:
+			
+		case 16:
+			
+		case 17:
+			
+		case 9 : return expr1.equals(Type.INT);
+		
+		case 10 :
+			
+		case 11 : return true;
+		
+		case 12 :
+			
+		case 13 : return expr1.equals(Type.BOOL);
+		
+		default : return false;
+		
+		}
+		
 	}
 
 	@Override
@@ -151,7 +214,7 @@ public class SemanticChecker extends BasicParserBaseVisitor<Type>{
 	}
 
 	@Override
-	public T visitProgram(BasicParser.ProgramContext ctx) {
+	public Type visitProgram(BasicParser.ProgramContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -188,3 +251,5 @@ public class SemanticChecker extends BasicParserBaseVisitor<Type>{
 
 
 }
+
+
