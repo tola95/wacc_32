@@ -12,7 +12,8 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 	
-//	private Map<String, List<>> = new HashMap<>();
+	private Map<String, List<TerminalNode>> programsSymbolTable = new HashMap<String, List<TerminalNode>>();
+	private Map<String, String> variableSymbolTable = new HashMap<String, String>();
 
 	@Override
 	public Type visit(@NotNull ParseTree arg0) {
@@ -72,8 +73,8 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 
 	@Override
 	public Type visitParam(BasicParser.ParamContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
+		variableSymbolTable.put(ctx.IDENT().getText(), ctx.type().getText());
+		return Type.IDENT;
 	}
 
 	@Override
@@ -87,7 +88,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 		Type t;
 		switch (ctx.getStart().getType()) {
 		
-		   case 51 : t =  Type.INT;
+		   case 51 : t = Type.INT;
 		   
 		   case 49 : t = Type.BOOL;
 		   
@@ -109,21 +110,21 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 	private Type visitCompoundExpr(BasicParser.ExprContext ctx) {
 		if ((ctx.getChild(1) instanceof BasicParser.BinaryOperContext)) {  //case expr binOp expr
 			
-		    Type expr1 = visit(ctx.expr(0));
-		    Type expr2 = visit(ctx.expr(1));
+		    Type expr1 = visitExpr(ctx.expr(0));
+		    Type expr2 = visitExpr(ctx.expr(1));
 		    if (expr1.equals(expr2) ) {
 		        	return checkIfExprAllowed(expr1, ctx);
 		    } else {
 		        	return Type.ERROR;
 		    }
 		    
-		} else if(!ctx.arrayelem().isEmpty()) { 
+		} else if(ctx.getChild(0) instanceof BasicParser.ArrayelemContext) { 
 			
-			return visit(ctx.expr(0));
+			return visitExpr(ctx.expr(0));
 			
-		} else if(!ctx.unaryoper().isEmpty()) {
+		} else if(ctx.getChild(0) instanceof BasicParser.UnaryoperContext) {
 			
-			Type expr1 = visit(ctx.expr(0));
+			Type expr1 = visitExpr(ctx.expr(0));
 			return checkIfExprAllowed(expr1, ctx);
 			
 		} else {
@@ -137,39 +138,39 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 		
 		switch (ctx.binaryOper().getStart().getType()) {
 		
-		case 1 : 
+		case BasicParser.DIV : 
 			
-		case 2 : 
+		case BasicParser.MUL : 
 			
-		case 3 :	
+		case BasicParser.MOD :	
 			
-		case 4 :
+		case BasicParser.PLUS :
 			
-		case 5 :
+		case BasicParser.MINUS :
 			
-		case 6 :
+		case BasicParser.GRT :
 			
-		case 7 :
+		case BasicParser.GRTEQ :
 			
-		case 8 :
+		case BasicParser.SMT :
 			
-		case 14:
+		case BasicParser.NOT:
 			
-		case 15:
+		case BasicParser.LEN:
 			
-		case 16:
+		case BasicParser.ORD:
 			
-		case 17:
+		case BasicParser.CHR:
 			
-		case 9 : return (Type.INT);
+		case BasicParser.SMTEQ : return (Type.INT);
 		
-		case 10 :
+		case BasicParser.EQEQ :
 			
-		case 11 : 
+		case BasicParser.NOTEQ : 
 		
-		case 12 :
+		case BasicParser.AND :
 			
-		case 13 : return (Type.BOOL);
+		case BasicParser.OR : return (Type.BOOL);
 		
 		default : return Type.ERROR;
 		
@@ -183,9 +184,12 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 		return null;
 	}
 
+	 //Need to ask about this
 	@Override
 	public Type visitParamlist(BasicParser.ParamlistContext ctx) {
-		// TODO Auto-generated method stub
+		for (BasicParser.ParamContext param : ctx.param()) {
+			 visitParam(param);
+		}
 		return null;
 	}
 
@@ -280,8 +284,10 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 
 	@Override
 	public Type visitProgram(BasicParser.ProgramContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
+		for (BasicParser.FuncContext func : ctx.func()) {
+			visitFunc(func);
+		}
+		return visitStat(ctx.stat());
 	}
 
 	@Override
@@ -300,20 +306,25 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 			return visit(ctx.pairelem());
 		} else if (ctx.getStart().getType() == 42) {
 			visitExpr(ctx.expr(0));
-			visitExpr(ctx.expr(1));
-		} else if (ctx.getStart().getType() == 43) {
-			//Will do when I implement Symbol Table
-			
+			return visitExpr(ctx.expr(1));
+		} else if (ctx.getStart().getType() == 43 &&  
+			programsSymbolTable.get(ctx.IDENT().getText()) == ctx.arglist()) {
+			return visitAssignrhs(ctx);
 		} else {
 			return Type.ERROR;
 		}
-		return null;
 	}
 
 	@Override
 	public Type visitFunc(BasicParser.FuncContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
+		if (ctx.getChild(3) instanceof BasicParser.ParamlistContext) {
+		    programsSymbolTable.put(ctx.IDENT().getText(), ctx.paramlist().getTokens(0));
+		}
+		if (visitType(ctx.type()).equals(visitStat(ctx.stat()))) {
+			return visitType(ctx.type());
+		} else {
+			return Type.ERROR;
+		}
 	}
 
 	@Override

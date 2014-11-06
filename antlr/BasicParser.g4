@@ -12,7 +12,7 @@ paramlist : param (COMMA param)* ;
 
 param : type IDENT ;
 
-stat : SKIP 
+stat : SKIP
      | type IDENT EQ assignrhs
      | assignlhs EQ assignrhs
      | READ assignlhs
