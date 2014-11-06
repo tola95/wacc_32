@@ -21,7 +21,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 		for (int i=0; i<ctx.COMMA().size(); i++) {
 			visitTerminal(ctx.COMMA(i));
 		}
-		return null;
+		return Type.DONTCARE;
 	}
 
 	@Override
@@ -45,32 +45,29 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 
 	@Override
 	public Type visitBinaryOper(BasicParser.BinaryOperContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
+		return Type.BINOP;
 	}
 
 	@Override
 	public Type visitExpr(BasicParser.ExprContext ctx) {
-		Type t;
 		switch (ctx.getStart().getType()) {
 		
-		   case 51 : t = Type.INT;
+		   case 51 : return Type.INT;
 		   
-		   case 49 : t = Type.BOOL;
+		   case 49 : return Type.BOOL;
 		   
-		   case 53 : t = Type.CHAR;
+		   case 53 : return Type.CHAR;
 		   
-		   case 54 : t = Type.STRING;
+		   case 54 : return Type.STRING;
 		   
-		   case 56 : t = Type.PAIR;
+		   case 56 : return Type.PAIR;
 		   
-		   case 55 : t = Type.IDENT;
+		   case 55 : return Type.IDENT;
 		   
-		   case 20 : t = visitExpr(ctx.expr(0)); // case { expr }
+		   case 20 : return visitExpr(ctx.expr(0)); // case { expr }
 		   
-		   default : t = visitCompoundExpr(ctx); 
+		   default : return visitCompoundExpr(ctx); 
 		}
-		return t;
 	}
 
 	private Type visitCompoundExpr(BasicParser.ExprContext ctx) {
@@ -78,8 +75,8 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 			
 		    Type expr1 = visitExpr(ctx.expr(0));
 		    Type expr2 = visitExpr(ctx.expr(1));
-		    if (expr1.equals(expr2) ) {
-		        	return checkIfExprAllowed(expr1, ctx);
+		    if (expr1.equals(expr2) && checkBinOp(ctx).equals(expr1) ) {
+		        	return expr1;
 		    } else {
 		        	return Type.ERROR;
 		    }
@@ -88,10 +85,9 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 			
 			return visitExpr(ctx.expr(0));
 			
-		} else if(ctx.getChild(0) instanceof BasicParser.UnaryoperContext) {
-			
-			Type expr1 = visitExpr(ctx.expr(0));
-			return checkIfExprAllowed(expr1, ctx);
+		} else if(ctx.getChild(0) instanceof BasicParser.UnaryoperContext &&
+			checkBinOp(ctx).equals(visitExpr(ctx.expr(0)))) {
+			return visitExpr(ctx.expr(0));
 			
 		} else {
 			
@@ -100,7 +96,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 	
 	}
 
-	private Type checkIfExprAllowed(Type expr1, BasicParser.ExprContext ctx) {
+	private Type checkBinOp(BasicParser.ExprContext ctx) {
 		
 		switch (ctx.binaryOper().getStart().getType()) {
 		
@@ -156,7 +152,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 		for (BasicParser.ParamContext param : ctx.param()) {
 			 visitParam(param);
 		}
-		return null;
+		return Type.DONTCARE;
 	}
 
 	@Override
@@ -169,39 +165,39 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 	public Type visitStat(BasicParser.StatContext ctx) {
 		switch (ctx.getStart().getType()) {
 		
-		case 26 : return Type.SKIP;
+		case BasicParser.SKIP : return Type.SKIP;
 		
-		case 24 : return visitStat(ctx.stat(0));
+		case BasicParser.BEGIN : return visitStat(ctx.stat(0));
 		
-		case 29 : if (ctx.getChild(1) instanceof BasicParser.PairelemContext ||
-				      ctx.getChild(1) instanceof BasicParser.ArrayelemContext) { 
-			          visitExpr(ctx.expr());
-		          } else {
-		        	  return Type.ERROR;
-		          }
+		case BasicParser.FREE : if (ctx.getChild(1) instanceof BasicParser.PairelemContext ||
+				                    ctx.getChild(1) instanceof BasicParser.ArrayelemContext) { 
+			                        return visitExpr(ctx.expr());
+		                        } else {
+		        	                return Type.ERROR;
+		                        }
 		          
-		case 30 :
+		case BasicParser.RETURN :
 		
-		case 31 : if (visit(ctx.expr()).equals(Type.INT)) {
-			          return visit(ctx.expr());
-		          } else {
-		        	  return Type.ERROR;
-		          }
+		case BasicParser.EXIT : if (visit(ctx.expr()).equals(Type.INT)) {
+			                        return visit(ctx.expr());
+		                        } else {
+		        	                return Type.ERROR;
+		                        }
 		
-		case 32 :
+		case BasicParser.PRINT :
 		
-		case 33 : return visitExpr(ctx.expr());
+		case BasicParser.PRINTLN : return visitExpr(ctx.expr());
 		
-		case 47 : if (visit(ctx.expr()).equals(Type.BOOL)) {  //while
-			          visitStat(ctx.stat(0));
-		          }
+		case BasicParser.WHILE : if (visit(ctx.expr()).equals(Type.BOOL)) {  //while
+			                        return visitStat(ctx.stat(0));
+		                         }
 		
-		case 34 : if (visit(ctx.expr()).equals(Type.BOOL)) {
-			          visitStat(ctx.stat(0));
-			          visitStat(ctx.stat(1));
-		          }
+		case BasicParser.IF : if (visit(ctx.expr()).equals(Type.BOOL)) {
+			                     visitStat(ctx.stat(0));
+			                     return visitStat(ctx.stat(0));
+		                      }
 		
-		case 27 : return visitAssignlhs(ctx.assignlhs());
+		case BasicParser.READ : return visitAssignlhs(ctx.assignlhs());
 		
 		default : return visitComplexStat(ctx);
 		
@@ -217,11 +213,10 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 			return visitAssignrhs(ctx.assignrhs());  
 		} else if (ctx.getChild(0) instanceof BasicParser.StatContext) {
 			visitStat(ctx.stat(0));
-			visitStat(ctx.stat(1));
+			return visitStat(ctx.stat(1));
 		} else {
 			return Type.ERROR;
 		}
-		return null;
 	}
 
 	@Override
