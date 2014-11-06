@@ -1,51 +1,17 @@
 import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 
-import org.antlr.v4.runtime.misc.NotNull;
-import org.antlr.v4.runtime.tree.ErrorNode;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.RuleNode;
+
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 
 
 public class WACCVisitor extends BasicParserBaseVisitor<Type>{
-	
+
 	private Map<String, List<TerminalNode>> programsSymbolTable = new HashMap<String, List<TerminalNode>>();
 	private Map<String, String> variableSymbolTable = new HashMap<String, String>();
-
-	@Override
-	public Type visit(@NotNull ParseTree arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Type visitChildren(@NotNull RuleNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Type visitErrorNode(@NotNull ErrorNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Type visitTerminal(@NotNull TerminalNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
 
 	@Override
 	public Type visitArglist(BasicParser.ArglistContext ctx) {
@@ -139,7 +105,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 		switch (ctx.binaryOper().getStart().getType()) {
 		
 		case BasicParser.DIV : 
-			
+
 		case BasicParser.MUL : 
 			
 		case BasicParser.MOD :	
@@ -282,6 +248,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 		return null;
 	}
 
+
 	@Override
 	public Type visitProgram(BasicParser.ProgramContext ctx) {
 		for (BasicParser.FuncContext func : ctx.func()) {
@@ -289,6 +256,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 		}
 		return visitStat(ctx.stat());
 	}
+
 
 	@Override
 	public Type visitUnaryoper(BasicParser.UnaryoperContext ctx) {
@@ -335,7 +303,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 
 	@Override
 	public Type visitPairelem(BasicParser.PairelemContext ctx) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
