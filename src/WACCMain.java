@@ -10,11 +10,14 @@ public class WACCMain {
 		if (args.length > 0) inputFile = args[0];
 		InputStream is = System.in;
 		if (inputFile != null) is = new FileInputStream(inputFile);
-		ANTLRInputStream input = new ANTLRInputStream(System.in);
+		ANTLRInputStream input = new ANTLRInputStream(is);
 		BasicLexer lexer = new BasicLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		BasicParser parser = new BasicParser(tokens);
 		ParseTree tree = parser.program();
-		System.out.println(tree.toStringTree(parser));
+		int errors = parser.getNumberOfSyntaxErrors();
+		if (errors > 0) System.exit(-1);
+		WACCVisitor waccVisitor = new WACCVisitor();
+		waccVisitor.visit(tree);
 	}
 }

@@ -1,4 +1,5 @@
 import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 
@@ -13,38 +14,14 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 	
 //	private Map<String, List<>> = new HashMap<>();
-
-	@Override
-	public Type visit(@NotNull ParseTree arg0) {
-		// TODO Auto-generated method stub
+    @Override
+	public Type visitProgram(BasicParser.ProgramContext ctx) {
+    	for (BasicParser.FuncContext func : ctx.func()) {
+    		visit(func);
+    	}
+		visit(ctx.stat());
 		return null;
 	}
-
-	@Override
-	public Type visitChildren(@NotNull RuleNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Type visitErrorNode(@NotNull ErrorNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Type visitTerminal(@NotNull TerminalNode arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
 
 	@Override
 	public Type visitArglist(BasicParser.ArglistContext ctx) {
@@ -278,11 +255,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 		return null;
 	}
 
-	@Override
-	public Type visitProgram(BasicParser.ProgramContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	@Override
 	public Type visitUnaryoper(BasicParser.UnaryoperContext ctx) {

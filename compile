@@ -3,4 +3,8 @@
 # You are free to change the language used for this script,
 # but do *not* change its name.
 
-put "java -cp bin/:lib/antlr-4.4-complete.jar WACCMain 
+a = ARGV[0]
+
+system "java -cp bin/:lib/antlr-4.4-complete.jar WACCMain #{a}"
+
+exit $?.exitstatus
