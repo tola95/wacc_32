@@ -116,7 +116,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 		
 		case 1 : 
 			
-		case 2 : 
+		case 2 :
 			
 		case 3 :	
 			
@@ -297,7 +297,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type>{
 
 	@Override
 	public Type visitPairelem(BasicParser.PairelemContext ctx) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
