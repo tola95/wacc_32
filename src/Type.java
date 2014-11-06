@@ -1,7 +1,7 @@
 
 
 public enum Type {
-   INT, BOOL, CHAR, STRING, PAIR, IDENT, ERROR;
+   INT, BOOL, CHAR, STRING, PAIR, IDENT, ERROR, SKIP;
    
   
 }
