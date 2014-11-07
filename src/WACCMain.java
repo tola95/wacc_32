@@ -16,7 +16,7 @@ public class WACCMain {
 		BasicParser parser = new BasicParser(tokens);
 		ParseTree tree = parser.program();
 		int errors = parser.getNumberOfSyntaxErrors();
-		if (errors > 0) System.exit(-1);
+		if (WACCErrorListener.error) System.exit(100);
 		WACCVisitor waccVisitor = new WACCVisitor();
 		waccVisitor.visit(tree);
 	}
