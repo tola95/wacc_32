@@ -15,7 +15,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 //	private Map<String, List<>> = new HashMap<>();
     @Override
 	public Type visitProgram(BasicParser.ProgramContext ctx) {
-    	System.out.println("Program: ");
     	for (BasicParser.FuncContext func : ctx.func()) {
     		visit(func);
     	}
