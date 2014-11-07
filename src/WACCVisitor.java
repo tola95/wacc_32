@@ -61,7 +61,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     	} else if (visit(ctx.expr()) == Type.FALSE) {
     		return visit(ctx.stat(1));
     	} else {
-    		System.exit(-1); return null;
+    		System.exit(200); return Type.ERROR;
     	}
     }
     
