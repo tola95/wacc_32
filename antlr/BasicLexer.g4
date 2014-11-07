@@ -20,6 +20,10 @@ LEN : 'len' ;
 ORD : 'ord' ;
 CHR : 'chr' ;
 WS : [ \t\n\r\ ] -> skip ;
+INT : 'int' ;
+
+CHAR : 'char' ;
+STRING : 'string' ;
 
 fragment EOL : '\r'? '\n' ;
 
@@ -56,12 +60,13 @@ SND : 'snd' ;
 PAIR : 'pair' ;
 WHILE : 'while' ;
 COMMENT : '#' ~( '\r' | '\n' )* -> skip ; 
+BOOL : 'bool' ;
 
 //bools
-BOOL_LITER : 'true' | 'false' ;
+TRUE : 'true' ;
+FALSE : 'false' ;
 
 //numbers
-BASE_TYPE : 'int' | 'bool' | 'char' | 'string' ;
 INT_LITER : ('+'|'-')?[0-9]+ ;
 INTEGER : DIGIT+ ;
 fragment CHARACTER : ~('/' | '`' | '"') ;
