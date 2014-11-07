@@ -14,9 +14,10 @@ public class WACCMain {
 		BasicLexer lexer = new BasicLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		BasicParser parser = new BasicParser(tokens);
+		parser.removeErrorListeners();
+		parser.addErrorListener(new WACCErrorListener());
 		ParseTree tree = parser.program();
-		int errors = parser.getNumberOfSyntaxErrors();
-		if (WACCErrorListener.error) System.exit(100);
+		if (WACCErrorListener.isError()) System.exit(100);
 		WACCVisitor waccVisitor = new WACCVisitor();
 		waccVisitor.visit(tree);
 	}
