@@ -42,9 +42,9 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     public Type visitBegin_Stat(@NotNull BasicParser.Begin_StatContext ctx) { 
     	if (ctx.stop.getType() == BasicParser.END) {
     		return visit(ctx.getChild(1));
-    	} else {
-    		return Type.ERROR;
     	}
+    	System.exit(200);
+    	return Type.ERROR;
     }
     
     @Override
@@ -56,22 +56,18 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     
     @Override 
     public Type visitIf_Stat(@NotNull BasicParser.If_StatContext ctx) { 
-    	if (visit(ctx.expr()) == Type.TRUE) {
-    		return visit(ctx.stat(0));
-    	} else if (visit(ctx.expr()) == Type.FALSE) {
-    		return visit(ctx.stat(1));
-    	} else {
-    		System.exit(200); return Type.ERROR;
+    	if (visit(ctx.expr()) == Type.BOOL) {
+    		return Type.BOOL;
     	}
+    	System.exit(200); return Type.ERROR;
     }
     
     @Override 
     public Type visitBoolLiter_Expr(@NotNull BasicParser.BoolLiter_ExprContext ctx) { 
-    	if (ctx.start.getType() == BasicParser.TRUE) {
-    		return Type.TRUE;
-    	} else if (ctx.start.getType() == BasicParser.FALSE) {
-    		return Type.FALSE;
-    	} else return Type.ERROR;
+    	if (ctx.start.getType() == BasicParser.BOOL) {
+    		return Type.BOOL;
+    	} 
+    	System.exit(200); return Type.ERROR;
     }
     
     @Override 
@@ -99,16 +95,14 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     	return Type.IDENT; 
     }
 
-	/*@Override
+	@Override
 	public Type visitArglist(BasicParser.ArglistContext ctx) {
-		for (int i=0; i<ctx.expr().size(); i++) {
-			visitExpr(ctx.expr(i));
+		if (ctx.expr().size() == ctx.COMMA().size() + 1) {
+			return Type.NULL;
 		}
-		for (int i=0; i<ctx.COMMA().size(); i++) {
-			visitTerminal(ctx.COMMA(i));
-		}
-		return null;
-	}*/
+		System.exit(200);
+		return Type.NULL;
+	}
 
 	@Override
 	public Type visitAssignlhs(BasicParser.AssignlhsContext ctx) {
@@ -127,6 +121,14 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	public Type visitParam(BasicParser.ParamContext ctx) {
 		return visit(ctx.type());
 	}
+	
+	@Override
+	public Type visitParamlist(BasicParser.ParamlistContext ctx) {
+		if (ctx.COMMA().size() == ctx.param().size() - 1) {
+			return Type.NULL;
+		} else System.exit(200); return Type.NULL;
+	}
+
 	
 	@Override 
 	public Type visitFactor(@NotNull BasicParser.FactorContext ctx) { 
@@ -275,12 +277,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		return null;
 	}
 
-	@Override
-	public Type visitParamlist(BasicParser.ParamlistContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public Type visitType(BasicParser.TypeContext ctx) {
 		// TODO Auto-generated method stub
@@ -403,8 +400,15 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 
 	@Override
 	public Type visitFunc(BasicParser.FuncContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
+		Type t = visit(ctx.type());
+		if (ctx.getChild(3) instanceof BasicParser.ParamlistContext) {
+			visit(ctx.paramlist());
+		}
+		if (visit(ctx.stat()) == t) {
+			return Type.NULL;
+		} 
+		System.exit(200); 
+		return Type.NULL;
 	}
 
 	@Override

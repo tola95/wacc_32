@@ -66,6 +66,8 @@ BOOL : 'bool' ;
 TRUE : 'true' ;
 FALSE : 'false' ;
 
+NEWLINE : '\n' ;
+
 //numbers
 INT_LITER : ('+'|'-')?[0-9]+ ;
 INTEGER : DIGIT+ ;

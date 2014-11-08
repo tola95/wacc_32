@@ -16,14 +16,15 @@ public class BasicParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		PRINT=35, NEWPAIR=45, STR_LITER=58, PAIR_LITER=60, DO=41, CHR=17, MINUS=5, 
-		SEMICOLON=43, ELSE=39, IF=37, INTEGER=56, DONE=42, MUL=2, FST=47, TRUE=53, 
-		IS=31, EQ=22, READ=30, NOT=14, AND=12, GRTEQ=7, END=28, THEN=38, SMT=8, 
-		EXIT=34, PLUS=4, CLOSE_PARENTHESES=24, ORD=16, CALL=46, FI=40, PRINTLN=36, 
-		OPEN_PARENTHESES=23, GRT=6, CLOSE_SQUAREB=26, SND=48, CHAR=20, BEGIN=27, 
-		FREE=32, INT=19, COMMENT=51, RETURN=33, SMTEQ=9, SKIP=29, WS=18, COMMA=44, 
-		MOD=3, OR=13, CHAR_LITER=57, INT_LITER=55, NOTEQ=11, DIV=1, LEN=15, IDENT=59, 
-		BOOL=52, EQEQ=10, STRING=21, OPEN_SQUAREB=25, WHILE=50, FALSE=54, PAIR=49;
+		PRINT=35, NEWPAIR=45, STR_LITER=59, PAIR_LITER=61, DO=41, CHR=17, MINUS=5, 
+		SEMICOLON=43, ELSE=39, IF=37, INTEGER=57, DONE=42, MUL=2, FST=47, NEWLINE=55, 
+		TRUE=53, IS=31, EQ=22, READ=30, NOT=14, AND=12, GRTEQ=7, END=28, THEN=38, 
+		SMT=8, EXIT=34, PLUS=4, CLOSE_PARENTHESES=24, ORD=16, CALL=46, FI=40, 
+		PRINTLN=36, OPEN_PARENTHESES=23, GRT=6, CLOSE_SQUAREB=26, SND=48, CHAR=20, 
+		BEGIN=27, FREE=32, INT=19, COMMENT=51, RETURN=33, SMTEQ=9, SKIP=29, WS=18, 
+		COMMA=44, MOD=3, OR=13, CHAR_LITER=58, INT_LITER=56, NOTEQ=11, DIV=1, 
+		LEN=15, IDENT=60, BOOL=52, EQEQ=10, STRING=21, OPEN_SQUAREB=25, WHILE=50, 
+		FALSE=54, PAIR=49;
 	public static final String[] tokenNames = {
 		"<INVALID>", "'/'", "'*'", "'%'", "'+'", "'-'", "'>'", "'>='", "'<'", 
 		"'<='", "'=='", "'!='", "'&&'", "'||'", "'!'", "'len'", "'ord'", "'chr'", 
@@ -31,8 +32,8 @@ public class BasicParser extends Parser {
 		"'begin'", "'end'", "'skip'", "'read'", "'is'", "'free'", "'return'", 
 		"'exit'", "'print'", "'println'", "'if'", "'then'", "'else'", "'fi'", 
 		"'do'", "'done'", "';'", "','", "'newpair'", "'call'", "'fst'", "'snd'", 
-		"'pair'", "'while'", "COMMENT", "'bool'", "'true'", "'false'", "INT_LITER", 
-		"INTEGER", "CHAR_LITER", "STR_LITER", "IDENT", "'null'"
+		"'pair'", "'while'", "COMMENT", "'bool'", "'true'", "'false'", "'\n'", 
+		"INT_LITER", "INTEGER", "CHAR_LITER", "STR_LITER", "IDENT", "'null'"
 	};
 	public static final int
 		RULE_program = 0, RULE_func = 1, RULE_paramlist = 2, RULE_param = 3, RULE_stat = 4, 
@@ -1782,7 +1783,7 @@ public class BasicParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3>\u00fc\4\2\t\2\4"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3?\u00fc\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\3\2\3\2\7\2\61\n\2"+
@@ -1809,22 +1810,22 @@ public class BasicParser extends Parser {
 		"\2&\u00e6\3\2\2\2(\u00e8\3\2\2\2*\u00ed\3\2\2\2,\u00f6\3\2\2\2.\62\7\35"+
 		"\2\2/\61\5\4\3\2\60/\3\2\2\2\61\64\3\2\2\2\62\60\3\2\2\2\62\63\3\2\2\2"+
 		"\63\65\3\2\2\2\64\62\3\2\2\2\65\66\5\n\6\2\66\67\7\36\2\2\67\3\3\2\2\2"+
-		"89\5\26\f\29:\7=\2\2:<\7\31\2\2;=\5\6\4\2<;\3\2\2\2<=\3\2\2\2=>\3\2\2"+
+		"89\5\26\f\29:\7>\2\2:<\7\31\2\2;=\5\6\4\2<;\3\2\2\2<=\3\2\2\2=>\3\2\2"+
 		"\2>?\7\32\2\2?@\7!\2\2@A\5\n\6\2AB\7\36\2\2B\5\3\2\2\2CH\5\b\5\2DE\7."+
 		"\2\2EG\5\b\5\2FD\3\2\2\2GJ\3\2\2\2HF\3\2\2\2HI\3\2\2\2I\7\3\2\2\2JH\3"+
-		"\2\2\2KL\5\26\f\2LM\7=\2\2M\t\3\2\2\2NO\b\6\1\2Op\7\37\2\2PQ\5\26\f\2"+
-		"QR\7=\2\2RS\7\30\2\2ST\5\16\b\2Tp\3\2\2\2UV\5\f\7\2VW\7\30\2\2WX\5\16"+
+		"\2\2\2KL\5\26\f\2LM\7>\2\2M\t\3\2\2\2NO\b\6\1\2Op\7\37\2\2PQ\5\26\f\2"+
+		"QR\7>\2\2RS\7\30\2\2ST\5\16\b\2Tp\3\2\2\2UV\5\f\7\2VW\7\30\2\2WX\5\16"+
 		"\b\2Xp\3\2\2\2YZ\7 \2\2Zp\5\f\7\2[\\\t\2\2\2\\p\5\36\20\2]^\7\'\2\2^_"+
 		"\5\36\20\2_`\7(\2\2`a\5\n\6\2ab\7)\2\2bc\5\n\6\2cd\7*\2\2dp\3\2\2\2ef"+
 		"\7\64\2\2fg\5\36\20\2gh\7+\2\2hi\5\n\6\2ij\7,\2\2jp\3\2\2\2kl\7\35\2\2"+
 		"lm\5\n\6\2mn\7\36\2\2np\3\2\2\2oN\3\2\2\2oP\3\2\2\2oU\3\2\2\2oY\3\2\2"+
 		"\2o[\3\2\2\2o]\3\2\2\2oe\3\2\2\2ok\3\2\2\2pv\3\2\2\2qr\f\3\2\2rs\7-\2"+
 		"\2su\5\n\6\4tq\3\2\2\2ux\3\2\2\2vt\3\2\2\2vw\3\2\2\2w\13\3\2\2\2xv\3\2"+
-		"\2\2y}\7=\2\2z}\5(\25\2{}\5\22\n\2|y\3\2\2\2|z\3\2\2\2|{\3\2\2\2}\r\3"+
+		"\2\2y}\7>\2\2z}\5(\25\2{}\5\22\n\2|y\3\2\2\2|z\3\2\2\2|{\3\2\2\2}\r\3"+
 		"\2\2\2~\u0090\5\36\20\2\177\u0090\5*\26\2\u0080\u0081\7/\2\2\u0081\u0082"+
 		"\7\31\2\2\u0082\u0083\5\36\20\2\u0083\u0084\7.\2\2\u0084\u0085\5\36\20"+
 		"\2\u0085\u0086\7\32\2\2\u0086\u0090\3\2\2\2\u0087\u0090\5\22\n\2\u0088"+
-		"\u0089\7\60\2\2\u0089\u008a\7=\2\2\u008a\u008c\7\31\2\2\u008b\u008d\5"+
+		"\u0089\7\60\2\2\u0089\u008a\7>\2\2\u008a\u008c\7\31\2\2\u008b\u008d\5"+
 		"\20\t\2\u008c\u008b\3\2\2\2\u008c\u008d\3\2\2\2\u008d\u008e\3\2\2\2\u008e"+
 		"\u0090\7\32\2\2\u008f~\3\2\2\2\u008f\177\3\2\2\2\u008f\u0080\3\2\2\2\u008f"+
 		"\u0087\3\2\2\2\u008f\u0088\3\2\2\2\u0090\17\3\2\2\2\u0091\u0096\5\36\20"+
@@ -1846,8 +1847,8 @@ public class BasicParser extends Parser {
 		"\2\u00c0\u00be\3\2\2\2\u00c0\u00bf\3\2\2\2\u00c1\35\3\2\2\2\u00c2\u00c3"+
 		"\b\20\1\2\u00c3\u00c4\5 \21\2\u00c4\u00c5\5\36\20\r\u00c5\u00d2\3\2\2"+
 		"\2\u00c6\u00c7\7\31\2\2\u00c7\u00c8\5\36\20\2\u00c8\u00c9\7\32\2\2\u00c9"+
-		"\u00d2\3\2\2\2\u00ca\u00d2\79\2\2\u00cb\u00d2\5$\23\2\u00cc\u00d2\7;\2"+
-		"\2\u00cd\u00d2\7<\2\2\u00ce\u00d2\7>\2\2\u00cf\u00d2\7=\2\2\u00d0\u00d2"+
+		"\u00d2\3\2\2\2\u00ca\u00d2\7:\2\2\u00cb\u00d2\5$\23\2\u00cc\u00d2\7<\2"+
+		"\2\u00cd\u00d2\7=\2\2\u00ce\u00d2\7?\2\2\u00cf\u00d2\7>\2\2\u00d0\u00d2"+
 		"\5(\25\2\u00d1\u00c2\3\2\2\2\u00d1\u00c6\3\2\2\2\u00d1\u00ca\3\2\2\2\u00d1"+
 		"\u00cb\3\2\2\2\u00d1\u00cc\3\2\2\2\u00d1\u00cd\3\2\2\2\u00d1\u00ce\3\2"+
 		"\2\2\u00d1\u00cf\3\2\2\2\u00d1\u00d0\3\2\2\2\u00d2\u00dd\3\2\2\2\u00d3"+
@@ -1857,7 +1858,7 @@ public class BasicParser extends Parser {
 		"\3\2\2\2\u00dd\u00db\3\2\2\2\u00dd\u00de\3\2\2\2\u00de\37\3\2\2\2\u00df"+
 		"\u00dd\3\2\2\2\u00e0\u00e1\t\5\2\2\u00e1!\3\2\2\2\u00e2\u00e3\t\6\2\2"+
 		"\u00e3#\3\2\2\2\u00e4\u00e5\t\7\2\2\u00e5%\3\2\2\2\u00e6\u00e7\t\b\2\2"+
-		"\u00e7\'\3\2\2\2\u00e8\u00e9\7=\2\2\u00e9\u00ea\7\33\2\2\u00ea\u00eb\5"+
+		"\u00e7\'\3\2\2\2\u00e8\u00e9\7>\2\2\u00e9\u00ea\7\33\2\2\u00ea\u00eb\5"+
 		"\36\20\2\u00eb\u00ec\7\34\2\2\u00ec)\3\2\2\2\u00ed\u00ef\7\33\2\2\u00ee"+
 		"\u00f0\5\20\t\2\u00ef\u00ee\3\2\2\2\u00ef\u00f0\3\2\2\2\u00f0\u00f1\3"+
 		"\2\2\2\u00f1\u00f2\7\34\2\2\u00f2+\3\2\2\2\u00f3\u00f5\5\36\20\2\u00f4"+
