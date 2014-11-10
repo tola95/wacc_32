@@ -16,7 +16,11 @@ stat : SKIP                                             #skip_Stat
      | type IDENT EQ assignrhs                          #identEq_Stat 
      | assignlhs EQ assignrhs                           #assignLhsRhs_Stat
      | READ assignlhs                                   #read_Stat
-     | (FREE | RETURN | EXIT | PRINT | PRINTLN) expr    #exp_Stat
+     | FREE expr                                        #free_Stat
+     | RETURN expr                                      #return_Stat
+     | EXIT expr                                        #exit_Stat
+     | PRINT expr                                       #print_Stat
+     | PRINTLN expr                                     #println_Stat
      | IF expr THEN stat ELSE stat FI                   #if_Stat
      | WHILE expr DO stat DONE                          #while_Stat
      | BEGIN stat END                                   #begin_Stat
@@ -62,18 +66,18 @@ pairelemtype : basetype                             #baseType_pairElemType
              | arraytype                            #arrayType_pairElemType
              ;
 
-expr: unaryoper expr                                 #unaryOper_Expr
-    | OPEN_PARENTHESES expr CLOSE_PARENTHESES        #parenth_Expr
-    | expr factor expr                               #factor_Expr
-    | expr term expr                                 #term_Expr
-    | INT_LITER                                      #intLiter_Expr
-    | bool_Liter                                     #boolLiter_Expr
-    | CHAR_LITER                                     #charLiter_Expr
-    | STR_LITER                                      #strLiter_Expr
-    | PAIR_LITER                                     #pairLiter_Expr
-    | IDENT                                          #ident_Expr
-    | arrayelem                                      #arrayElem_Expr
-    ;
+expr : unaryoper expr                                 #unaryOper_Expr
+     | OPEN_PARENTHESES expr CLOSE_PARENTHESES        #parenth_Expr
+     | expr factor expr                               #factor_Expr
+     | expr term expr                                 #term_Expr
+     | INT_LITER                                      #intLiter_Expr
+     | bool_Liter                                     #boolLiter_Expr
+     | CHAR_LITER                                     #charLiter_Expr
+     | STR_LITER                                      #strLiter_Expr
+     | PAIR_LITER                                     #pairLiter_Expr
+     | IDENT                                          #ident_Expr
+     | arrayelem                                      #arrayElem_Expr
+     ;
 
 unaryoper : NOT | MINUS | LEN | ORD | CHR ;
 

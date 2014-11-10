@@ -29,8 +29,11 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		}
 		if (visit(ctx.stat()) == t) {
 			return Type.NULL;
-		} 
-		System.exit(200); 
+		}
+		if (!(ctx.stat() instanceof BasicParser.Return_StatContext)) {
+			System.exit(100);
+		}
+		System.exit(100); 
 		return Type.NULL;
 	}
     
@@ -38,7 +41,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	public Type visitParamlist(BasicParser.ParamlistContext ctx) {
 		if (ctx.COMMA().size() == ctx.param().size() - 1) {
 			return Type.NULL;
-		} else System.exit(200); return Type.NULL;
+		} else System.exit(100); return Type.NULL;
 	}
 	
     @Override
@@ -105,31 +108,46 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     }
     
     @Override 
-    public Type visitExp_Stat(@NotNull BasicParser.Exp_StatContext ctx) { 
-    	switch (ctx.start.getType()) {
-    	case BasicParser.FREE    :
-    	case BasicParser.RETURN  :
-    	case BasicParser.EXIT    :
-    	case BasicParser.PRINT   :
-    	case BasicParser.PRINTLN : return visit(ctx.expr());
-    	default                  : return Type.ERROR;
-    	}
+    public Type visitBegin_Stat(@NotNull BasicParser.Begin_StatContext ctx) { 
+    	return visit(ctx.stat());
     }
     
     @Override 
-    public Type visitBegin_Stat(@NotNull BasicParser.Begin_StatContext ctx) { 
-    	if (ctx.stop.getType() == BasicParser.END) {
-    		return visit(ctx.getChild(1));
+    public Type visitFree_Stat(@NotNull BasicParser.Free_StatContext ctx) { 
+    	if (visit(ctx.expr()) != Type.INT) {
+    		System.exit(200);
     	}
-    	System.exit(200);
     	return Type.ERROR;
+    }
+    
+    @Override
+    public Type visitReturn_Stat(@NotNull BasicParser.Return_StatContext ctx) { 
+    	return visit(ctx.expr());
+    }
+    
+    @Override 
+    public Type visitExit_Stat(@NotNull BasicParser.Exit_StatContext ctx) { 
+    	if (visit(ctx.expr()) != Type.INT) {
+    		System.exit(200);
+    	}
+    	return Type.ERROR;
+    }
+    
+    @Override 
+    public Type visitPrint_Stat(@NotNull BasicParser.Print_StatContext ctx) { 
+    	return visit(ctx.expr());
+    }
+    
+    @Override 
+    public Type visitPrintln_Stat(@NotNull BasicParser.Println_StatContext ctx) { 
+    	return visit(ctx.expr());
     }
     
     @Override
     public Type visitSemicolon_Stat(@NotNull BasicParser.Semicolon_StatContext ctx) {
     	visit(ctx.stat(0));
     	visit(ctx.stat(1));
-    	return null;
+    	return Type.ERROR;
     }
     
     @Override 
@@ -170,8 +188,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     public Type visitStrLiter_Expr(@NotNull BasicParser.StrLiter_ExprContext ctx) { 
     	return Type.STRING; 
     }
-    
-    
     
     @Override 
     public Type visitPairLiter_Expr(@NotNull BasicParser.PairLiter_ExprContext ctx) { 

@@ -66,14 +66,14 @@ public class BasicParserBaseVisitor<T> extends AbstractParseTreeVisitor<T> imple
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitUnaryOper_Expr(@NotNull BasicParser.UnaryOper_ExprContext ctx) { return visitChildren(ctx); }
+	@Override public T visitPrintln_Stat(@NotNull BasicParser.Println_StatContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExp_Stat(@NotNull BasicParser.Exp_StatContext ctx) { return visitChildren(ctx); }
+	@Override public T visitUnaryOper_Expr(@NotNull BasicParser.UnaryOper_ExprContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -158,6 +158,13 @@ public class BasicParserBaseVisitor<T> extends AbstractParseTreeVisitor<T> imple
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitArrayType_arrayType(@NotNull BasicParser.ArrayType_arrayTypeContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitExit_Stat(@NotNull BasicParser.Exit_StatContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -360,7 +367,21 @@ public class BasicParserBaseVisitor<T> extends AbstractParseTreeVisitor<T> imple
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitReturn_Stat(@NotNull BasicParser.Return_StatContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitString_baseType(@NotNull BasicParser.String_baseTypeContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitFree_Stat(@NotNull BasicParser.Free_StatContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -382,4 +403,11 @@ public class BasicParserBaseVisitor<T> extends AbstractParseTreeVisitor<T> imple
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitSkip_Stat(@NotNull BasicParser.Skip_StatContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitPrint_Stat(@NotNull BasicParser.Print_StatContext ctx) { return visitChildren(ctx); }
 }

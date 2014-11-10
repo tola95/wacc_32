@@ -58,19 +58,19 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitArrayElem_Expr(@NotNull BasicParser.ArrayElem_ExprContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code println_Stat}
+	 * labeled alternative in {@link BasicParser#stat}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrintln_Stat(@NotNull BasicParser.Println_StatContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code unaryOper_Expr}
 	 * labeled alternative in {@link BasicParser#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitUnaryOper_Expr(@NotNull BasicParser.UnaryOper_ExprContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code exp_Stat}
-	 * labeled alternative in {@link BasicParser#stat}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExp_Stat(@NotNull BasicParser.Exp_StatContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code arrayType_pairElemType}
 	 * labeled alternative in {@link BasicParser#pairelemtype}.
@@ -152,6 +152,13 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitArrayType_arrayType(@NotNull BasicParser.ArrayType_arrayTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code exit_Stat}
+	 * labeled alternative in {@link BasicParser#stat}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExit_Stat(@NotNull BasicParser.Exit_StatContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link BasicParser#bool_Liter}.
 	 * @param ctx the parse tree
@@ -340,12 +347,26 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIdentEq_Stat(@NotNull BasicParser.IdentEq_StatContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code return_Stat}
+	 * labeled alternative in {@link BasicParser#stat}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReturn_Stat(@NotNull BasicParser.Return_StatContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code string_baseType}
 	 * labeled alternative in {@link BasicParser#basetype}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitString_baseType(@NotNull BasicParser.String_baseTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code free_Stat}
+	 * labeled alternative in {@link BasicParser#stat}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFree_Stat(@NotNull BasicParser.Free_StatContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code bool_baseType}
 	 * labeled alternative in {@link BasicParser#basetype}.
@@ -366,4 +387,11 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitSkip_Stat(@NotNull BasicParser.Skip_StatContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code print_Stat}
+	 * labeled alternative in {@link BasicParser#stat}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrint_Stat(@NotNull BasicParser.Print_StatContext ctx);
 }
