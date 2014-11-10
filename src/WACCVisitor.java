@@ -141,6 +141,14 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     }
     
     @Override 
+    public Type visitWhile_Stat(@NotNull BasicParser.While_StatContext ctx) { 
+    	if (visit(ctx.expr()) == Type.BOOL) {
+    		return visit(ctx.stat());
+    	} 
+    	System.exit(200); return Type.ERROR;
+    }
+    
+    @Override 
     public Type visitBoolLiter_Expr(@NotNull BasicParser.BoolLiter_ExprContext ctx) { 
     	if (ctx.start.getType() == BasicParser.BOOL) {
     		return Type.BOOL;
@@ -183,10 +191,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		System.exit(200);
 		return Type.NULL;
 	}
-
-	
-
-	
 	
 	@Override 
 	public Type visitFactor(@NotNull BasicParser.FactorContext ctx) { 
@@ -226,6 +230,11 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		if (visit(ctx.expr(0)) == Type.INT && visit(ctx.expr(1)) == Type.INT) {
 			return Type.INT;
 		} else System.exit(-1); return Type.ERROR;
+	}
+	
+	@Override 
+	public Type visitArrayelem(@NotNull BasicParser.ArrayelemContext ctx) { 
+		return visit(ctx.expr());
 	}
 	
 	/*@Override
