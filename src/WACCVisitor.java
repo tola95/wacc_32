@@ -198,7 +198,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		case BasicParser.MUL : return Type.MUL;
 		case BasicParser.DIV : return Type.DIV;
 		case BasicParser.MOD : return Type.MOD;
-		default : System.exit(-1); return Type.ERROR;
+		default : System.exit(200); return Type.ERROR;
 		}
 	}
 	
@@ -220,7 +220,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		case BasicParser.NOTEQ : return Type.NOTEQ;
 		case BasicParser.AND   : return Type.AND;
 		case BasicParser.OR    : return Type.OR;
-		default                : System.exit(-1); return Type.ERROR;
+		default                : System.exit(200); return Type.ERROR;
 		}
 	}
 	
@@ -229,7 +229,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	public Type visitFactor_Expr(@NotNull BasicParser.Factor_ExprContext ctx) { 
 		if (visit(ctx.expr(0)) == Type.INT && visit(ctx.expr(1)) == Type.INT) {
 			return Type.INT;
-		} else System.exit(-1); return Type.ERROR;
+		} else System.exit(200); return Type.ERROR;
 	}
 	
 	@Override 
@@ -294,96 +294,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	
 	}*/
 
-	/*private Type checkIfExprAllowed(Type expr1, BasicParser.ExprContext ctx) {
-		
-		switch (ctx.binaryOper().getStart().getType()) {
-		
-		case 1 : 
-			
-		case 2 :
-			
-		case 3 :	
-			
-		case 4 :
-			
-		case 5 :
-			
-		case 6 :
-			
-		case 7 :
-			
-		case 8 :
-			
-		case 14:
-			
-		case 15:
-			
-		case 16:
-			
-		case 17:
-			
-		case 9 : return (Type.INT);
-		
-		case 10 :
-			
-		case 11 : 
-		
-		case 12 :
-			
-		case 13 : return (Type.BOOL);
-		
-		default : return Type.ERROR;
-		
-		}
-		
-	}*/
-
-	/*@Override
-	public Type visitStat(BasicParser.StatContext ctx) {
-		switch (ctx.getStart().getType()) {
-		
-		case BasicParser.SKIP : return Type.SKIP;
-		
-		case BasicParser.BEGIN : if (ctx.stop.getType() == BasicParser.END) {
-			return visitStat(ctx.stat(0));
-		} else {
-			return Type.ERROR;
-		}
-		
-		case 29 : if (ctx.getChild(1) instanceof BasicParser.PairelemContext ||
-				      ctx.getChild(1) instanceof BasicParser.ArrayelemContext) { 
-			          visitExpr(ctx.expr());
-		          } else {
-		        	  return Type.ERROR;
-		          }
-		          
-		
-		case BasicParser.READ : return visitAssignlhs(ctx.assignlhs());
-		
-		case BasicParser.IS :
-			
-		case BasicParser.EXIT :
-		
-		case BasicParser.PRINT :
-			
-		case BasicParser.PRINTLN :
-		
-		case BasicParser.FREE : return visitExpr(ctx.expr());
-		
-		case 47 : if (visit(ctx.expr()).equals(Type.BOOL)) {  //while
-			          visitStat(ctx.stat(0));
-		          }
-		
-		case 34 : if (visit(ctx.expr()).equals(Type.BOOL)) {
-			          visitStat(ctx.stat(0));
-			          visitStat(ctx.stat(1));
-		          }
-		
-		default : return visitComplexStat(ctx);
-		
-		}
-	}*/
-
 	/*private Type visitComplexStat(BasicParser.StatContext ctx) {
 		if (ctx.getChild(0) instanceof BasicParser.TypeContext &&
 		    visit(ctx.type()).equals(visitAssignrhs(ctx.assignrhs()))) {
@@ -407,12 +317,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	}
 
 	@Override
-	public Type visitArraytype(BasicParser.ArraytypeContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
-	}*/
-
-	@Override
 	public Type visitArrayliter(BasicParser.ArrayliterContext ctx) {
 		if (ctx.getChild(1) instanceof BasicParser.ArglistContext) {
 			return visit(ctx.arglist());
@@ -422,14 +326,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 
 	/*@Override
 	public Type visitPairtype(BasicParser.PairtypeContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	
-
-	@Override
-	public Type visitUnaryoper(BasicParser.UnaryoperContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -453,21 +349,37 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		}
 		return null;
 	}*/
-
 	
-	@Override
-	public Type visitPairelemtype(BasicParser.PairelemtypeContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
+	@Override 
+	public Type visitBaseType_arrayType(@NotNull BasicParser.BaseType_arrayTypeContext ctx) { 
+		return visit(ctx.basetype()); 
+	}
+	
+	@Override 
+	public Type visitArrayType_arrayType(@NotNull BasicParser.ArrayType_arrayTypeContext ctx) { 
+		return visit(ctx.arraytype()); 
+	}
+	
+	@Override 
+	public Type visitPairType_arrayType(@NotNull BasicParser.PairType_arrayTypeContext ctx) { 
+		return visit(ctx.pairtype()); 
+	}
+	
+	@Override 
+	public Type visitPair_pairElemType(@NotNull BasicParser.Pair_pairElemTypeContext ctx) { 
+		return Type.PAIR;
+	}
+	
+	@Override 
+	public Type visitBaseType_pairElemType(@NotNull BasicParser.BaseType_pairElemTypeContext ctx) { 
+		return visit(ctx.basetype()); 
 	}
 
 	@Override
 	public Type visitPairelem(BasicParser.PairelemContext ctx) {
-		
-		return null;
+		return visit(ctx.expr());
 	}
-
-
+	
 }
 
 

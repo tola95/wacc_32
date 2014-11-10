@@ -50,11 +50,17 @@ type : basetype                                  #baseType_type
      | pairtype                                  #pairType_type
      ;                            
 
-arraytype : basetype OPEN_SQUAREB CLOSE_SQUAREB | arraytype OPEN_SQUAREB CLOSE_SQUAREB | pairtype OPEN_SQUAREB CLOSE_SQUAREB ;
+arraytype : basetype OPEN_SQUAREB CLOSE_SQUAREB     #baseType_arrayType
+          | arraytype OPEN_SQUAREB CLOSE_SQUAREB    #arrayType_arrayType
+          | pairtype OPEN_SQUAREB CLOSE_SQUAREB     #pairType_arrayType
+          ;
 
 pairtype : PAIR OPEN_PARENTHESES pairelemtype COMMA pairelemtype CLOSE_PARENTHESES ;
 
-pairelemtype : basetype | PAIR | arraytype ;
+pairelemtype : basetype                             #baseType_pairElemType        
+             | PAIR                                 #pair_pairElemType
+             | arraytype                            #arrayType_pairElemType
+             ;
 
 expr: unaryoper expr                                 #unaryOper_Expr
     | OPEN_PARENTHESES expr CLOSE_PARENTHESES        #parenth_Expr

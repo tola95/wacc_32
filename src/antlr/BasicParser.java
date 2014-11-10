@@ -1092,24 +1092,52 @@ public class BasicParser extends Parser {
 	}
 
 	public static class ArraytypeContext extends ParserRuleContext {
-		public TerminalNode OPEN_SQUAREB() { return getToken(BasicParser.OPEN_SQUAREB, 0); }
-		public ArraytypeContext arraytype() {
-			return getRuleContext(ArraytypeContext.class,0);
-		}
-		public PairtypeContext pairtype() {
-			return getRuleContext(PairtypeContext.class,0);
-		}
-		public BasetypeContext basetype() {
-			return getRuleContext(BasetypeContext.class,0);
-		}
-		public TerminalNode CLOSE_SQUAREB() { return getToken(BasicParser.CLOSE_SQUAREB, 0); }
 		public ArraytypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_arraytype; }
+	 
+		public ArraytypeContext() { }
+		public void copyFrom(ArraytypeContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class BaseType_arrayTypeContext extends ArraytypeContext {
+		public TerminalNode OPEN_SQUAREB() { return getToken(BasicParser.OPEN_SQUAREB, 0); }
+		public BasetypeContext basetype() {
+			return getRuleContext(BasetypeContext.class,0);
+		}
+		public TerminalNode CLOSE_SQUAREB() { return getToken(BasicParser.CLOSE_SQUAREB, 0); }
+		public BaseType_arrayTypeContext(ArraytypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitArraytype(this);
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitBaseType_arrayType(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ArrayType_arrayTypeContext extends ArraytypeContext {
+		public TerminalNode OPEN_SQUAREB() { return getToken(BasicParser.OPEN_SQUAREB, 0); }
+		public ArraytypeContext arraytype() {
+			return getRuleContext(ArraytypeContext.class,0);
+		}
+		public TerminalNode CLOSE_SQUAREB() { return getToken(BasicParser.CLOSE_SQUAREB, 0); }
+		public ArrayType_arrayTypeContext(ArraytypeContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitArrayType_arrayType(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class PairType_arrayTypeContext extends ArraytypeContext {
+		public TerminalNode OPEN_SQUAREB() { return getToken(BasicParser.OPEN_SQUAREB, 0); }
+		public PairtypeContext pairtype() {
+			return getRuleContext(PairtypeContext.class,0);
+		}
+		public TerminalNode CLOSE_SQUAREB() { return getToken(BasicParser.CLOSE_SQUAREB, 0); }
+		public PairType_arrayTypeContext(ArraytypeContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitPairType_arrayType(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1136,6 +1164,10 @@ public class BasicParser extends Parser {
 			case STRING:
 			case BOOL:
 				{
+				_localctx = new BaseType_arrayTypeContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+
 				setState(167); basetype();
 				setState(168); match(OPEN_SQUAREB);
 				setState(169); match(CLOSE_SQUAREB);
@@ -1143,6 +1175,9 @@ public class BasicParser extends Parser {
 				break;
 			case PAIR:
 				{
+				_localctx = new PairType_arrayTypeContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
 				setState(171); pairtype();
 				setState(172); match(OPEN_SQUAREB);
 				setState(173); match(CLOSE_SQUAREB);
@@ -1161,7 +1196,7 @@ public class BasicParser extends Parser {
 					_prevctx = _localctx;
 					{
 					{
-					_localctx = new ArraytypeContext(_parentctx, _parentState);
+					_localctx = new ArrayType_arrayTypeContext(new ArraytypeContext(_parentctx, _parentState));
 					pushNewRecursionContext(_localctx, _startState, RULE_arraytype);
 					setState(177);
 					if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
@@ -1235,20 +1270,44 @@ public class BasicParser extends Parser {
 	}
 
 	public static class PairelemtypeContext extends ParserRuleContext {
-		public ArraytypeContext arraytype() {
-			return getRuleContext(ArraytypeContext.class,0);
-		}
-		public BasetypeContext basetype() {
-			return getRuleContext(BasetypeContext.class,0);
-		}
-		public TerminalNode PAIR() { return getToken(BasicParser.PAIR, 0); }
 		public PairelemtypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_pairelemtype; }
+	 
+		public PairelemtypeContext() { }
+		public void copyFrom(PairelemtypeContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class BaseType_pairElemTypeContext extends PairelemtypeContext {
+		public BasetypeContext basetype() {
+			return getRuleContext(BasetypeContext.class,0);
+		}
+		public BaseType_pairElemTypeContext(PairelemtypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitPairelemtype(this);
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitBaseType_pairElemType(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ArrayType_pairElemTypeContext extends PairelemtypeContext {
+		public ArraytypeContext arraytype() {
+			return getRuleContext(ArraytypeContext.class,0);
+		}
+		public ArrayType_pairElemTypeContext(PairelemtypeContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitArrayType_pairElemType(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Pair_pairElemTypeContext extends PairelemtypeContext {
+		public TerminalNode PAIR() { return getToken(BasicParser.PAIR, 0); }
+		public Pair_pairElemTypeContext(PairelemtypeContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitPair_pairElemType(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1260,18 +1319,21 @@ public class BasicParser extends Parser {
 			setState(195);
 			switch ( getInterpreter().adaptivePredict(_input,13,_ctx) ) {
 			case 1:
+				_localctx = new BaseType_pairElemTypeContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(192); basetype();
 				}
 				break;
 			case 2:
+				_localctx = new Pair_pairElemTypeContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(193); match(PAIR);
 				}
 				break;
 			case 3:
+				_localctx = new ArrayType_pairElemTypeContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(194); arraytype(0);
