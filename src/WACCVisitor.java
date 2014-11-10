@@ -21,6 +21,84 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     	return visit(ctx.stat());
 	}
     
+    @Override
+	public Type visitFunc(BasicParser.FuncContext ctx) {
+		Type t = visit(ctx.type());
+		if (ctx.getChild(3) instanceof BasicParser.ParamlistContext) {
+			visit(ctx.paramlist());
+		}
+		if (visit(ctx.stat()) == t) {
+			return Type.NULL;
+		} 
+		System.exit(200); 
+		return Type.NULL;
+	}
+    
+	@Override
+	public Type visitParamlist(BasicParser.ParamlistContext ctx) {
+		if (ctx.COMMA().size() == ctx.param().size() - 1) {
+			return Type.NULL;
+		} else System.exit(200); return Type.NULL;
+	}
+	
+    @Override
+	public Type visitParam(BasicParser.ParamContext ctx) {
+		return visit(ctx.type());
+	}
+    
+	@Override
+	public Type visitAssignlhs(BasicParser.AssignlhsContext ctx) {
+		if (ctx.getStart().getType() == 55) {
+			return Type.IDENT;
+		} else if (ctx.getChild(0) instanceof BasicParser.ArrayelemContext) {
+			return visit(ctx.arrayelem());
+		} else if (ctx.getChild(0) instanceof BasicParser.PairelemContext) {
+			return visit(ctx.pairelem());
+		} else {
+			return Type.ERROR;
+		}
+	}
+	
+	@Override 
+	public Type visitExp_assignrhs(@NotNull BasicParser.Exp_assignrhsContext ctx) { 
+		return visit(ctx.expr()); 
+	}
+
+	@Override
+	public Type visitArrayLiter_assignrhs(@NotNull BasicParser.ArrayLiter_assignrhsContext ctx) { 
+		return visit(ctx.arrayliter()); 
+	}
+	
+	@Override 
+	public Type visitBaseType_type(@NotNull BasicParser.BaseType_typeContext ctx) { 
+		return visit(ctx.basetype());
+	}
+	
+	@Override 
+	public Type visitNewPair_assignrhs(@NotNull BasicParser.NewPair_assignrhsContext ctx) { 
+		return null;
+	}
+	
+	@Override 
+	public Type visitInt_baseType(@NotNull BasicParser.Int_baseTypeContext ctx) { 
+		return Type.INT;
+	}
+	
+	@Override 
+	public Type visitBool_baseType(@NotNull BasicParser.Bool_baseTypeContext ctx) { 
+		return Type.BOOL;
+	}
+	
+	@Override 
+	public Type visitChar_baseType(@NotNull BasicParser.Char_baseTypeContext ctx) { 
+		return Type.CHAR;
+	}
+	
+	@Override 
+	public Type visitString_baseType(@NotNull BasicParser.String_baseTypeContext ctx) { 
+		return Type.STRING;
+	}
+	
     @Override 
     public Type visitSkip_Stat(@NotNull BasicParser.Skip_StatContext ctx) { 
     	return Type.SKIP; 
@@ -85,6 +163,8 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     	return Type.STRING; 
     }
     
+    
+    
     @Override 
     public Type visitPairLiter_Expr(@NotNull BasicParser.PairLiter_ExprContext ctx) { 
     	return Type.NULL; 
@@ -104,31 +184,9 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		return Type.NULL;
 	}
 
-	@Override
-	public Type visitAssignlhs(BasicParser.AssignlhsContext ctx) {
-		if (ctx.getStart().getType() == 55) {
-			return Type.IDENT;
-		} else if (ctx.getChild(0) instanceof BasicParser.ArrayelemContext) {
-			return visit(ctx.arrayelem());
-		} else if (ctx.getChild(0) instanceof BasicParser.PairelemContext) {
-			return visit(ctx.pairelem());
-		} else {
-			return Type.ERROR;
-		}
-	}
-
-	@Override
-	public Type visitParam(BasicParser.ParamContext ctx) {
-		return visit(ctx.type());
-	}
 	
-	@Override
-	public Type visitParamlist(BasicParser.ParamlistContext ctx) {
-		if (ctx.COMMA().size() == ctx.param().size() - 1) {
-			return Type.NULL;
-		} else System.exit(200); return Type.NULL;
-	}
 
+	
 	
 	@Override 
 	public Type visitFactor(@NotNull BasicParser.FactorContext ctx) { 
@@ -271,19 +329,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		
 	}*/
 
-	@Override
-	public Type visitArrayelem(BasicParser.ArrayelemContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	
-	@Override
-	public Type visitType(BasicParser.TypeContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	/*@Override
 	public Type visitStat(BasicParser.StatContext ctx) {
 		switch (ctx.getStart().getType()) {
@@ -356,15 +401,17 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	public Type visitArraytype(BasicParser.ArraytypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
-	}
+	}*/
 
 	@Override
 	public Type visitArrayliter(BasicParser.ArrayliterContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
+		if (ctx.getChild(1) instanceof BasicParser.ArglistContext) {
+			return visit(ctx.arglist());
+		}
+		return Type.NULL;
 	}
 
-	@Override
+	/*@Override
 	public Type visitPairtype(BasicParser.PairtypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
@@ -398,19 +445,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		return null;
 	}*/
 
-	@Override
-	public Type visitFunc(BasicParser.FuncContext ctx) {
-		Type t = visit(ctx.type());
-		if (ctx.getChild(3) instanceof BasicParser.ParamlistContext) {
-			visit(ctx.paramlist());
-		}
-		if (visit(ctx.stat()) == t) {
-			return Type.NULL;
-		} 
-		System.exit(200); 
-		return Type.NULL;
-	}
-
+	
 	@Override
 	public Type visitPairelemtype(BasicParser.PairelemtypeContext ctx) {
 		// TODO Auto-generated method stub

@@ -28,20 +28,27 @@ assignlhs : IDENT
           | pairelem
           ;
 
-assignrhs : expr
-          | arrayliter
-          | NEWPAIR OPEN_PARENTHESES expr COMMA expr CLOSE_PARENTHESES
-          | pairelem
-          | CALL IDENT OPEN_PARENTHESES (arglist)? CLOSE_PARENTHESES
+assignrhs : expr                                                        #exp_assignrhs
+          | arrayliter                                                  #arrayLiter_assignrhs
+          | NEWPAIR OPEN_PARENTHESES expr COMMA expr CLOSE_PARENTHESES  #newPair_assignrhs
+          | pairelem                                                    #pairElem_assignrhs
+          | CALL IDENT OPEN_PARENTHESES (arglist)? CLOSE_PARENTHESES    #call_assignrhs
           ;
 
 arglist : expr (COMMA expr)* ;
 
 pairelem : (FST | SND) expr ;
 
-basetype : INT | BOOL | CHAR | STRING ;
+basetype : INT                                   #int_baseType
+         | BOOL                                  #bool_baseType
+         | CHAR                                  #char_baseType
+         | STRING                                #string_baseType
+         ;
 
-type : basetype | arraytype |  pairtype ;
+type : basetype                                  #baseType_type
+     | arraytype                                 #arrayType_type
+     | pairtype                                  #pairType_type
+     ;                            
 
 arraytype : basetype OPEN_SQUAREB CLOSE_SQUAREB | arraytype OPEN_SQUAREB CLOSE_SQUAREB | pairtype OPEN_SQUAREB CLOSE_SQUAREB ;
 
