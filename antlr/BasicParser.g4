@@ -4,7 +4,7 @@ options {
   tokenVocab=BasicLexer;
 }
 
-program : BEGIN (func)* stat END ;
+program : BEGIN (func)* stat END EOF;
 
 func : type IDENT OPEN_PARENTHESES (paramlist)? CLOSE_PARENTHESES IS stat END ;
 
@@ -16,7 +16,11 @@ stat : SKIP                                             #skip_Stat
      | type IDENT EQ assignrhs                          #identEq_Stat 
      | assignlhs EQ assignrhs                           #assignLhsRhs_Stat
      | READ assignlhs                                   #read_Stat
-     | (FREE | RETURN | EXIT | PRINT | PRINTLN) expr    #exp_Stat
+     | FREE expr                                        #free_Stat
+     | RETURN expr                                      #return_Stat
+     | EXIT expr                                        #exit_Stat
+     | PRINT expr                                       #print_Stat
+     | PRINTLN expr                                     #println_Stat
      | IF expr THEN stat ELSE stat FI                   #if_Stat
      | WHILE expr DO stat DONE                          #while_Stat
      | BEGIN stat END                                   #begin_Stat
@@ -50,24 +54,30 @@ type : basetype                                  #baseType_type
      | pairtype                                  #pairType_type
      ;                            
 
-arraytype : basetype OPEN_SQUAREB CLOSE_SQUAREB | arraytype OPEN_SQUAREB CLOSE_SQUAREB | pairtype OPEN_SQUAREB CLOSE_SQUAREB ;
+arraytype : basetype OPEN_SQUAREB CLOSE_SQUAREB     #baseType_arrayType
+          | arraytype OPEN_SQUAREB CLOSE_SQUAREB    #arrayType_arrayType
+          | pairtype OPEN_SQUAREB CLOSE_SQUAREB     #pairType_arrayType
+          ;
 
 pairtype : PAIR OPEN_PARENTHESES pairelemtype COMMA pairelemtype CLOSE_PARENTHESES ;
 
-pairelemtype : basetype | PAIR | arraytype ;
+pairelemtype : basetype                             #baseType_pairElemType        
+             | PAIR                                 #pair_pairElemType
+             | arraytype                            #arrayType_pairElemType
+             ;
 
-expr: unaryoper expr                                 #unaryOper_Expr
-    | OPEN_PARENTHESES expr CLOSE_PARENTHESES        #parenth_Expr
-    | expr factor expr                               #factor_Expr
-    | expr term expr                                 #term_Expr
-    | INT_LITER                                      #intLiter_Expr
-    | bool_Liter                                     #boolLiter_Expr
-    | CHAR_LITER                                     #charLiter_Expr
-    | STR_LITER                                      #strLiter_Expr
-    | PAIR_LITER                                     #pairLiter_Expr
-    | IDENT                                          #ident_Expr
-    | arrayelem                                      #arrayElem_Expr
-    ;
+expr : unaryoper expr                                 #unaryOper_Expr
+     | OPEN_PARENTHESES expr CLOSE_PARENTHESES        #parenth_Expr
+     | expr factor expr                               #factor_Expr
+     | expr term expr                                 #term_Expr
+     | INT_LITER                                      #intLiter_Expr
+     | bool_Liter                                     #boolLiter_Expr
+     | CHAR_LITER                                     #charLiter_Expr
+     | STR_LITER                                      #strLiter_Expr
+     | PAIR_LITER                                     #pairLiter_Expr
+     | IDENT                                          #ident_Expr
+     | arrayelem                                      #arrayElem_Expr
+     ;
 
 unaryoper : NOT | MINUS | LEN | ORD | CHR ;
 

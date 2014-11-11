@@ -8,7 +8,9 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-public class WACCVisitor extends BasicParserBaseVisitor<Type> implements BasicParserVisitor<Type> {
+
+
+public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	
 	
     @Override
@@ -27,8 +29,11 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> implements BasicPa
 		}
 		if (visit(ctx.stat()) == t) {
 			return Type.NULL;
-		} 
-		System.exit(200); 
+		}
+		if (!(ctx.stat() instanceof BasicParser.Return_StatContext)) {
+			System.exit(100);
+		}
+		System.exit(100); 
 		return Type.NULL;
 	}
     
@@ -39,7 +44,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> implements BasicPa
 				visit(ctx.param(i));
 			}
 			return Type.NULL;
-		} else System.exit(200); return Type.NULL;
+		} else System.exit(100); return Type.NULL;
 	}
 	
     @Override
@@ -107,31 +112,46 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> implements BasicPa
     }
     
     @Override 
-    public Type visitExp_Stat(@NotNull BasicParser.Exp_StatContext ctx) { 
-    	switch (ctx.start.getType()) {
-    	case BasicParser.FREE    :
-    	case BasicParser.RETURN  :
-    	case BasicParser.EXIT    :
-    	case BasicParser.PRINT   :
-    	case BasicParser.PRINTLN : return visit(ctx.expr());
-    	default                  : return Type.ERROR;
-    	}
+    public Type visitBegin_Stat(@NotNull BasicParser.Begin_StatContext ctx) { 
+    	return visit(ctx.stat());
     }
     
     @Override 
-    public Type visitBegin_Stat(@NotNull BasicParser.Begin_StatContext ctx) { 
-    	if (ctx.stop.getType() == BasicParser.END) {
-    		return visit(ctx.getChild(1));
+    public Type visitFree_Stat(@NotNull BasicParser.Free_StatContext ctx) { 
+    	if (visit(ctx.expr()) != Type.INT) {
+    		System.exit(200);
     	}
-    	System.exit(200);
     	return Type.ERROR;
+    }
+    
+    @Override
+    public Type visitReturn_Stat(@NotNull BasicParser.Return_StatContext ctx) { 
+    	return visit(ctx.expr());
+    }
+    
+    @Override 
+    public Type visitExit_Stat(@NotNull BasicParser.Exit_StatContext ctx) { 
+    	if (visit(ctx.expr()) != Type.INT) {
+    		System.exit(200);
+    	}
+    	return Type.ERROR;
+    }
+    
+    @Override 
+    public Type visitPrint_Stat(@NotNull BasicParser.Print_StatContext ctx) { 
+    	return visit(ctx.expr());
+    }
+    
+    @Override 
+    public Type visitPrintln_Stat(@NotNull BasicParser.Println_StatContext ctx) { 
+    	return visit(ctx.expr());
     }
     
     @Override
     public Type visitSemicolon_Stat(@NotNull BasicParser.Semicolon_StatContext ctx) {
     	visit(ctx.stat(0));
     	visit(ctx.stat(1));
-    	return null;
+    	return Type.ERROR;
     }
     
     @Override 
@@ -139,6 +159,14 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> implements BasicPa
     	if (visit(ctx.expr()) == Type.BOOL) {
     		return Type.BOOL;
     	}
+    	System.exit(200); return Type.ERROR;
+    }
+    
+    @Override 
+    public Type visitWhile_Stat(@NotNull BasicParser.While_StatContext ctx) { 
+    	if (visit(ctx.expr()) == Type.BOOL) {
+    		return visit(ctx.stat());
+    	} 
     	System.exit(200); return Type.ERROR;
     }
     
@@ -165,8 +193,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> implements BasicPa
     	return Type.STRING; 
     }
     
-    
-    
     @Override 
     public Type visitPairLiter_Expr(@NotNull BasicParser.PairLiter_ExprContext ctx) { 
     	return Type.NULL; 
@@ -185,10 +211,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> implements BasicPa
 		System.exit(200);
 		return Type.NULL;
 	}
-
-	
-
-	
 	
 	@Override 
 	public Type visitFactor(@NotNull BasicParser.FactorContext ctx) { 
@@ -196,7 +218,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> implements BasicPa
 		case BasicParser.MUL : return Type.MUL;
 		case BasicParser.DIV : return Type.DIV;
 		case BasicParser.MOD : return Type.MOD;
-		default : System.exit(-1); return Type.ERROR;
+		default : System.exit(200); return Type.ERROR;
 		}
 	}
 	
@@ -218,7 +240,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> implements BasicPa
 		case BasicParser.NOTEQ : return Type.NOTEQ;
 		case BasicParser.AND   : return Type.AND;
 		case BasicParser.OR    : return Type.OR;
-		default                : System.exit(-1); return Type.ERROR;
+		default                : System.exit(200); return Type.ERROR;
 		}
 	}
 	
@@ -227,7 +249,91 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> implements BasicPa
 	public Type visitFactor_Expr(@NotNull BasicParser.Factor_ExprContext ctx) { 
 		if (visit(ctx.expr(0)) == Type.INT && visit(ctx.expr(1)) == Type.INT) {
 			return Type.INT;
-		} else System.exit(-1); return Type.ERROR;
+		} else System.exit(200); return Type.ERROR;
+	}
+	
+	@Override 
+	public Type visitArrayelem(@NotNull BasicParser.ArrayelemContext ctx) { 
+		return visit(ctx.expr());
+	}
+	
+	/*@Override
+	public Type visitExpr(BasicParser.ExprContext ctx) {
+		Type t;
+		switch (ctx.getStart().getType()) {
+		
+		   case BasicParser.INT_LITER : return  Type.INT;
+		   
+		   case BasicParser.BOOL_LITER : return Type.BOOL;
+		   
+		   case BasicParser.CHAR_LITER : return Type.CHAR;
+		   
+		   case BasicParser.STR_LITER : return Type.STRING;
+		   
+		   case BasicParser.PAIR_LITER : return Type.PAIR;
+		   
+		   case BasicParser.IDENT : return Type.IDENT;
+		   
+		   //case BasicParser.OPEN_PARENTHESES : t = visitExpr(ctx.expr(0)); // case { expr }
+		   
+		   default : t = null; 
+		}
+		return t;
+	}*/
+
+	/*private Type visitCompoundExpr(BasicParser.ExprContext ctx) {
+		
+		if ((ctx.getChild(1) instanceof BasicParser.TermContext ||
+				ctx.getChild(1) instanceof BasicParser.FactorContext )) { 
+		    Type expr1 = visit(ctx.expr(0));
+		    Type expr2 = visit(ctx.expr(1));
+		    return null;
+		} else {
+			return null;
+		}
+	}*/
+		/*    if (expr1.equals(expr2) ) {
+		        	return checkIfExprAllowed(expr1, ctx);
+		    } else {
+		        	return Type.ERROR;
+		    }
+		    
+		} else if(!ctx.arrayelem().isEmpty()) { 
+			
+			return visit(ctx.expr(0));
+			
+		} else if(!ctx.unaryoper().isEmpty()) {
+			
+			Type expr1 = visit(ctx.expr(0));
+			return checkIfExprAllowed(expr1, ctx);
+			
+		} else {
+			
+			return Type.ERROR;
+		}
+	
+	}*/
+
+	/*private Type visitComplexStat(BasicParser.StatContext ctx) {
+		if (ctx.getChild(0) instanceof BasicParser.TypeContext &&
+		    visit(ctx.type()).equals(visitAssignrhs(ctx.assignrhs()))) {
+			return visitAssignrhs(ctx.assignrhs());
+		} else if (ctx.getChild(0) instanceof BasicParser.AssignlhsContext &&
+		    visit(ctx.assignlhs()).equals(visitAssignrhs(ctx.assignrhs()))) {
+			return visitAssignrhs(ctx.assignrhs());  
+		} else if (ctx.getChild(0) instanceof BasicParser.StatContext) {
+			visitStat(ctx.stat(0));
+			visitStat(ctx.stat(1));
+		} else {
+			return Type.ERROR;
+		}
+		return null;
+	}
+
+	@Override
+	public Type visitProg(BasicParser.ProgContext ctx) {
+		
+		return null;
 	}
 
 	@Override
@@ -238,18 +344,62 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> implements BasicPa
 		return Type.NULL;
 	}
 
-	@Override
-	public Type visitPairelemtype(BasicParser.PairelemtypeContext ctx) {
+	/*@Override
+	public Type visitPairtype(BasicParser.PairtypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
-	public Type visitPairelem(BasicParser.PairelemContext ctx) {		
+	/*@Override
+	public Type visitAssignrhs(BasicParser.AssignrhsContext ctx) {
+		if (ctx.getChild(0) instanceof BasicParser.ExprContext) {
+			return visit(ctx.expr(0));
+		} else if (ctx.getChild(0) instanceof BasicParser.ArrayliterContext) {
+			return visit(ctx.arrayliter());
+		} else if (ctx.getChild(0) instanceof BasicParser.PairelemContext) {
+			return visit(ctx.pairelem());
+		} else if (ctx.getStart().getType() == 42) {
+			visitExpr(ctx.expr(0));
+			visitExpr(ctx.expr(1));
+		} else if (ctx.getStart().getType() == 43) {
+			//Will do when I implement Symbol Table
+			
+		} else {
+			return Type.ERROR;
+		}
 		return null;
+	}*/
+	
+	@Override 
+	public Type visitBaseType_arrayType(@NotNull BasicParser.BaseType_arrayTypeContext ctx) { 
+		return visit(ctx.basetype()); 
+	}
+	
+	@Override 
+	public Type visitArrayType_arrayType(@NotNull BasicParser.ArrayType_arrayTypeContext ctx) { 
+		return visit(ctx.arraytype()); 
+	}
+	
+	@Override 
+	public Type visitPairType_arrayType(@NotNull BasicParser.PairType_arrayTypeContext ctx) { 
+		return visit(ctx.pairtype()); 
+	}
+	
+	@Override 
+	public Type visitPair_pairElemType(@NotNull BasicParser.Pair_pairElemTypeContext ctx) { 
+		return Type.PAIR;
+	}
+	
+	@Override 
+	public Type visitBaseType_pairElemType(@NotNull BasicParser.BaseType_pairElemTypeContext ctx) { 
+		return visit(ctx.basetype()); 
 	}
 
-
+	@Override
+	public Type visitPairelem(BasicParser.PairelemContext ctx) {
+		return visit(ctx.expr());
+	}
+	
 }
 
 

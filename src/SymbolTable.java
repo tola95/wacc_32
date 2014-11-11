@@ -1,39 +1,34 @@
 import java.util.HashMap;
-import java.util.Map;
-
 
 public class SymbolTable {
+	SymbolTable symTable;
+	HashMap<String, Type> dictionary;
 	
-//	private Map<String, BasicParser.TypeContext> encSymTable = new HashMap<String, BasicParser.TypeContext>();
-	private SymbolTable encSymTable;
-	private Map<String, Object> dict;
 	
-	public SymbolTable(SymbolTable st) {
-		this.encSymTable = st;
-		dict = new HashMap<String, Object>();
+	SymbolTable(SymbolTable st) {
+		symTable = st;
+		dictionary = new HashMap<String, Type>();
 	}
 	
-	public void add(String s, Object t) {
-		dict.put(s, t);
+	public void add(String str, Type type) {
+		dictionary.put(str, type);
 	}
 	
-	public Object lookupCurrLevelOnly(String name) {
-		return dict.get(name);
+	public Type lookUpCurrLevelOnly(String str) {
+		return dictionary.get(str);
 	}
 	
-	public Object lookupCurrLevelAndEnclosingLevels(String name) {
+	public Type lookUpCurrLevelAndEnclosingLevels(String str) {
 		SymbolTable S = this;
+		Type id;
 		while (S != null) {
-			Object obj = S.lookupCurrLevelOnly(name);
-			if (obj != null) {
-				return obj;
-			} else {
-				S = S.encSymTable;
+			id = S.lookUpCurrLevelOnly(str);
+			if (id != null) {
+				return id;
 			}
+			S = S.symTable;
 		}
 		return null;
 	}
-	
-	
 
 }
