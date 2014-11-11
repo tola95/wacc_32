@@ -40,10 +40,14 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 			return Type.NULL;
 		}
 		if (!(ctx.stat() instanceof BasicParser.Return_StatContext)) {
-			System.exit(100);
+			System.exit(200);
+		}
+		for (BasicParser.ParamContext param : ctx.paramlist().param()) {
+			visit(param);
 		}
 		System.exit(100); 
 		return Type.NULL;
+		
 	}
     
 	@Override
@@ -83,6 +87,19 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	@Override
 	public Type visitArrayLiter_assignrhs(@NotNull BasicParser.ArrayLiter_assignrhsContext ctx) { 
 		return visit(ctx.arrayliter()); 
+	}
+	
+	@Override 
+	public Type visitPairElem_assignrhs(@NotNull BasicParser.PairElem_assignrhsContext ctx) { 
+		return visit(ctx.pairelem());
+	}
+	
+	@Override 
+	public Type visitCall_assignrhs(@NotNull BasicParser.Call_assignrhsContext ctx) { 
+		if (ctx.getChild(3) instanceof BasicParser.ArglistContext) {
+			return Type.NULL;
+		}
+		return Type.NULL;
 	}
 	
 	@Override 
@@ -266,6 +283,14 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		return visit(ctx.expr());
 	}
 	
+	@Override 
+	public Type visitBool_Liter(@NotNull BasicParser.Bool_LiterContext ctx) { 
+		 if (ctx.start.getType() == BasicParser.TRUE) {
+			 return Type.TRUE;
+		 } 
+		 return Type.FALSE;
+	}
+	
 	/*@Override
 	public Type visitExpr(BasicParser.ExprContext ctx) {
 		Type t;
@@ -380,6 +405,11 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	}*/
 	
 	@Override 
+	public Type visitUnaryoper(@NotNull BasicParser.UnaryoperContext ctx) { 
+		return Type.NULL;
+	}
+	
+	@Override 
 	public Type visitBaseType_arrayType(@NotNull BasicParser.BaseType_arrayTypeContext ctx) { 
 		return visit(ctx.basetype()); 
 	}
@@ -407,6 +437,14 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	@Override
 	public Type visitPairelem(BasicParser.PairelemContext ctx) {
 		return visit(ctx.expr());
+	}
+	
+	@Override 
+	public Type visitArrayliter(@NotNull BasicParser.ArrayliterContext ctx) { 
+		if (ctx.getChild(1) instanceof BasicParser.ArglistContext) {
+			return visit(ctx.arglist());
+		}
+		return Type.NULL;
 	}
 	
 }
