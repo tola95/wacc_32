@@ -1,0 +1,73 @@
+import java.util.HashMap;
+<<<<<<< HEAD
+import java.util.Map;
+
+
+public class SymbolTable {
+	
+//	private Map<String, BasicParser.TypeContext> encSymTable = new HashMap<String, BasicParser.TypeContext>();
+	private SymbolTable encSymTable;
+	private Map<String, Object> dict;
+	
+	public SymbolTable(SymbolTable st) {
+		this.encSymTable = st;
+		dict = new HashMap<String, Object>();
+	}
+	
+	public void add(String s, Object t) {
+		dict.put(s, t);
+	}
+	
+	public Object lookupCurrLevelOnly(String name) {
+		return dict.get(name);
+	}
+	
+	public Object lookupCurrLevelAndEnclosingLevels(String name) {
+		SymbolTable S = this;
+		while (S != null) {
+			Object obj = S.lookupCurrLevelOnly(name);
+			if (obj != null) {
+				return obj;
+			} else {
+				S = S.encSymTable;
+			}
+		}
+		return null;
+	}
+	
+	
+=======
+
+public class SymbolTable {
+	SymbolTable symTable;
+	HashMap<String, Type> dictionary;
+	
+	
+	SymbolTable(SymbolTable st) {
+		symTable = st;
+		dictionary = new HashMap<String, Type>();
+	}
+	
+	public void add(String str, Type type) {
+		dictionary.put(str, type);
+	}
+	
+	public Type lookUpCurrLevelOnly(String str) {
+		return dictionary.get(str);
+	}
+	
+	public Type lookUpCurrLevelAndEnclosingLevels(String str) {
+		SymbolTable S = this;
+		Type id;
+		while (S != null) {
+			id = S.lookUpCurrLevelOnly(str);
+			if (id != null) {
+				return id;
+			}
+			S = S.symTable;
+		}
+		return null;
+	}
+>>>>>>> 0d3f91ba6dc488f4d8ececf74f312bc8ab980c74
+
+}

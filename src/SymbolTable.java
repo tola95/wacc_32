@@ -2,25 +2,25 @@ import java.util.HashMap;
 
 public class SymbolTable {
 	SymbolTable symTable;
-	HashMap<String, Type> dictionary;
+	HashMap<String, Identifier> dictionary;
 	
 	
 	SymbolTable(SymbolTable st) {
 		symTable = st;
-		dictionary = new HashMap<String, Type>();
+		dictionary = new HashMap<String, Identifier>();
 	}
 	
-	public void add(String str, Type type) {
-		dictionary.put(str, type);
+	public void add(String str, Identifier obj) {
+		dictionary.put(str, obj);
 	}
 	
-	public Type lookUpCurrLevelOnly(String str) {
+	public Identifier lookUpCurrLevelOnly(String str) {
 		return dictionary.get(str);
 	}
 	
-	public Type lookUpCurrLevelAndEnclosingLevels(String str) {
+	public Identifier lookUpCurrLevelAndEnclosingLevels(String str) {
 		SymbolTable S = this;
-		Type id;
+		Identifier id;
 		while (S != null) {
 			id = S.lookUpCurrLevelOnly(str);
 			if (id != null) {
