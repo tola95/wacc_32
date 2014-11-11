@@ -8,11 +8,9 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-
-
-public class WACCVisitor extends BasicParserBaseVisitor<Type> {
+public class WACCVisitor extends BasicParserBaseVisitor<Type> implements BasicParserVisitor<Type> {
 	
-//	private Map<String, List<>> = new HashMap<>();
+	
     @Override
 	public Type visitProgram(BasicParser.ProgramContext ctx) {
     	for (BasicParser.FuncContext func : ctx.func()) {
@@ -37,12 +35,16 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	@Override
 	public Type visitParamlist(BasicParser.ParamlistContext ctx) {
 		if (ctx.COMMA().size() == ctx.param().size() - 1) {
+			for (int i=0; i<ctx.param().size(); i++) {
+				visit(ctx.param(i));
+			}
 			return Type.NULL;
 		} else System.exit(200); return Type.NULL;
 	}
 	
     @Override
 	public Type visitParam(BasicParser.ParamContext ctx) {
+//    	identSymbolTable.put(ctx.IDENT().getText(), ctx.type());
 		return visit(ctx.type());
 	}
     
@@ -227,181 +229,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 			return Type.INT;
 		} else System.exit(-1); return Type.ERROR;
 	}
-	
-	/*@Override
-	public Type visitExpr(BasicParser.ExprContext ctx) {
-		Type t;
-		switch (ctx.getStart().getType()) {
-		
-		   case BasicParser.INT_LITER : return  Type.INT;
-		   
-		   case BasicParser.BOOL_LITER : return Type.BOOL;
-		   
-		   case BasicParser.CHAR_LITER : return Type.CHAR;
-		   
-		   case BasicParser.STR_LITER : return Type.STRING;
-		   
-		   case BasicParser.PAIR_LITER : return Type.PAIR;
-		   
-		   case BasicParser.IDENT : return Type.IDENT;
-		   
-		   //case BasicParser.OPEN_PARENTHESES : t = visitExpr(ctx.expr(0)); // case { expr }
-		   
-		   default : t = null; 
-		}
-		return t;
-	}*/
-
-	/*private Type visitCompoundExpr(BasicParser.ExprContext ctx) {
-		
-		if ((ctx.getChild(1) instanceof BasicParser.TermContext ||
-				ctx.getChild(1) instanceof BasicParser.FactorContext )) { 
-		    Type expr1 = visit(ctx.expr(0));
-		    Type expr2 = visit(ctx.expr(1));
-		    return null;
-		} else {
-			return null;
-		}
-	}*/
-		/*    if (expr1.equals(expr2) ) {
-		        	return checkIfExprAllowed(expr1, ctx);
-		    } else {
-		        	return Type.ERROR;
-		    }
-		    
-		} else if(!ctx.arrayelem().isEmpty()) { 
-			
-			return visit(ctx.expr(0));
-			
-		} else if(!ctx.unaryoper().isEmpty()) {
-			
-			Type expr1 = visit(ctx.expr(0));
-			return checkIfExprAllowed(expr1, ctx);
-			
-		} else {
-			
-			return Type.ERROR;
-		}
-	
-	}*/
-
-	/*private Type checkIfExprAllowed(Type expr1, BasicParser.ExprContext ctx) {
-		
-		switch (ctx.binaryOper().getStart().getType()) {
-		
-		case 1 : 
-			
-		case 2 :
-			
-		case 3 :	
-			
-		case 4 :
-			
-		case 5 :
-			
-		case 6 :
-			
-		case 7 :
-			
-		case 8 :
-			
-		case 14:
-			
-		case 15:
-			
-		case 16:
-			
-		case 17:
-			
-		case 9 : return (Type.INT);
-		
-		case 10 :
-			
-		case 11 : 
-		
-		case 12 :
-			
-		case 13 : return (Type.BOOL);
-		
-		default : return Type.ERROR;
-		
-		}
-		
-	}*/
-
-	/*@Override
-	public Type visitStat(BasicParser.StatContext ctx) {
-		switch (ctx.getStart().getType()) {
-		
-		case BasicParser.SKIP : return Type.SKIP;
-		
-		case BasicParser.BEGIN : if (ctx.stop.getType() == BasicParser.END) {
-			return visitStat(ctx.stat(0));
-		} else {
-			return Type.ERROR;
-		}
-		
-		case 29 : if (ctx.getChild(1) instanceof BasicParser.PairelemContext ||
-				      ctx.getChild(1) instanceof BasicParser.ArrayelemContext) { 
-			          visitExpr(ctx.expr());
-		          } else {
-		        	  return Type.ERROR;
-		          }
-		          
-		
-		case BasicParser.READ : return visitAssignlhs(ctx.assignlhs());
-		
-		case BasicParser.IS :
-			
-		case BasicParser.EXIT :
-		
-		case BasicParser.PRINT :
-			
-		case BasicParser.PRINTLN :
-		
-		case BasicParser.FREE : return visitExpr(ctx.expr());
-		
-		case 47 : if (visit(ctx.expr()).equals(Type.BOOL)) {  //while
-			          visitStat(ctx.stat(0));
-		          }
-		
-		case 34 : if (visit(ctx.expr()).equals(Type.BOOL)) {
-			          visitStat(ctx.stat(0));
-			          visitStat(ctx.stat(1));
-		          }
-		
-		default : return visitComplexStat(ctx);
-		
-		}
-	}*/
-
-	/*private Type visitComplexStat(BasicParser.StatContext ctx) {
-		if (ctx.getChild(0) instanceof BasicParser.TypeContext &&
-		    visit(ctx.type()).equals(visitAssignrhs(ctx.assignrhs()))) {
-			return visitAssignrhs(ctx.assignrhs());
-		} else if (ctx.getChild(0) instanceof BasicParser.AssignlhsContext &&
-		    visit(ctx.assignlhs()).equals(visitAssignrhs(ctx.assignrhs()))) {
-			return visitAssignrhs(ctx.assignrhs());  
-		} else if (ctx.getChild(0) instanceof BasicParser.StatContext) {
-			visitStat(ctx.stat(0));
-			visitStat(ctx.stat(1));
-		} else {
-			return Type.ERROR;
-		}
-		return null;
-	}
-
-	@Override
-	public Type visitProg(BasicParser.ProgContext ctx) {
-		
-		return null;
-	}
-
-	@Override
-	public Type visitArraytype(BasicParser.ArraytypeContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
-	}*/
 
 	@Override
 	public Type visitArrayliter(BasicParser.ArrayliterContext ctx) {
@@ -411,41 +238,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		return Type.NULL;
 	}
 
-	/*@Override
-	public Type visitPairtype(BasicParser.PairtypeContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	
-
-	@Override
-	public Type visitUnaryoper(BasicParser.UnaryoperContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*@Override
-	public Type visitAssignrhs(BasicParser.AssignrhsContext ctx) {
-		if (ctx.getChild(0) instanceof BasicParser.ExprContext) {
-			return visit(ctx.expr(0));
-		} else if (ctx.getChild(0) instanceof BasicParser.ArrayliterContext) {
-			return visit(ctx.arrayliter());
-		} else if (ctx.getChild(0) instanceof BasicParser.PairelemContext) {
-			return visit(ctx.pairelem());
-		} else if (ctx.getStart().getType() == 42) {
-			visitExpr(ctx.expr(0));
-			visitExpr(ctx.expr(1));
-		} else if (ctx.getStart().getType() == 43) {
-			//Will do when I implement Symbol Table
-			
-		} else {
-			return Type.ERROR;
-		}
-		return null;
-	}*/
-
-	
 	@Override
 	public Type visitPairelemtype(BasicParser.PairelemtypeContext ctx) {
 		// TODO Auto-generated method stub
@@ -453,8 +245,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	}
 
 	@Override
-	public Type visitPairelem(BasicParser.PairelemContext ctx) {
-		
+	public Type visitPairelem(BasicParser.PairelemContext ctx) {		
 		return null;
 	}
 
