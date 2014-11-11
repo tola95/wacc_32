@@ -12,7 +12,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	
-//	private Map<String, List<>> = new HashMap<>();
+	
     @Override
 	public Type visitProgram(BasicParser.ProgramContext ctx) {
     	for (BasicParser.FuncContext func : ctx.func()) {
@@ -44,12 +44,16 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	@Override
 	public Type visitParamlist(BasicParser.ParamlistContext ctx) {
 		if (ctx.COMMA().size() == ctx.param().size() - 1) {
+			for (int i=0; i<ctx.param().size(); i++) {
+				visit(ctx.param(i));
+			}
 			return Type.NULL;
 		} else System.exit(100); return Type.NULL;
 	}
 	
     @Override
 	public Type visitParam(BasicParser.ParamContext ctx) {
+//    	identSymbolTable.put(ctx.IDENT().getText(), ctx.type());
 		return visit(ctx.type());
 	}
     
