@@ -1,7 +1,5 @@
 
-public enum Type {
+public interface Type {
+	boolean isOfType(Type t);
 
-	INT, BOOL, CHAR, STRING, PAIR, IDENT, ERROR, SKIP, NULL, TRUE, FALSE
-	   ,MUL , DIV , MOD , PLUS , MINUS , GRT , GRTEQ , SMT , SMTEQ , EQEQ , NOTEQ , AND , OR ;
-	
 }
