@@ -109,17 +109,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		return visit(ctx.pairtype());
 	}
 	
-
-	@Override 
-	public Type visitBaseType_arrayType(@NotNull BasicParser.BaseType_arrayTypeContext ctx) { 
-		return visit(ctx.basetype());
-	}
-	
-	@Override 
-	public Type visitArrayType_arrayType(@NotNull BasicParser.ArrayType_arrayTypeContext ctx) { 
-		return visit(ctx.arraytype()); 
-	}
-	
 	@Override
 	public Type visitUnaryOper_Expr(@NotNull BasicParser.UnaryOper_ExprContext ctx) { 
 	    visit(ctx.unaryoper());
@@ -228,15 +217,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	    Type t = visit(ctx.expr());
 	    TOP_ST.add(ctx.IDENT().getText(), new ArrayType(t)); 
 	    return visit(ctx.expr());
-	}
-
-
-	@Override 
-	public Type visitArrayliter(@NotNull BasicParser.ArrayliterContext ctx) { 
-	    if (ctx.getChild(1) instanceof BasicParser.ArglistContext) {
-	        visit(ctx.arglist());
-	    }   
-	    return null;    
 	}
 	
 	@Override 

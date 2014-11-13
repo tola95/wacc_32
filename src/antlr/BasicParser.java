@@ -659,20 +659,44 @@ public class BasicParser extends Parser {
 	}
 
 	public static class AssignlhsContext extends ParserRuleContext {
-		public PairelemContext pairelem() {
-			return getRuleContext(PairelemContext.class,0);
-		}
-		public ArrayelemContext arrayelem() {
-			return getRuleContext(ArrayelemContext.class,0);
-		}
-		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
 		public AssignlhsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_assignlhs; }
+	 
+		public AssignlhsContext() { }
+		public void copyFrom(AssignlhsContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class Arrayelem_AssignLhsContext extends AssignlhsContext {
+		public ArrayelemContext arrayelem() {
+			return getRuleContext(ArrayelemContext.class,0);
+		}
+		public Arrayelem_AssignLhsContext(AssignlhsContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitAssignlhs(this);
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitArrayelem_AssignLhs(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Ident_AssignLhsContext extends AssignlhsContext {
+		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
+		public Ident_AssignLhsContext(AssignlhsContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitIdent_AssignLhs(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Pairelem_AssignLhsContext extends AssignlhsContext {
+		public PairelemContext pairelem() {
+			return getRuleContext(PairelemContext.class,0);
+		}
+		public Pairelem_AssignLhsContext(AssignlhsContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitPairelem_AssignLhs(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -684,18 +708,21 @@ public class BasicParser extends Parser {
 			setState(131);
 			switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
 			case 1:
+				_localctx = new Ident_AssignLhsContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(128); match(IDENT);
 				}
 				break;
 			case 2:
+				_localctx = new Arrayelem_AssignLhsContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(129); arrayelem();
 				}
 				break;
 			case 3:
+				_localctx = new Pairelem_AssignLhsContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(130); pairelem();
