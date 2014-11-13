@@ -77,7 +77,12 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 			System.exit(200);
 		}
 		List<Type> paramList = functions.get(function).getParamList();
-		List<BasicParser.ExprContext> argList = ctx.arglist().expr();
+		List<BasicParser.ExprContext> argList;
+		if (ctx.arglist() == null) {
+			argList = new ArrayList<BasicParser.ExprContext>();
+		} else {
+			argList = ctx.arglist().expr();
+		}
 		if (!(paramList.size() == argList.size())) {
 			System.err.println("Number of parameters incorrect");
 			System.exit(200);
@@ -509,16 +514,19 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	
 	@Override 
 	public Type visitArrayliter(@NotNull BasicParser.ArrayliterContext ctx) {
-		Type type = visit(ctx.arglist().expr(0));
-		for (BasicParser.ExprContext expr : ctx.arglist().expr()) {
-			if (!visit(expr).isOfType(type)) {
-				System.err.println("Type error at line " + expr.getStart().getLine() + 
+		if (ctx.arglist() != null) {
+			Type type = visit(ctx.arglist().expr(0));
+			for (BasicParser.ExprContext expr : ctx.arglist().expr()) {
+				if (!visit(expr).isOfType(type)) {
+					System.err.println("Type error at line " + expr.getStart().getLine() + 
 						"and position " + expr.getStart().getCharPositionInLine() +  
 						". All the items in the list must be of type " + type);
-				System.exit(200);
+					System.exit(200);
+				}
 			}
+			return new ArrayType(type);
 		}
-		return new ArrayType(type);
+		return new ArrayType(PrimType.ANY);
 	}
 	
 }

@@ -22,7 +22,7 @@ public class ArrayType implements Type{
 		} 
 		if (t instanceof ArrayType) {
 			ArrayType type1 = (ArrayType) t;
-			return (type1.getType() == type);
+			return (type1.getType().isOfType(type));
 		}
 		return false;
 	}
