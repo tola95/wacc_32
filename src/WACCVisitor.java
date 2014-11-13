@@ -250,16 +250,17 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	public Type visitIdentEq_Stat(@NotNull BasicParser.IdentEq_StatContext ctx) {
 		Type type1 = visit(ctx.type());
 		Type type2 = visit(ctx.assignrhs());
-		if (type1.isOfType(type2)) {
-			String id = ctx.IDENT().getText();
-			if (TOP_ST.lookUpCurrLevelAndEnclosingLevels(id) != null) {
-				TOP_ST.add(ctx.IDENT().getText(), type1);
-			}
-			System.err.println("Identifier already declared: " + id);
+		if (!(type1.isOfType(type2))) {
+			System.err.println("Mismatched types. Expected: " + type1 + "Actual: " + type2);
 			System.exit(200);
 		}
-		System.err.println("Mismatched types. Expected: " + type1 + "Actual: " + type2);
-		System.exit(200);
+		String id = ctx.IDENT().getText();
+		if (TOP_ST.lookUpCurrLevelAndEnclosingLevels(id) != null) {
+			TOP_ST.add(ctx.IDENT().getText(), type1);
+			} else {
+				System.err.println("Identifier already declared: " + id);
+			    System.exit(200);
+			}		
 		return null;
 	}
 	
