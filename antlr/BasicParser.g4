@@ -27,9 +27,9 @@ stat : SKIP                                             #skip_Stat
      | stat SEMICOLON stat                              #semicolon_Stat
      ;
 
-assignlhs : IDENT 
-          | arrayelem
-          | pairelem
+assignlhs : IDENT                                       #ident_AssignLhs
+          | arrayelem                                   #arrayelem_AssignLhs
+          | pairelem                                    #pairelem_AssignLhs
           ;
 
 assignrhs : expr                                                        #exp_assignrhs

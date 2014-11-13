@@ -14,5 +14,9 @@ public class Function extends Identifier {
 	public Type getReturnType() {
 		return returnType;
 	}
+	
+	public List<Type> getParamList() {
+		return paramList;
+	}
 
 }
