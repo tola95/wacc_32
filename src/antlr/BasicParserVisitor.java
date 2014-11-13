@@ -18,13 +18,6 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSemicolon_Stat(@NotNull BasicParser.Semicolon_StatContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code arrayType_type}
-	 * labeled alternative in {@link BasicParser#type}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArrayType_type(@NotNull BasicParser.ArrayType_typeContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code if_Stat}
 	 * labeled alternative in {@link BasicParser#stat}.
 	 * @param ctx the parse tree
@@ -50,6 +43,12 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPairelem(@NotNull BasicParser.PairelemContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link BasicParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitType(@NotNull BasicParser.TypeContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code arrayElem_Expr}
 	 * labeled alternative in {@link BasicParser#expr}.
@@ -140,6 +139,12 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCompare_Expr(@NotNull BasicParser.Compare_ExprContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link BasicParser#arraytype}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArraytype(@NotNull BasicParser.ArraytypeContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code term_Expr}
 	 * labeled alternative in {@link BasicParser#expr}.
 	 * @param ctx the parse tree
@@ -153,13 +158,6 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitArrayLiter_assignrhs(@NotNull BasicParser.ArrayLiter_assignrhsContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code arrayType_arrayType}
-	 * labeled alternative in {@link BasicParser#arraytype}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArrayType_arrayType(@NotNull BasicParser.ArrayType_arrayTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code exit_Stat}
 	 * labeled alternative in {@link BasicParser#stat}.
@@ -248,27 +246,6 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExp_assignrhs(@NotNull BasicParser.Exp_assignrhsContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code baseType_arrayType}
-	 * labeled alternative in {@link BasicParser#arraytype}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBaseType_arrayType(@NotNull BasicParser.BaseType_arrayTypeContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code baseType_type}
-	 * labeled alternative in {@link BasicParser#type}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBaseType_type(@NotNull BasicParser.BaseType_typeContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code pairType_arrayType}
-	 * labeled alternative in {@link BasicParser#arraytype}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPairType_arrayType(@NotNull BasicParser.PairType_arrayTypeContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code equality_Expr}
 	 * labeled alternative in {@link BasicParser#expr}.
 	 * @param ctx the parse tree
@@ -324,13 +301,6 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitRead_Stat(@NotNull BasicParser.Read_StatContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code pairType_type}
-	 * labeled alternative in {@link BasicParser#type}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPairType_type(@NotNull BasicParser.PairType_typeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link BasicParser#prog}.
 	 * @param ctx the parse tree

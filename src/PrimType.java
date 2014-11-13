@@ -1,7 +1,7 @@
 
 public enum PrimType implements Type{
 
-	INT, BOOL, CHAR, STRING, ANY, ERROR, NULL;
+	INT, BOOL, CHAR, STRING, ANY;
 
 	@Override
 	public boolean isOfType(Type t) {

@@ -61,6 +61,7 @@ PAIR : 'pair' ;
 WHILE : 'while' ;
 COMMENT : '#' ~( '\r' | '\n' )* -> skip ; 
 BOOL : 'bool' ;
+PAIR_LITER : 'null' ;
 
 //bools
 TRUE : 'true' ;
@@ -77,7 +78,7 @@ STR_LITER : '\"' (CHARACTER|ESCAPED_CHAR)* '\"' ;
 fragment ESCAPED_CHAR: '\\0' | '\\b' | '\\t' | '\\n' | '\\f' | '\\r' | '\\' | '\\\\' | '\\\"' | '\\\'' ; 
 IDENT : ('_'|'a'..'z'|'A'..'Z')('_'|'a'..'z'|'A'..'Z'|DIGIT)* ;
 fragment DIGIT : '0'..'9' ; 
-PAIR_LITER : 'null' ;
+
 
 
 

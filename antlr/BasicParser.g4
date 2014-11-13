@@ -49,14 +49,14 @@ basetype : INT                                   #int_baseType
          | STRING                                #string_baseType
          ;
 
-type : basetype                                  #baseType_type
-     | arraytype                                 #arrayType_type
-     | pairtype                                  #pairType_type
+type : basetype                                
+     | arraytype                                 
+     | pairtype                                
      ;                            
 
-arraytype : basetype OPEN_SQUAREB CLOSE_SQUAREB     #baseType_arrayType
-          | arraytype OPEN_SQUAREB CLOSE_SQUAREB    #arrayType_arrayType
-          | pairtype OPEN_SQUAREB CLOSE_SQUAREB     #pairType_arrayType
+arraytype : basetype OPEN_SQUAREB CLOSE_SQUAREB  
+          | arraytype OPEN_SQUAREB CLOSE_SQUAREB    
+          | pairtype OPEN_SQUAREB CLOSE_SQUAREB    
           ;
 
 pairtype : PAIR OPEN_PARENTHESES pairelemtype COMMA pairelemtype CLOSE_PARENTHESES ;  
@@ -87,7 +87,7 @@ unaryoper : NOT | MINUS | LEN | ORD | CHR ;
 
 bool_Liter : TRUE | FALSE ;
 
-arrayelem : IDENT OPEN_SQUAREB expr CLOSE_SQUAREB ;
+arrayelem : IDENT (OPEN_SQUAREB expr CLOSE_SQUAREB)+ ;
 
 arrayliter : OPEN_SQUAREB arglist? CLOSE_SQUAREB ;
 

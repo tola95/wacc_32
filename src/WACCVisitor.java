@@ -94,21 +94,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		return functions.get(function).getReturnType();
 	}
 	
-	@Override 
-	public Type visitBaseType_type(@NotNull BasicParser.BaseType_typeContext ctx) { 
-		return visit(ctx.basetype());
-	}
-
-	@Override 
-	public Type visitArrayType_type(@NotNull BasicParser.ArrayType_typeContext ctx) { 
-		return visit(ctx.arraytype());
-	}
-	
-	@Override 
-	public Type visitPairType_type(@NotNull BasicParser.PairType_typeContext ctx) { 
-		return visit(ctx.pairtype());
-	}
-	
 	@Override
 	public Type visitUnaryOper_Expr(@NotNull BasicParser.UnaryOper_ExprContext ctx) { 
 		Type exprType = visit(ctx.expr());
@@ -283,6 +268,11 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	}
 	
 	@Override 
+	public Type visitPair_pairElemType(@NotNull BasicParser.Pair_pairElemTypeContext ctx) { 
+		 return new PairType(PrimType.ANY, PrimType.ANY);
+	}
+	
+	@Override 
 	public Type visitInt_baseType(@NotNull BasicParser.Int_baseTypeContext ctx) { 
 		return PrimType.INT;
 	}
@@ -360,6 +350,16 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     		System.exit(200);
     	}
     	return null;
+    }
+    
+    @Override 
+    public Type visitArrayType_pairElemType(@NotNull BasicParser.ArrayType_pairElemTypeContext ctx) { 
+    	return visit(ctx.arraytype());
+    }
+    
+    @Override
+    public Type visitPairtype(@NotNull BasicParser.PairtypeContext ctx) { 
+    	return new PairType(visit(ctx.pairelemtype(0)), visit(ctx.pairelemtype(1))); 
     }
     
     @Override 
@@ -459,18 +459,19 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     
     @Override 
     public Type visitPairLiter_Expr(@NotNull BasicParser.PairLiter_ExprContext ctx) { 
-    	return PrimType.NULL; 
+    	return new PairType(PrimType.ANY, PrimType.ANY); 
     }
     
     @Override 
     public Type visitIdent_Expr(@NotNull BasicParser.Ident_ExprContext ctx) { 
     	String id = ctx.IDENT().getText();
-    	Type t = TOP_ST.lookUpCurrLevelAndEnclosingLevels(id);
-    	if (t == null) {
-    		System.err.println("Ident " + id + "not defined");
-    		System.exit(200);
-    	}
-    	return t;
+    		Type t = TOP_ST.lookUpCurrLevelAndEnclosingLevels(id);
+    		if (t == null) {
+    			System.err.println("Ident " + id + "not defined");
+    			System.exit(200);
+    		}
+    		return t;
+    	
     }
 	
 	@Override 
@@ -486,23 +487,13 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	}
 	
 	@Override 
-	public Type visitBaseType_arrayType(@NotNull BasicParser.BaseType_arrayTypeContext ctx) { 
-		return visit(ctx.basetype()); 
-	}
-	
-	@Override 
-	public Type visitArrayType_arrayType(@NotNull BasicParser.ArrayType_arrayTypeContext ctx) { 
-		return visit(ctx.arraytype()); 
-	}
-	
-	@Override 
-	public Type visitPairType_arrayType(@NotNull BasicParser.PairType_arrayTypeContext ctx) { 
-		return visit(ctx.pairtype()); 
-	}
-	
-	@Override 
 	public Type visitBaseType_pairElemType(@NotNull BasicParser.BaseType_pairElemTypeContext ctx) { 
 		return visit(ctx.basetype()); 
+	}
+	
+	@Override 
+	public Type visitArraytype(@NotNull BasicParser.ArraytypeContext ctx) { 
+		return new ArrayType(visit(ctx.getChild(0))); 
 	}
 
 	@Override
