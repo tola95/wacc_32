@@ -59,7 +59,7 @@ arraytype : basetype OPEN_SQUAREB CLOSE_SQUAREB     #baseType_arrayType
           | pairtype OPEN_SQUAREB CLOSE_SQUAREB     #pairType_arrayType
           ;
 
-pairtype : PAIR OPEN_PARENTHESES pairelemtype COMMA pairelemtype CLOSE_PARENTHESES ;
+pairtype : PAIR OPEN_PARENTHESES pairelemtype COMMA pairelemtype CLOSE_PARENTHESES ;  
 
 pairelemtype : basetype                             #baseType_pairElemType        
              | PAIR                                 #pair_pairElemType

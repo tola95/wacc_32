@@ -1,14 +1,18 @@
+import java.util.List;
+
 
 public class Function extends Identifier {
 	
 	private Type returnType;
-	private Param[] paramlist;
-	private int noOfParams;
+	private List<Type> paramList;
 
-	public Function(Type returnType, Param paramlist[], int noOfParams) {
+	public Function(Type returnType, List<Type> paramList) {
 		this.returnType = returnType;
-		this.paramlist = paramlist;
-		this.noOfParams = noOfParams;
+		this.paramList = paramList;
+	}
+	
+	public Type getReturnType() {
+		return returnType;
 	}
 
 }
