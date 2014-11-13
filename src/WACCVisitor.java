@@ -398,11 +398,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     	return visit(ctx.expr());
     }
     
-    @Override 
-    public Type visitPrintln_Stat(@NotNull BasicParser.Println_StatContext ctx) { 
-    	return visit(ctx.expr());
-    }
-    
     @Override
     public Type visitSemicolon_Stat(@NotNull BasicParser.Semicolon_StatContext ctx) {
     	visit(ctx.stat(0));
@@ -431,23 +426,20 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     @Override 
     public Type visitWhile_Stat(@NotNull BasicParser.While_StatContext ctx) {
     	Type t = visit(ctx.expr());
-    	if (t == PrimType.BOOL) {
-    		SymbolTable sym1 = new SymbolTable(TOP_ST);
-    		TOP_ST = sym1;
-    		visit(ctx.stat());
-    		TOP_ST = TOP_ST.getParent();
+    	if (t != PrimType.BOOL) {
+    		System.err.println("Expression does not resolve to a Bool Type. Actual type: " + t);
+    	    System.exit(200);
     	}
-    	System.err.println("Expression does not resolve to a Bool Type. Actual type: " + t);
-    	System.exit(200); 
+    	SymbolTable sym1 = new SymbolTable(TOP_ST);
+    	TOP_ST = sym1;
+    	visit(ctx.stat());
+    	TOP_ST = TOP_ST.getParent();
     	return null;
     }
     
     @Override 
     public Type visitBoolLiter_Expr(@NotNull BasicParser.BoolLiter_ExprContext ctx) { 
-    	if (ctx.start.getType() == BasicParser.BOOL) {
-    		return PrimType.BOOL;
-    	} 
-    	System.exit(200); return PrimType.ERROR;
+    	return PrimType.BOOL;
     }
     
     @Override 
@@ -480,15 +472,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     	}
     	return t;
     }
-
-	@Override
-	public Type visitArglist(BasicParser.ArglistContext ctx) {
-		if (ctx.expr().size() == ctx.COMMA().size() + 1) {
-			return PrimType.NULL;
-		}
-		System.exit(200);
-		return PrimType.NULL;
-	}
 	
 	@Override 
 	public Type visitUnaryoper(@NotNull BasicParser.UnaryoperContext ctx) { 
