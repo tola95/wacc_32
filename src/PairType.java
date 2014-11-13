@@ -19,7 +19,17 @@ public class PairType implements Type {
 
 	@Override
 	public boolean isOfType(Type t) {
-		return (t instanceof PairType);
+		if (t instanceof PairType) {
+			PairType pair = (PairType) t;
+			if (this.getFst().isOfType(pair.getFst()) 
+					&& this.getSnd().isOfType(pair.getSnd())) {
+				return true;
+			}
+		}
+		if (t instanceof PrimType) {
+			return (t == PrimType.ANY);
+		}
+		return false;
 	}
 	
 

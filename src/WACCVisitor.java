@@ -42,7 +42,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     		visit(ctx.stat());
     		TOP_ST = TOP_ST.getParent().getParent();
     	}
-		return PrimType.NULL;
+		return null;
 		
 	}
 	
@@ -70,11 +70,27 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	
 	@Override 
 	public Type visitCall_assignrhs(@NotNull BasicParser.Call_assignrhsContext ctx) { 
-		if (!functions.containsKey(ctx.IDENT().getText())){
+		String function = ctx.IDENT().getText();
+		if (!functions.containsKey(function)) {
 			System.err.println("Function not defined");
 			System.exit(200);
 		}
-		return PrimType.NULL;
+		List<Type> paramList = functions.get(function).getParamList();
+		List<BasicParser.ExprContext> argList = ctx.arglist().expr();
+		if (!(paramList.size() == argList.size())) {
+			System.err.println("Number of parameters incorrect");
+			System.exit(200);
+		}
+		for (int i = 0; i < paramList.size(); i ++) {
+			Type expected = paramList.get(i);
+			Type actual = visit(argList.get(i));
+			if (!(paramList.get(i).isOfType(visit(argList.get(i))))) {
+				System.err.println("The types for the parameters do not match. Expected: " 
+						+ expected + "Actual: " + actual);
+				System.exit(200);
+			}
+		}
+		return functions.get(function).getReturnType();
 	}
 	
 	@Override 
@@ -84,6 +100,8 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	
 	@Override 
 	public Type visitNewPair_assignrhs(@NotNull BasicParser.NewPair_assignrhsContext ctx) { 
+		visit(ctx.expr(0));
+		visit(ctx.expr(1));
 		return null;
 	}
 	
@@ -368,7 +386,17 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 
 	@Override
 	public Type visitPairelem(BasicParser.PairelemContext ctx) {
-		return visit(ctx.expr());
+		Type t = visit(ctx.expr());
+		if (!(t instanceof PairType)) {
+			System.err.println("Not a pair type. Actual: " + t);
+			System.exit(200);
+		}
+		PairType pair = (PairType) t;
+		if (ctx.FST() != null) {
+			return pair.getFst();
+		} 
+		return pair.getSnd();
+		
 	}
 	
 	@Override 
