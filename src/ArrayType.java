@@ -21,8 +21,8 @@ public class ArrayType implements Type{
 			return true;
 		} 
 		if (t instanceof ArrayType) {
-			Type thisType = this.type;
-			return (t == thisType);
+			ArrayType type1 = (ArrayType) t;
+			return (type1.getType() == type);
 		}
 		return false;
 	}

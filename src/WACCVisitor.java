@@ -13,7 +13,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	
 	private SymbolTable TOP_ST; 
-	HashMap<String, Function> functions;
+	HashMap<String, Function> functions = new HashMap<String, Function>();
 	
 	
     @Override
@@ -265,9 +265,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	
 	@Override 
 	public Type visitNewPair_assignrhs(@NotNull BasicParser.NewPair_assignrhsContext ctx) { 
-		visit(ctx.expr(0));
-		visit(ctx.expr(1));
-		return null;
+		return new PairType(visit(ctx.expr(0)), visit(ctx.expr(1)));
 	}
 	
 	@Override 
@@ -300,7 +298,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		Type type1 = visit(ctx.type());
 		Type type2 = visit(ctx.assignrhs());
 		if (!(type1.isOfType(type2))) {
-			System.err.println("Mismatched types. Expected: " + type1 + "Actual: " + type2);
+			System.err.println(" Mismatched types. Expected: " + type1 + "Actual: " + type2);
 			System.exit(200);
 		}
 		String id = ctx.IDENT().getText();
@@ -520,7 +518,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 				System.exit(200);
 			}
 		}
-		return type;
+		return new ArrayType(type);
 	}
 	
 }
