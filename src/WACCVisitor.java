@@ -111,8 +111,25 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	
 	@Override
 	public Type visitUnaryOper_Expr(@NotNull BasicParser.UnaryOper_ExprContext ctx) { 
-	    visit(ctx.unaryoper());
-	    visit(ctx.expr());
+		Type exprType = visit(ctx.expr());
+		int unaryOperType = ctx.start.getType(); 
+	    if (exprType == PrimType.BOOL && unaryOperType == BasicParser.NOT) {
+	    	return exprType;
+	    }
+	    if (exprType == PrimType.INT && unaryOperType == BasicParser.MINUS) {
+	    	return exprType;
+	    }
+	    if (exprType instanceof ArrayType && unaryOperType == BasicParser.LEN) {
+	    	return exprType;
+	    }
+	    if (exprType == PrimType.CHAR && unaryOperType == BasicParser.ORD) {
+	    	return PrimType.INT;
+	    }
+	    if (exprType == PrimType.INT && unaryOperType == BasicParser.CHR) {
+	    	return PrimType.CHAR;
+	    }
+	    System.err.println("UnaryOper and expr don't match");
+	    System.exit(200);
 	    return null;
 
 	}
@@ -430,7 +447,14 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	
 	@Override 
 	public Type visitUnaryoper(@NotNull BasicParser.UnaryoperContext ctx) { 
-		return PrimType.NULL;
+		switch (ctx.start.getType()) {
+		case BasicParser.NOT : return PrimType.BOOL;
+		case BasicParser.MINUS : return PrimType.INT;
+		case BasicParser.LEN : return PrimType.INT;
+		case BasicParser.ORD : return PrimType.INT;
+		case BasicParser.CHR : return PrimType.CHAR;
+		default : return null;
+		}
 	}
 	
 	@Override 
