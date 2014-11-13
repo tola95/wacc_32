@@ -18,13 +18,17 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	
     @Override
 	public Type visitProgram(BasicParser.ProgramContext ctx) {
-    	TOP_ST = new SymbolTable(null);
+    	TOP_ST = new SymbolTable(null, null);
     	for (BasicParser.FuncContext func : ctx.func()) {
     		List<Type> params = new ArrayList<Type>();
     		if (func.paramlist() != null) {
     			for (BasicParser.ParamContext l : func.paramlist().param()) {
     				params.add(visit(l.type()));
     			}
+    		}
+    		if (functions.containsKey(func.IDENT().getText())) {
+    			System.err.println("Function " + func.IDENT().getText() + " is already defined");
+    		    System.exit(200);
     		}
     		functions.put(func.IDENT().getText(), new Function(visit(func.type()), params));
     	}
@@ -33,7 +37,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     
     @Override
 	public Type visitFunc(BasicParser.FuncContext ctx) {
-    	SymbolTable symboltable1 = new SymbolTable(TOP_ST);
+    	SymbolTable symboltable1 = new SymbolTable(TOP_ST, visit(ctx.type()));
     	TOP_ST = symboltable1;
     	if (ctx.paramlist() != null) {
     		visit(ctx.paramlist());
@@ -374,7 +378,12 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     }
     
     @Override
-    public Type visitReturn_Stat(@NotNull BasicParser.Return_StatContext ctx) { 
+    public Type visitReturn_Stat(@NotNull BasicParser.Return_StatContext ctx) {
+    	Type t1 = visit(ctx.expr());
+    	if (t1 != TOP_ST.getReturnType()) {
+    		System.err.println("Unexpected return type.");
+    		System.exit(200);
+    	}
     	return visit(ctx.expr());
     }
     

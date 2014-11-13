@@ -3,11 +3,26 @@ import java.util.HashMap;
 public class SymbolTable {
 	SymbolTable symTable;
 	HashMap<String, Type> dictionary;
+	Type returnType;
 	
+	SymbolTable(SymbolTable st, Type t) {
+		symTable = st;
+		returnType = t;
+		dictionary = new HashMap<String, Type>();
+	}
 	
 	SymbolTable(SymbolTable st) {
 		symTable = st;
+		returnType = st.getReturnType();
 		dictionary = new HashMap<String, Type>();
+	}
+	
+	public void setReturnType(Type type) {
+		returnType = type;
+	}
+	
+	public Type getReturnType() {
+		return returnType;
 	}
 	
 	public SymbolTable getParent() {
