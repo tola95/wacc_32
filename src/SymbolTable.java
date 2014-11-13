@@ -34,5 +34,9 @@ public class SymbolTable {
 		}
 		return null;
 	}
+	
+	public String printing() {
+		return dictionary.toString();
+	}
 
 }
