@@ -175,12 +175,6 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAnd_Expr(@NotNull BasicParser.And_ExprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BasicParser#compare}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCompare(@NotNull BasicParser.CompareContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link BasicParser#bool_Liter}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -235,12 +229,6 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParam(@NotNull BasicParser.ParamContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BasicParser#and}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAnd(@NotNull BasicParser.AndContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link BasicParser#arglist}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -267,12 +255,6 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBaseType_arrayType(@NotNull BasicParser.BaseType_arrayTypeContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BasicParser#term}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTerm(@NotNull BasicParser.TermContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code baseType_type}
 	 * labeled alternative in {@link BasicParser#type}.
 	 * @param ctx the parse tree
@@ -287,30 +269,12 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPairType_arrayType(@NotNull BasicParser.PairType_arrayTypeContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BasicParser#factor}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFactor(@NotNull BasicParser.FactorContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BasicParser#equality}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitEquality(@NotNull BasicParser.EqualityContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code equality_Expr}
 	 * labeled alternative in {@link BasicParser#expr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitEquality_Expr(@NotNull BasicParser.Equality_ExprContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BasicParser#or}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitOr(@NotNull BasicParser.OrContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code baseType_pairElemType}
 	 * labeled alternative in {@link BasicParser#pairelemtype}.

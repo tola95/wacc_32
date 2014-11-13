@@ -263,10 +263,16 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 
 	@Override 
 
-	public Type visitArrayelem(@NotNull BasicParser.ArrayelemContext ctx) { 
-	    Type t = visit(ctx.expr());
-	    TOP_ST.add(ctx.IDENT().getText(), new ArrayType(t)); 
-	    return visit(ctx.expr());
+	public Type visitArrayelem(@NotNull BasicParser.ArrayelemContext ctx) {
+		String id = ctx.IDENT().getText();
+		Type typeOfArray = TOP_ST.lookUpCurrLevelAndEnclosingLevels(id);
+		if (typeOfArray == null) {
+			System.err.println("Identifier " + id + " at line " 
+		       + ctx.IDENT().getSymbol().getLine() + " and position: " 
+					+ ctx.IDENT().getSymbol().getCharPositionInLine() + " not declared.");
+			System.exit(200);
+		}
+		return typeOfArray;
 	}
 	
 	@Override 
