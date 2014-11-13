@@ -538,11 +538,17 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	}
 	
 	@Override 
-	public Type visitArrayliter(@NotNull BasicParser.ArrayliterContext ctx) { 
-		if (ctx.getChild(1) instanceof BasicParser.ArglistContext) {
-			return visit(ctx.arglist());
+	public Type visitArrayliter(@NotNull BasicParser.ArrayliterContext ctx) {
+		Type type = visit(ctx.arglist().expr(0));
+		for (BasicParser.ExprContext expr : ctx.arglist().expr()) {
+			if (!visit(expr).isOfType(type)) {
+				System.err.println("Type error at line " + expr.getStart().getLine() + 
+						"and position " + expr.getStart().getCharPositionInLine() +  
+						". All the items in the list must be of type " + type);
+				System.exit(200);
+			}
 		}
-		return PrimType.NULL;
+		return type;
 	}
 	
 }
