@@ -1,17 +1,30 @@
 
 public class ArrayType implements Type{
 	
-	private int length;
 	private Type type;
 	
-	ArrayType(int length, Type type) {
-		this.length = length;
-		this.type = type;
+	public ArrayType() {
+		this.type = PrimType.ANY;
+	}
+	
+	public ArrayType(Type t) {
+		type = t;
+	}
+	
+	public Type getType() {
+		return type;
 	}
 
 	@Override
 	public boolean isOfType(Type t) {
-		return (t instanceof ArrayType);
+		if (t == PrimType.ANY) {
+			return true;
+		} 
+		if (t instanceof ArrayType) {
+			Type thisType = this.type;
+			return (t == thisType);
+		}
+		return false;
 	}
 
 }
