@@ -433,7 +433,13 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     
     @Override 
     public Type visitIdent_Expr(@NotNull BasicParser.Ident_ExprContext ctx) { 
-    	return null; 
+    	String id = ctx.IDENT().getText();
+    	Type t = TOP_ST.lookUpCurrLevelAndEnclosingLevels(id);
+    	if (t == null) {
+    		System.err.println("Ident " + id + "not defined");
+    		System.exit(200);
+    	}
+    	return t;
     }
 
 	@Override
