@@ -1,8 +1,7 @@
 
 public enum PrimType implements Type{
 
-	INT, BOOL, CHAR, STRING, ANY, ERROR, NULL, TRUE, FALSE
-	   ,MUL , DIV , MOD , PLUS , MINUS , GRT , GRTEQ , SMT , SMTEQ , EQEQ , NOTEQ , AND , OR ;
+	INT, BOOL, CHAR, STRING, ANY, ERROR, NULL;
 
 	@Override
 	public boolean isOfType(Type t) {

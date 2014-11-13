@@ -68,8 +68,12 @@ pairelemtype : basetype                             #baseType_pairElemType
 
 expr : unaryoper expr                                 #unaryOper_Expr
      | OPEN_PARENTHESES expr CLOSE_PARENTHESES        #parenth_Expr
-     | expr factor expr                               #factor_Expr
-     | expr term expr                                 #term_Expr
+     | expr (MUL | DIV | MOD) expr                    #factor_Expr
+     | expr (PLUS | MINUS) expr                       #term_Expr
+     | expr (GRT | GRTEQ | SMT | SMTEQ) expr          #compare_Expr
+     | expr (EQEQ | NOTEQ) expr                       #equality_Expr
+     | expr AND expr                                  #and_Expr
+     | expr OR expr                                   #or_Expr
      | INT_LITER                                      #intLiter_Expr
      | bool_Liter                                     #boolLiter_Expr
      | CHAR_LITER                                     #charLiter_Expr
@@ -81,11 +85,7 @@ expr : unaryoper expr                                 #unaryOper_Expr
 
 unaryoper : NOT | MINUS | LEN | ORD | CHR ;
 
-factor : MUL | DIV | MOD ;
-
 bool_Liter : TRUE | FALSE ;
-
-term : PLUS | MINUS | GRT | GRTEQ | SMT | SMTEQ | EQEQ | NOTEQ | AND | OR ;
 
 arrayelem : IDENT OPEN_SQUAREB expr CLOSE_SQUAREB ;
 

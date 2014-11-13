@@ -141,46 +141,107 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 
 	@Override
 	public Type visitFactor_Expr(@NotNull BasicParser.Factor_ExprContext ctx) { 
-	    visit(ctx.expr(0));
-	    visit(ctx.factor());
-	    return visit(ctx.expr(1));
+	    Type expr1 = visit(ctx.expr(0));
+	    Type expr2 = visit(ctx.expr(1));
+	    if (!expr1.isOfType(PrimType.INT)) {
+	    	System.err.println("Type error at line: " + ctx.start.getLine() 
+	    			+ " Position: " + ctx.start.getCharPositionInLine() 
+	    			+ " Expected type: int \t Actual type: " + expr1);
+	    	System.exit(200);
+	    } 
+	    if (!expr2.isOfType(PrimType.INT)) {
+	    	System.err.println("Type error at line: " + ctx.stop.getLine() 
+	    			+ " Position: " + ctx.stop.getCharPositionInLine()
+	    			+ " Expected type: int \t Actual type: " + expr2);
+	    	System.exit(200);
+	    }
+	    return PrimType.INT;
 	}
-
-
-	/*
-
-	@Override
-
-	public Type visitFactor_Expr(@NotNull BasicParser.Factor_ExprContext ctx) { 
-
-	if (visit(ctx.expr(0)) == Type.INT && visit(ctx.expr(1)) == Type.INT) {
-
-	return Type.INT;
-
-	} else System.exit(200); return Type.ERROR;
-
-	}
-
-	*/
 
 	@Override
 	public Type visitTerm_Expr(@NotNull BasicParser.Term_ExprContext ctx) { 
-	    visit(ctx.expr(0));
-	    visit(ctx.term());
-	    return visit(ctx.expr(1));
+	    Type expr1 = visit(ctx.expr(0));
+	    Type expr2 = visit(ctx.expr(1));
+	    if (!expr1.isOfType(PrimType.INT)) {
+	    	System.err.println("Type error at line: " + ctx.start.getLine() 
+	    			+ " Position: " + ctx.start.getCharPositionInLine() 
+	    			+ " Expected type: int \t Actual type: " + expr1);
+	    	System.exit(200);
+	    }
+	    if (!expr2.isOfType(PrimType.INT)) {
+	    	System.err.println("Type error at line: " + ctx.stop.getLine() 
+	    			+ " Position: " + ctx.stop.getCharPositionInLine()
+	    			+ " Expected type: int \t Actual type: " + expr2);
+	    	System.exit(200);
+	    }
+	    return PrimType.INT;
 	}
-
-	/*
-
-	* @Override 
-
-	public Type visitTerm_Expr(@NotNull BasicParser.Term_ExprContext ctx) { 
-
-	return visitChildren(ctx); 
-
+	
+	@Override 
+	public Type visitCompare_Expr(@NotNull BasicParser.Compare_ExprContext ctx) { 
+		 Type expr1 = visit(ctx.expr(0));
+		 Type expr2 = visit(ctx.expr(1));
+		 if (expr1.isOfType(PrimType.INT) && expr2.isOfType(PrimType.INT)) {
+			 return PrimType.BOOL;
+		 }
+		 if (expr1.isOfType(PrimType.CHAR) && expr2.isOfType(PrimType.CHAR)) {
+			 return PrimType.BOOL;
+		 }
+		 System.err.println("Type error: Both expressions required to be of either type int or type char. Error in line: " 
+				 + ctx.start.getLine() + "Left exp of type: " + expr1 + " Right exp of type: " + expr2);
+		 System.exit(200);
+		 return null;
 	}
-
-	*/
+	
+	@Override 
+	public Type visitEquality_Expr(@NotNull BasicParser.Equality_ExprContext ctx) { 
+		Type expr1 = visit(ctx.expr(0));
+		Type expr2 = visit(ctx.expr(1));
+		if (!expr1.isOfType(expr2)) {
+			System.err.println("Type error: Both expressions required to be of the same type. Error in line: " 
+					 + ctx.start.getLine() + "Left exp of type: " + expr1 + " Right exp of type: " + expr2);
+			 System.exit(200);
+		}
+		return PrimType.BOOL;
+	}
+	
+	@Override 
+	public Type visitAnd_Expr(@NotNull BasicParser.And_ExprContext ctx) { 
+		Type expr1 = visit(ctx.expr(0));
+		Type expr2 = visit(ctx.expr(1));
+		if (!expr1.isOfType(PrimType.BOOL)) {
+			System.err.println("Type error at line: " + ctx.start.getLine() 
+	    			+ " Position: " + ctx.start.getCharPositionInLine() 
+	    			+ " Expected type: bool \t Actual type: " + expr1);
+	    	System.exit(200);
+		}
+		if (!expr2.isOfType(PrimType.BOOL)) {
+			System.err.println("Type error at line: " + ctx.stop.getLine() 
+	    			+ " Position: " + ctx.stop.getCharPositionInLine()
+	    			+ " Expected type: bool \t Actual type: " + expr2);
+	    	System.exit(200);
+		}
+		return PrimType.BOOL;
+	}
+	
+	@Override 
+	public Type visitOr_Expr(@NotNull BasicParser.Or_ExprContext ctx) { 
+		Type expr1 = visit(ctx.expr(0));
+		Type expr2 = visit(ctx.expr(1));
+		if (!expr1.isOfType(PrimType.BOOL)) {
+			System.err.println("Type error at line: " + ctx.start.getLine() 
+	    			+ " Position: " + ctx.start.getCharPositionInLine() 
+	    			+ " Expected type: bool \t Actual type: " + expr1);
+	    	System.exit(200);
+		}
+		if (!expr2.isOfType(PrimType.BOOL)) {
+			System.err.println("Type error at line: " + ctx.stop.getLine() 
+	    			+ " Position: " + ctx.stop.getCharPositionInLine()
+	    			+ " Expected type: bool \t Actual type: " + expr2);
+	    	System.exit(200);
+		}
+		return PrimType.BOOL;
+	}
 
 	@Override
 	public Type visitArrayElem_Expr(@NotNull BasicParser.ArrayElem_ExprContext ctx) { 
@@ -189,17 +250,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	    return visit(ctx.arrayelem());
 	}
 
-	@Override 
-	public Type visitFactor(@NotNull BasicParser.FactorContext ctx) { 
-	    switch (ctx.start.getType()) {
-	    case BasicParser.MUL : return PrimType.MUL;
-	    case BasicParser.DIV : return PrimType.DIV;
-	    case BasicParser.MOD : return PrimType.MOD;
-	    default : System.exit(200); return PrimType.ERROR;
-	    } 
-	}
-
-	@Override 
+	/*@Override 
 	public Type visitBool_Liter(@NotNull BasicParser.Bool_LiterContext ctx) { 
 	    if (ctx.start.getType() == BasicParser.TRUE) { 
 		    return PrimType.TRUE;
@@ -208,25 +259,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	    } else {
 	        return PrimType.ERROR;
 	    }
-	}
-
-	@Override 
-	public Type visitTerm(@NotNull BasicParser.TermContext ctx) { 
-	    switch (ctx.start.getType()) { 
-	        case BasicParser.PLUS  : return PrimType.PLUS;
-            case BasicParser.MINUS : return PrimType.MINUS; 
-	        case BasicParser.GRT   : return PrimType.GRT; 
-	        case BasicParser.GRTEQ : return PrimType.GRTEQ; 
-	        case BasicParser.SMT   : return PrimType.SMT; 
-	        case BasicParser.EQEQ  : return PrimType.EQEQ; 
-	        case BasicParser.SMTEQ : return PrimType.SMTEQ; 
-	        case BasicParser.NOTEQ : return PrimType.NOTEQ; 
-	        case BasicParser.AND   : return PrimType.AND; 
-	        case BasicParser.OR    : return PrimType.OR; 
-	        default                : System.exit(200); return PrimType.ERROR;
-	     }
-	}
-
+	}*/
 
 	@Override 
 
