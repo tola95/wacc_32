@@ -227,14 +227,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		}
 		return PrimType.BOOL;
 	}
-
-	@Override
-	public Type visitArrayElem_Expr(@NotNull BasicParser.ArrayElem_ExprContext ctx) { 
-		SymbolTable st = new SymbolTable(TOP_ST);
-		st.add(ctx.arrayelem().IDENT().getText(), new ArrayType(visit(ctx.arrayelem())));
-	    return visit(ctx.arrayelem());
-	}
-
+	
 	/*@Override 
 	public Type visitBool_Liter(@NotNull BasicParser.Bool_LiterContext ctx) { 
 	    if (ctx.start.getType() == BasicParser.TRUE) { 
@@ -249,15 +242,25 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	@Override 
 
 	public Type visitArrayelem(@NotNull BasicParser.ArrayelemContext ctx) {
-		String id = ctx.IDENT().getText();
-		Type typeOfArray = TOP_ST.lookUpCurrLevelAndEnclosingLevels(id);
-		if (typeOfArray == null) {
-			System.err.println("Identifier " + id + " at line " 
-		       + ctx.IDENT().getSymbol().getLine() + " and position: " 
-					+ ctx.IDENT().getSymbol().getCharPositionInLine() + " not declared.");
+		Type t1 = visit(ctx.expr(0));
+		if (t1 != PrimType.INT) {
+			System.err.println("Needed index of type int. Got type " + t1  
+				       + " at line " + ctx.expr(0).start.getLine() + " and position: " 
+							+ ctx.expr(0).start.getCharPositionInLine());
 			System.exit(200);
 		}
-		return typeOfArray;
+		Type t2 = visit(ctx.ident());
+		if (t2 == PrimType.STRING) {
+			t2 = new ArrayType(PrimType.CHAR);
+		}
+		if (!(t2 instanceof ArrayType)) {
+			System.err.println("Identifier " + ctx.ident().IDENT() + " at line "
+					+ ctx.ident().IDENT().getSymbol().getLine() + " and position " 
+					+ ctx.ident().IDENT().getSymbol().getCharPositionInLine() + " is not of array type"
+					+ " Actual type: " + t2);
+			System.exit(200);
+		}
+		return ((ArrayType) t2).getType();
 	}
 	
 	@Override 
@@ -321,6 +324,11 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		 return null;
 	}
     
+	@Override 
+	public Type visitAssignlhs(@NotNull BasicParser.AssignlhsContext ctx) { 
+		return visit(ctx.getChild(0));
+	}
+	
     @Override 
     public Type visitBegin_Stat(@NotNull BasicParser.Begin_StatContext ctx) { 
     	SymbolTable symbolTable1 = new SymbolTable(TOP_ST);
@@ -335,7 +343,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     	Type lhs = visit(ctx.assignlhs());
     	Type rhs = visit(ctx.assignrhs());
     	if (!lhs.isOfType(rhs)) {
-    		System.err.println("Mismatched types of lhs: " + lhs + " and rhs: " + rhs);
+    		System.err.println("Mismatched types of lhs: " + lhs + " and rhs: " + rhs + " line " + ctx.assignlhs().start.getLine());
     		System.exit(200);
     	}
     	return null;
@@ -360,22 +368,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     @Override
     public Type visitPairtype(@NotNull BasicParser.PairtypeContext ctx) { 
     	return new PairType(visit(ctx.pairelemtype(0)), visit(ctx.pairelemtype(1))); 
-    }
-    
-    @Override 
-    public Type visitArrayelem_AssignLhs(@NotNull BasicParser.Arrayelem_AssignLhsContext ctx) { 
-    	return visitChildren(ctx); 
-    }
-    
-    @Override 
-    public Type visitIdent_AssignLhs(@NotNull BasicParser.Ident_AssignLhsContext ctx) {
-    	String id = ctx.IDENT().getText();
-    	Type type = TOP_ST.lookUpCurrLevelAndEnclosingLevels(id);
-    	if (type == null) {
-    		System.err.println("The identifier " + id + "not declared");
-    		System.exit(200);
-    	}
-    	return type;
     }
     
     @Override
@@ -408,19 +400,20 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     @Override 
     public Type visitIf_Stat(@NotNull BasicParser.If_StatContext ctx) { 
     	Type t = visit(ctx.expr());
-    	if (t == PrimType.BOOL) {
-    		SymbolTable sym1 = new SymbolTable(TOP_ST);
-    		TOP_ST = sym1;
-    		visit(ctx.stat(0));
-    		TOP_ST = TOP_ST.getParent();
-    		SymbolTable sym2 = new SymbolTable(TOP_ST);
-    		TOP_ST = sym2;
-    		visit(ctx.stat(1));
-    		TOP_ST = TOP_ST.getParent();
+    	if (t != PrimType.BOOL) {
+    		System.err.println("Expression does not resolve to a Bool Type. Actual type: " + t);
+    	    System.exit(200); 
     	}
-    	System.err.println("Expression does not resolve to a Bool Type. Actual type: " + t);
-    	System.exit(200); 
-    	return null;
+    	SymbolTable sym1 = new SymbolTable(TOP_ST);
+    	TOP_ST = sym1;
+    	visit(ctx.stat(0));
+    	TOP_ST = TOP_ST.getParent();
+    	SymbolTable sym2 = new SymbolTable(TOP_ST);
+    	TOP_ST = sym2;
+    	visit(ctx.stat(1));
+   		TOP_ST = TOP_ST.getParent();
+   		return null;
+  
     }
     
     @Override 
@@ -463,15 +456,20 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     }
     
     @Override 
-    public Type visitIdent_Expr(@NotNull BasicParser.Ident_ExprContext ctx) { 
+    public Type visitIdent(@NotNull BasicParser.IdentContext ctx) { 
     	String id = ctx.IDENT().getText();
-    		Type t = TOP_ST.lookUpCurrLevelAndEnclosingLevels(id);
-    		if (t == null) {
-    			System.err.println("Ident " + id + "not defined");
-    			System.exit(200);
-    		}
-    		return t;
-    	
+    	Type type = TOP_ST.lookUpCurrLevelAndEnclosingLevels(id);
+    	if (type == null) {
+    		System.err.println("The identifier" + id + "at line " + ctx.start.getLine() + " and position " 
+    				+ ctx.start.getCharPositionInLine() + "is undefined.");
+    		System.exit(200);
+    	}
+    	return type;
+    }
+    
+    @Override 
+    public Type visitIdent_Expr(@NotNull BasicParser.Ident_ExprContext ctx) { 
+    	return visit(ctx.ident());
     }
 	
 	@Override 

@@ -18,6 +18,12 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSemicolon_Stat(@NotNull BasicParser.Semicolon_StatContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link BasicParser#ident}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIdent(@NotNull BasicParser.IdentContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code if_Stat}
 	 * labeled alternative in {@link BasicParser#stat}.
 	 * @param ctx the parse tree
@@ -85,12 +91,11 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBoolLiter_Expr(@NotNull BasicParser.BoolLiter_ExprContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code pairelem_AssignLhs}
-	 * labeled alternative in {@link BasicParser#assignlhs}.
+	 * Visit a parse tree produced by {@link BasicParser#assignlhs}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPairelem_AssignLhs(@NotNull BasicParser.Pairelem_AssignLhsContext ctx);
+	T visitAssignlhs(@NotNull BasicParser.AssignlhsContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link BasicParser#arrayliter}.
 	 * @param ctx the parse tree
@@ -207,13 +212,6 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParenth_Expr(@NotNull BasicParser.Parenth_ExprContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ident_AssignLhs}
-	 * labeled alternative in {@link BasicParser#assignlhs}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIdent_AssignLhs(@NotNull BasicParser.Ident_AssignLhsContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code strLiter_Expr}
 	 * labeled alternative in {@link BasicParser#expr}.
 	 * @param ctx the parse tree
@@ -320,13 +318,6 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitArrayelem(@NotNull BasicParser.ArrayelemContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code arrayelem_AssignLhs}
-	 * labeled alternative in {@link BasicParser#assignlhs}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArrayelem_AssignLhs(@NotNull BasicParser.Arrayelem_AssignLhsContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link BasicParser#func}.
 	 * @param ctx the parse tree

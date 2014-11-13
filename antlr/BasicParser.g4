@@ -27,9 +27,9 @@ stat : SKIP                                             #skip_Stat
      | stat SEMICOLON stat                              #semicolon_Stat
      ;
 
-assignlhs : IDENT                                       #ident_AssignLhs
-          | arrayelem                                   #arrayelem_AssignLhs
-          | pairelem                                    #pairelem_AssignLhs
+assignlhs : ident                                      
+          | arrayelem                                   
+          | pairelem                                    
           ;
 
 assignrhs : expr                                                        #exp_assignrhs
@@ -79,15 +79,17 @@ expr : unaryoper expr                                 #unaryOper_Expr
      | CHAR_LITER                                     #charLiter_Expr
      | STR_LITER                                      #strLiter_Expr
      | PAIR_LITER                                     #pairLiter_Expr
-     | IDENT                                          #ident_Expr
+     | ident                                          #ident_Expr
      | arrayelem                                      #arrayElem_Expr
      ;
+
+ident : IDENT ;
 
 unaryoper : NOT | MINUS | LEN | ORD | CHR ;
 
 bool_Liter : TRUE | FALSE ;
 
-arrayelem : IDENT (OPEN_SQUAREB expr CLOSE_SQUAREB)+ ;
+arrayelem : ident (OPEN_SQUAREB expr CLOSE_SQUAREB)+ ;
 
 arrayliter : OPEN_SQUAREB arglist? CLOSE_SQUAREB ;
 
