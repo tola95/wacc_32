@@ -27,6 +27,9 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     		    System.exit(200);
     		}
     		functions.put(func.IDENT().getText(), new Function(visit(func.type()), params));
+    		//visitFunc(func);
+    	}
+    	for (BasicParser.FuncContext func : ctx.func()) {
     		visitFunc(func);
     	}
     	return visitChildren(ctx);
@@ -74,7 +77,8 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	public Type visitCall_assignrhs(@NotNull BasicParser.Call_assignrhsContext ctx) {
 		String function = ctx.IDENT().getText();
 		if (!functions.containsKey(function)) {
-			System.err.println("Function not defined");
+			System.err.println("Function " + function + " at " 
+					+ ctx.IDENT().getSymbol().getLine() +  " not defined");
 			System.exit(200);
 		}
 		List<Type> paramList = functions.get(function).getParamList();
