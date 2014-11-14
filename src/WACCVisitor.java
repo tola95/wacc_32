@@ -31,6 +31,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     		    System.exit(200);
     		}
     		functions.put(func.IDENT().getText(), new Function(visit(func.type()), params));
+    		visit(func.stat());
     	}
     	return visitChildren(ctx);
 	}
@@ -96,7 +97,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 			Type actual = visit(argList.get(i));
 			if (!(paramList.get(i).isOfType(visit(argList.get(i))))) {
 				System.err.println("The types for the parameters do not match. Expected: " 
-						+ expected + "Actual: " + actual);
+						+ expected + " Actual: " + actual);
 				System.exit(200);
 			}
 		}
@@ -472,7 +473,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     	String id = ctx.IDENT().getText();
     	Type type = TOP_ST.lookUpCurrLevelAndEnclosingLevels(id);
     	if (type == null) {
-    		System.err.println("The identifier" + id + "at line " + ctx.start.getLine() + " and position " 
+    		System.err.println("The identifier " + id + " at line " + ctx.start.getLine() + " and position " 
     				+ ctx.start.getCharPositionInLine() + "is undefined.");
     		System.exit(200);
     	}
@@ -480,7 +481,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     }
     
     @Override 
-    public Type visitIdent_Expr(@NotNull BasicParser.Ident_ExprContext ctx) { 
+    public Type visitIdent_Expr(@NotNull BasicParser.Ident_ExprContext ctx) {
     	return visit(ctx.ident());
     }
 	
