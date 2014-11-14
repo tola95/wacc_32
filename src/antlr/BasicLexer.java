@@ -85,7 +85,7 @@ public class BasicLexer extends Lexer {
 	}
 	private boolean INT_LITER_sempred(RuleContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 0: return Long.valueOf(getText()) <= 2147483647 && Long.valueOf(getText()) >= -2147483647;
+		case 0: return Long.valueOf(getText()) <= 2147483647 && Long.valueOf(getText()) >= -2147483648;
 		}
 		return true;
 	}

@@ -70,7 +70,7 @@ FALSE : 'false' ;
 NEWLINE : '\n' ;
 
 //numbers
-INT_LITER : ('+'|'-')?[0-9]+ {Long.valueOf(getText()) <= 2147483647 && Long.valueOf(getText()) >= -2147483647}?;
+INT_LITER : ('+'|'-')?[0-9]+ {Long.valueOf(getText()) <= 2147483647 && Long.valueOf(getText()) >= -2147483648}? ;
 INTEGER : DIGIT+ ;
 fragment CHARACTER : ~('/' | '`' | '"') ;
 CHAR_LITER : '\'' (CHARACTER|ESCAPED_CHAR) '\'' ;
