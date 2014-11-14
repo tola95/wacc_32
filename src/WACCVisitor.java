@@ -38,21 +38,21 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     	if (ctx.paramlist() != null) {
     		visit(ctx.paramlist());
     	}
-    		SymbolTable symboltable2 = new SymbolTable(symboltable1);
-    		TOP_ST = symboltable2;
-    		visit(ctx.stat());
-    		TOP_ST = TOP_ST.getParent().getParent();
+    	SymbolTable symboltable2 = new SymbolTable(symboltable1);
+    	TOP_ST = symboltable2;
+    	visit(ctx.stat());
+    	TOP_ST = TOP_ST.getParent().getParent();
 		return null;
 		
 	
 	}
 	
-    /*@Override
+    @Override
 	public Type visitParam(BasicParser.ParamContext ctx) {
     	Type t = visit(ctx.type());
     	TOP_ST.add(ctx.IDENT().getText(), t);
     	return t;
-	}*/
+	}
 	
 	@Override 
 	public Type visitExp_assignrhs(@NotNull BasicParser.Exp_assignrhsContext ctx) { 
@@ -308,7 +308,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 			System.exit(200);
 		}
 		String id = ctx.IDENT().getText();
-		if (TOP_ST.lookUpCurrLevelOnly(id) == null) {
+		if (TOP_ST.lookUpCurrLevelAndEnclosingLevels(id) == null) {
 			TOP_ST.add(ctx.IDENT().getText(), type1);
 		} else {
 			System.err.println("Identifier already declared: " + id);
