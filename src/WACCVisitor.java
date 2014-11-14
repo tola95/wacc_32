@@ -27,7 +27,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     		    System.exit(200);
     		}
     		functions.put(func.IDENT().getText(), new Function(visit(func.type()), params));
-    		//visitFunc(func);
     	}
     	for (BasicParser.FuncContext func : ctx.func()) {
     		visitFunc(func);
@@ -381,8 +380,10 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     @Override
     public Type visitReturn_Stat(@NotNull BasicParser.Return_StatContext ctx) {
     	Type t1 = visit(ctx.expr());
-    	if (t1 != TOP_ST.getReturnType()) {
-    		System.err.println("Unexpected return type.");
+    	System.out.println(t1);
+    	System.out.println(TOP_ST.getReturnType());
+    	if (!(t1.isOfType(TOP_ST.getReturnType()))) {
+    		System.err.println("Unexpected return type at line " + ctx.RETURN().getSymbol().getLine());
     		System.exit(200);
     	}
     	return visit(ctx.expr());

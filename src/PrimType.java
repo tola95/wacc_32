@@ -8,7 +8,7 @@ public enum PrimType implements Type{
 		if (this == ANY) {
 			return true;
 		}
-		if (!(t instanceof Type)) {
+		if (!(t instanceof PrimType)) {
 			return false;
 		}
 		PrimType type = (PrimType) t;
