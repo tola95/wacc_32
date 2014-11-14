@@ -308,7 +308,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 			System.exit(200);
 		}
 		String id = ctx.IDENT().getText();
-		if (TOP_ST.lookUpCurrLevelAndEnclosingLevels(id) == null) {
+		if (TOP_ST.lookUpCurrLevelOnly(id) == null) {
 			TOP_ST.add(ctx.IDENT().getText(), type1);
 		} else {
 			System.err.println("Identifier already declared: " + id);
