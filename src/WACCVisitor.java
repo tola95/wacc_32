@@ -3,10 +3,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.antlr.v4.runtime.misc.NotNull;
-import org.antlr.v4.runtime.tree.ErrorNode;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.RuleNode;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
 
 
@@ -31,7 +27,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     		    System.exit(200);
     		}
     		functions.put(func.IDENT().getText(), new Function(visit(func.type()), params));
-    		visit(func.stat());
+    		visitFunc(func);
     	}
     	return visitChildren(ctx);
 	}
