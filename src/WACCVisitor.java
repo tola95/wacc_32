@@ -42,7 +42,8 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     	TOP_ST = symboltable2;
     	SyntaxChecker.checkReturnType(ctx.stat());
     	if (!SyntaxChecker.checkReturnType(ctx.stat())) {
-    		System.err.println("No return type of function");
+    		System.err.println("No return type of function " + 
+    	        ctx.IDENT().getSymbol().getText() + " at line " + ctx.start.getLine());
     		System.exit(100);
     	}
     	visit(ctx.stat());
