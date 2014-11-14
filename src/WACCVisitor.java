@@ -28,9 +28,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     		}
     		functions.put(func.IDENT().getText(), new Function(visit(func.type()), params));
     	}
-    	for (BasicParser.FuncContext func : ctx.func()) {
-    		visitFunc(func);
-    	}
     	return visitChildren(ctx);
 	}
     
@@ -40,22 +37,22 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     	TOP_ST = symboltable1;
     	if (ctx.paramlist() != null) {
     		visit(ctx.paramlist());
+    	}
     		SymbolTable symboltable2 = new SymbolTable(symboltable1);
     		TOP_ST = symboltable2;
     		visit(ctx.stat());
     		TOP_ST = TOP_ST.getParent().getParent();
-    	}
 		return null;
 		
 	
 	}
 	
-    @Override
+    /*@Override
 	public Type visitParam(BasicParser.ParamContext ctx) {
     	Type t = visit(ctx.type());
     	TOP_ST.add(ctx.IDENT().getText(), t);
     	return t;
-	}
+	}*/
 	
 	@Override 
 	public Type visitExp_assignrhs(@NotNull BasicParser.Exp_assignrhsContext ctx) { 
