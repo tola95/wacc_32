@@ -23,7 +23,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     			}
     		}
     		if (functions.containsKey(func.IDENT().getText())) {
-    			System.err.println("Function " + func.IDENT().getText() + " is already defined");
+    			System.err.println("Function " + func.IDENT().getText() + " at line " + func.start.getLine() + " is already defined");
     		    System.exit(200);
     		}
     		functions.put(func.IDENT().getText(), new Function(visit(func.type()), params));
@@ -79,7 +79,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	public Type visitCall_assignrhs(@NotNull BasicParser.Call_assignrhsContext ctx) {
 		String function = ctx.IDENT().getText();
 		if (!functions.containsKey(function)) {
-			System.err.println("Function " + function + " at " 
+			System.err.println("Function " + function + " at line " 
 					+ ctx.IDENT().getSymbol().getLine() +  " not defined");
 			System.exit(200);
 		}
@@ -91,14 +91,18 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 			argList = ctx.arglist().expr();
 		}
 		if (!(paramList.size() == argList.size())) {
-			System.err.println("Number of parameters incorrect");
+			System.err.println("Number of parameters for function " + 
+		           ctx.IDENT().getSymbol().getText() + " at line " 
+				   + ctx.start.getLine() + "are incorrect");
 			System.exit(200);
 		}
 		for (int i = 0; i < paramList.size(); i ++) {
 			Type expected = paramList.get(i);
 			Type actual = visit(argList.get(i));
 			if (!(paramList.get(i).isOfType(visit(argList.get(i))))) {
-				System.err.println("The types for the parameters do not match. Expected: " 
+				System.err.println("The types of the parameters of function " 
+			         + ctx.IDENT().getSymbol().getText() +  "at line " + ctx.start.getLine() 
+			         + " do not match. Expected: " 
 						+ expected + " Actual: " + actual);
 				System.exit(200);
 			}
@@ -125,7 +129,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	    if (exprType == PrimType.INT && unaryOperType == BasicParser.CHR) {
 	    	return PrimType.CHAR;
 	    }
-	    System.err.println("UnaryOper and expr don't match");
+	    System.err.println("UnaryOper and expr at line " + ctx.start.getLine() + " don't match");
 	    System.exit(200);
 	    return null;
 
@@ -239,17 +243,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		}
 		return PrimType.BOOL;
 	}
-	
-	/*@Override 
-	public Type visitBool_Liter(@NotNull BasicParser.Bool_LiterContext ctx) { 
-	    if (ctx.start.getType() == BasicParser.TRUE) { 
-		    return PrimType.TRUE;
-	    } else if (ctx.start.getType() == BasicParser.FALSE) {
-	        return PrimType.FALSE;
-	    } else {
-	        return PrimType.ERROR;
-	    }
-	}*/
 
 	@Override 
 
@@ -310,14 +303,17 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		Type type1 = visit(ctx.type());
 		Type type2 = visit(ctx.assignrhs());
 		if (!(type1.isOfType(type2))) {
-			System.err.println(" Mismatched types. Expected: " + type1 + "Actual: " + type2);
+			System.err.println(" Mismatched types at line " + ctx.start.getLine() +
+					" and position " + ctx.start.getCharPositionInLine() + 
+					" Expected: " + type1 + "Actual: " + type2);
 			System.exit(200);
 		}
 		String id = ctx.IDENT().getText();
 		if (TOP_ST.lookUpCurrLevelOnly(id) == null) {
 			TOP_ST.add(ctx.IDENT().getText(), type1);
 		} else {
-			System.err.println("Identifier already declared: " + id);
+			System.err.println("Identifier " + id + " at line " + ctx.start.getLine() +
+					" and position " + ctx.start.getCharPositionInLine() + " already declared");
 			System.exit(200);
 		}		
 		return null;
@@ -328,7 +324,9 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		 Type t = visit(ctx.assignlhs());
 		 if (!(t.isOfType(PrimType.CHAR) || t.isOfType(PrimType.INT)
 			 ||t.isOfType(PrimType.STRING))) {
-			 System.err.println("Cannot read. Type is invalid");
+			 System.err.println("Cannot read at line " + ctx.start.getLine() +
+					 " and position " + ctx.start.getCharPositionInLine() +
+					 " Type is invalid");
 			 System.exit(200);
 		 }
 		 return null;
@@ -353,7 +351,9 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     	Type lhs = visit(ctx.assignlhs());
     	Type rhs = visit(ctx.assignrhs());
     	if (!lhs.isOfType(rhs)) {
-    		System.err.println("Mismatched types of lhs: " + lhs + " and rhs: " + rhs + " line " + ctx.assignlhs().start.getLine());
+    		System.err.println("Mismatched types at line " + ctx.start.getLine() +
+    				"and position " + ctx.start.getCharPositionInLine() +
+    				" Type lhs: " + lhs + " and Type rhs: " + rhs);
     		System.exit(200);
     	}
     	return null;
@@ -363,7 +363,9 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     public Type visitFree_Stat(@NotNull BasicParser.Free_StatContext ctx) { 
     	Type t = visit(ctx.expr());
     	if (!(t instanceof ArrayType || t instanceof PairType)) {
-    		System.err.println("Incorrect type. Must be of arraytype or pairtype. Actual type: " 
+    		System.err.println("Incorrect type at line " + ctx.start.getLine() +
+    				" and position " + ctx.start.getCharPositionInLine() + 
+    				" Must be of arraytype or pairtype. Actual type: " 
     				+ t);
     		System.exit(200);
     	}
@@ -384,7 +386,8 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     public Type visitReturn_Stat(@NotNull BasicParser.Return_StatContext ctx) {
     	Type t1 = visit(ctx.expr());
     	if (!(t1.isOfType(TOP_ST.getReturnType()))) {
-    		System.err.println("Unexpected return type at line " + ctx.RETURN().getSymbol().getLine());
+    		System.err.println("Unexpected return type at line " + ctx.start.getLine() + 
+    				" and position " + ctx.start.getCharPositionInLine());
     		System.exit(200);
     	}
     	return visit(ctx.expr());
@@ -394,7 +397,9 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     public Type visitExit_Stat(@NotNull BasicParser.Exit_StatContext ctx) { 
     	Type t = visit(ctx.expr());
     	if (t != PrimType.INT) {
-    		System.err.println("Expected type: Int, Actual type: " + t);
+    		System.err.println("Unexpected type at line " + ctx.start.getLine() + 
+    				" and position " + ctx.start.getCharPositionInLine() + 
+    				"Expected type: Int, Actual type: " + t);
     		System.exit(200);
     	}
     	return null;
@@ -416,7 +421,9 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     public Type visitIf_Stat(@NotNull BasicParser.If_StatContext ctx) { 
     	Type t = visit(ctx.expr());
     	if (t != PrimType.BOOL) {
-    		System.err.println("Expression does not resolve to a Bool Type. Actual type: " + t);
+    		System.err.println("Expression at line " + ctx.start.getLine() +
+    				" and position " + ctx.expr().start.getCharPositionInLine() +
+    				" does not resolve to a Bool Type. Actual type: " + t);
     	    System.exit(200); 
     	}
     	SymbolTable sym1 = new SymbolTable(TOP_ST);
@@ -435,7 +442,9 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     public Type visitWhile_Stat(@NotNull BasicParser.While_StatContext ctx) {
     	Type t = visit(ctx.expr());
     	if (t != PrimType.BOOL) {
-    		System.err.println("Expression does not resolve to a Bool Type. Actual type: " + t);
+    		System.err.println("Expression at line " + ctx.start.getLine() +
+    				" and position " + ctx.expr().start.getCharPositionInLine() +
+    				" does not resolve to a Bool Type. Actual type: " + t);
     	    System.exit(200);
     	}
     	SymbolTable sym1 = new SymbolTable(TOP_ST);
@@ -513,7 +522,8 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	public Type visitPairelem(BasicParser.PairelemContext ctx) {
 		Type t = visit(ctx.expr());
 		if (!(t instanceof PairType)) {
-			System.err.println("Not a pair type. Actual: " + t);
+			System.err.println("Not a pair type at line " + ctx.start.getLine() +
+					" and position " + ctx.start.getCharPositionInLine() + " Actual: " + t);
 			System.exit(200);
 		}
 		PairType pair = (PairType) t;
