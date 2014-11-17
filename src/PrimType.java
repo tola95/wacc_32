@@ -11,6 +11,11 @@ public enum PrimType implements Type{
 		if (!(t instanceof PrimType)) {
 			return false;
 		}
+		if (t instanceof ArrayType) {
+			ArrayType at = (ArrayType) t;
+			Type type = at.getType();
+			 return type.isOfType(CHAR) && this == STRING;
+		}
 		PrimType type = (PrimType) t;
 		return (type == this || type == PrimType.ANY);
 	}

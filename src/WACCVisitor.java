@@ -101,7 +101,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 			Type actual = visit(argList.get(i));
 			if (!(paramList.get(i).isOfType(visit(argList.get(i))))) {
 				System.err.println("The types of the parameters of function " 
-			         + ctx.IDENT().getSymbol().getText() +  "at line " + ctx.start.getLine() 
+			         + ctx.IDENT().getSymbol().getText() +  " at line " + ctx.start.getLine() 
 			         + " do not match. Expected: " 
 						+ expected + " Actual: " + actual);
 				System.exit(200);
@@ -115,13 +115,13 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		Type exprType = visit(ctx.expr());
 		int unaryOperType = ctx.start.getType(); 
 	    if (exprType == PrimType.BOOL && unaryOperType == BasicParser.NOT) {
-	    	return exprType;
+	    	return PrimType.BOOL;
 	    }
 	    if (exprType == PrimType.INT && unaryOperType == BasicParser.MINUS) {
-	    	return exprType;
+	    	return PrimType.INT;
 	    }
 	    if (exprType instanceof ArrayType && unaryOperType == BasicParser.LEN) {
-	    	return exprType;
+	    	return PrimType.INT;
 	    }
 	    if (exprType == PrimType.CHAR && unaryOperType == BasicParser.ORD) {
 	    	return PrimType.INT;

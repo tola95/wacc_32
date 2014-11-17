@@ -24,7 +24,7 @@ public class ArrayType implements Type{
 			ArrayType type1 = (ArrayType) t;
 			return (type1.getType().isOfType(type));
 		}
-		return false;
+		return (t.isOfType(PrimType.STRING) && this.getType().isOfType(PrimType.CHAR));
 	}
 
 }
