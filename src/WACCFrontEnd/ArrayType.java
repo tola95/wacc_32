@@ -1,3 +1,5 @@
+package WACCFrontEnd;
+
 
 public class ArrayType implements Type{
 	
@@ -25,6 +27,11 @@ public class ArrayType implements Type{
 			return (type1.getType().isOfType(type));
 		}
 		return (t.isOfType(PrimType.STRING) && this.getType().isOfType(PrimType.CHAR));
+	}
+
+	@Override
+	public int getSize() {
+		return 4;
 	}
 
 }

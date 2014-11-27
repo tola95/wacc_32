@@ -1,3 +1,5 @@
+package WACCFrontEnd;
+
 
 public enum PrimType implements Type{
 
@@ -18,6 +20,20 @@ public enum PrimType implements Type{
 		}
 		PrimType type = (PrimType) t;
 		return (type == this || type == PrimType.ANY);
+	}
+
+	@Override
+	public int getSize() {
+		int i = 0;
+		switch (this) {
+		case INT : i = 4; break;
+		case BOOL : i = 1; break;
+		case CHAR : i = 1; break;
+		case STRING : i = 4; break;
+		default:
+			break;
+		}
+		return i;
 	}
 	
 }

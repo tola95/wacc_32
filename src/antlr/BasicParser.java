@@ -1,4 +1,7 @@
 // Generated from ./BasicParser.g4 by ANTLR 4.4
+
+package antlr;
+
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -16,15 +19,15 @@ public class BasicParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		PRINT=35, NEWPAIR=45, PAIR_LITER=53, STR_LITER=60, DO=41, CHR=17, MINUS=5, 
-		SEMICOLON=43, ELSE=39, IF=37, INTEGER=58, DONE=42, MUL=2, FST=47, NEWLINE=56, 
-		TRUE=54, IS=31, EQ=22, READ=30, NOT=14, AND=12, GRTEQ=7, END=28, THEN=38, 
-		SMT=8, EXIT=34, PLUS=4, CLOSE_PARENTHESES=24, ORD=16, CALL=46, FI=40, 
-		PRINTLN=36, OPEN_PARENTHESES=23, GRT=6, CLOSE_SQUAREB=26, SND=48, CHAR=20, 
-		BEGIN=27, FREE=32, INT=19, COMMENT=51, RETURN=33, SMTEQ=9, SKIP=29, WS=18, 
-		COMMA=44, MOD=3, OR=13, CHAR_LITER=59, INT_LITER=57, NOTEQ=11, DIV=1, 
-		LEN=15, IDENT=61, BOOL=52, EQEQ=10, STRING=21, OPEN_SQUAREB=25, WHILE=50, 
-		FALSE=55, PAIR=49;
+		WHILE=50, FST=47, MOD=3, CHAR=20, DO=41, NOT=14, AND=12, OPEN_SQUAREB=25, 
+		ORD=16, IF=37, FREE=32, CLOSE_PARENTHESES=24, SMTEQ=9, THEN=38, COMMA=44, 
+		IS=31, DONE=42, PRINTLN=36, BEGIN=27, RETURN=33, CHAR_LITER=59, IDENT=61, 
+		PLUS=4, PAIR=49, STR_LITER=60, EQ=22, COMMENT=51, GRT=6, NEWPAIR=45, SMT=8, 
+		EQEQ=10, INTEGER=58, EXIT=34, SND=48, ELSE=39, BOOL=52, PAIR_LITER=53, 
+		INT=19, SEMICOLON=43, CLOSE_SQUAREB=26, MINUS=5, TRUE=54, MUL=2, PRINT=35, 
+		CHR=17, FI=40, SKIP=29, GRTEQ=7, NOTEQ=11, WS=18, NEWLINE=56, READ=30, 
+		OR=13, INT_LITER=57, OPEN_PARENTHESES=23, LEN=15, CALL=46, DIV=1, END=28, 
+		FALSE=55, STRING=21;
 	public static final String[] tokenNames = {
 		"<INVALID>", "'/'", "'*'", "'%'", "'+'", "'-'", "'>'", "'>='", "'<'", 
 		"'<='", "'=='", "'!='", "'&&'", "'||'", "'!'", "'len'", "'ord'", "'chr'", 
@@ -72,14 +75,14 @@ public class BasicParser extends Parser {
 		public List<FuncContext> func() {
 			return getRuleContexts(FuncContext.class);
 		}
+		public StatContext stat() {
+			return getRuleContext(StatContext.class,0);
+		}
 		public FuncContext func(int i) {
 			return getRuleContext(FuncContext.class,i);
 		}
 		public TerminalNode BEGIN() { return getToken(BasicParser.BEGIN, 0); }
 		public TerminalNode END() { return getToken(BasicParser.END, 0); }
-		public StatContext stat() {
-			return getRuleContext(StatContext.class,0);
-		}
 		public ProgramContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -131,20 +134,20 @@ public class BasicParser extends Parser {
 	}
 
 	public static class FuncContext extends ParserRuleContext {
-		public TerminalNode CLOSE_PARENTHESES() { return getToken(BasicParser.CLOSE_PARENTHESES, 0); }
 		public ParamlistContext paramlist() {
 			return getRuleContext(ParamlistContext.class,0);
 		}
-		public TerminalNode IS() { return getToken(BasicParser.IS, 0); }
-		public TerminalNode END() { return getToken(BasicParser.END, 0); }
+		public TerminalNode CLOSE_PARENTHESES() { return getToken(BasicParser.CLOSE_PARENTHESES, 0); }
+		public TerminalNode OPEN_PARENTHESES() { return getToken(BasicParser.OPEN_PARENTHESES, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
 		public StatContext stat() {
 			return getRuleContext(StatContext.class,0);
 		}
+		public TerminalNode IS() { return getToken(BasicParser.IS, 0); }
 		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
-		public TerminalNode OPEN_PARENTHESES() { return getToken(BasicParser.OPEN_PARENTHESES, 0); }
+		public TerminalNode END() { return getToken(BasicParser.END, 0); }
 		public FuncContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -296,6 +299,112 @@ public class BasicParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
+	public static class IdentEq_StatContext extends StatContext {
+		public AssignrhsContext assignrhs() {
+			return getRuleContext(AssignrhsContext.class,0);
+		}
+		public TypeContext type() {
+			return getRuleContext(TypeContext.class,0);
+		}
+		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
+		public TerminalNode EQ() { return getToken(BasicParser.EQ, 0); }
+		public IdentEq_StatContext(StatContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitIdentEq_Stat(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Read_StatContext extends StatContext {
+		public TerminalNode READ() { return getToken(BasicParser.READ, 0); }
+		public AssignlhsContext assignlhs() {
+			return getRuleContext(AssignlhsContext.class,0);
+		}
+		public Read_StatContext(StatContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitRead_Stat(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class While_StatContext extends StatContext {
+		public TerminalNode WHILE() { return getToken(BasicParser.WHILE, 0); }
+		public TerminalNode DO() { return getToken(BasicParser.DO, 0); }
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
+		public TerminalNode DONE() { return getToken(BasicParser.DONE, 0); }
+		public StatContext stat() {
+			return getRuleContext(StatContext.class,0);
+		}
+		public While_StatContext(StatContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitWhile_Stat(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Print_StatContext extends StatContext {
+		public TerminalNode PRINT() { return getToken(BasicParser.PRINT, 0); }
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
+		public Print_StatContext(StatContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitPrint_Stat(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Println_StatContext extends StatContext {
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
+		public TerminalNode PRINTLN() { return getToken(BasicParser.PRINTLN, 0); }
+		public Println_StatContext(StatContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitPrintln_Stat(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Return_StatContext extends StatContext {
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
+		public TerminalNode RETURN() { return getToken(BasicParser.RETURN, 0); }
+		public Return_StatContext(StatContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitReturn_Stat(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Free_StatContext extends StatContext {
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
+		public TerminalNode FREE() { return getToken(BasicParser.FREE, 0); }
+		public Free_StatContext(StatContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitFree_Stat(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Begin_StatContext extends StatContext {
+		public StatContext stat() {
+			return getRuleContext(StatContext.class,0);
+		}
+		public TerminalNode BEGIN() { return getToken(BasicParser.BEGIN, 0); }
+		public TerminalNode END() { return getToken(BasicParser.END, 0); }
+		public Begin_StatContext(StatContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitBegin_Stat(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class Semicolon_StatContext extends StatContext {
 		public TerminalNode SEMICOLON() { return getToken(BasicParser.SEMICOLON, 0); }
 		public StatContext stat(int i) {
@@ -312,120 +421,17 @@ public class BasicParser extends Parser {
 		}
 	}
 	public static class AssignLhsRhs_StatContext extends StatContext {
-		public AssignlhsContext assignlhs() {
-			return getRuleContext(AssignlhsContext.class,0);
-		}
 		public AssignrhsContext assignrhs() {
 			return getRuleContext(AssignrhsContext.class,0);
+		}
+		public AssignlhsContext assignlhs() {
+			return getRuleContext(AssignlhsContext.class,0);
 		}
 		public TerminalNode EQ() { return getToken(BasicParser.EQ, 0); }
 		public AssignLhsRhs_StatContext(StatContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitAssignLhsRhs_Stat(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class If_StatContext extends StatContext {
-		public TerminalNode FI() { return getToken(BasicParser.FI, 0); }
-		public TerminalNode ELSE() { return getToken(BasicParser.ELSE, 0); }
-		public TerminalNode IF() { return getToken(BasicParser.IF, 0); }
-		public ExprContext expr() {
-			return getRuleContext(ExprContext.class,0);
-		}
-		public TerminalNode THEN() { return getToken(BasicParser.THEN, 0); }
-		public StatContext stat(int i) {
-			return getRuleContext(StatContext.class,i);
-		}
-		public List<StatContext> stat() {
-			return getRuleContexts(StatContext.class);
-		}
-		public If_StatContext(StatContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitIf_Stat(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class While_StatContext extends StatContext {
-		public TerminalNode DONE() { return getToken(BasicParser.DONE, 0); }
-		public ExprContext expr() {
-			return getRuleContext(ExprContext.class,0);
-		}
-		public TerminalNode DO() { return getToken(BasicParser.DO, 0); }
-		public StatContext stat() {
-			return getRuleContext(StatContext.class,0);
-		}
-		public TerminalNode WHILE() { return getToken(BasicParser.WHILE, 0); }
-		public While_StatContext(StatContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitWhile_Stat(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class Read_StatContext extends StatContext {
-		public AssignlhsContext assignlhs() {
-			return getRuleContext(AssignlhsContext.class,0);
-		}
-		public TerminalNode READ() { return getToken(BasicParser.READ, 0); }
-		public Read_StatContext(StatContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitRead_Stat(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class Begin_StatContext extends StatContext {
-		public TerminalNode BEGIN() { return getToken(BasicParser.BEGIN, 0); }
-		public TerminalNode END() { return getToken(BasicParser.END, 0); }
-		public StatContext stat() {
-			return getRuleContext(StatContext.class,0);
-		}
-		public Begin_StatContext(StatContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitBegin_Stat(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class Println_StatContext extends StatContext {
-		public ExprContext expr() {
-			return getRuleContext(ExprContext.class,0);
-		}
-		public TerminalNode PRINTLN() { return getToken(BasicParser.PRINTLN, 0); }
-		public Println_StatContext(StatContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitPrintln_Stat(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class IdentEq_StatContext extends StatContext {
-		public AssignrhsContext assignrhs() {
-			return getRuleContext(AssignrhsContext.class,0);
-		}
-		public TypeContext type() {
-			return getRuleContext(TypeContext.class,0);
-		}
-		public TerminalNode EQ() { return getToken(BasicParser.EQ, 0); }
-		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
-		public IdentEq_StatContext(StatContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitIdentEq_Stat(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class Return_StatContext extends StatContext {
-		public TerminalNode RETURN() { return getToken(BasicParser.RETURN, 0); }
-		public ExprContext expr() {
-			return getRuleContext(ExprContext.class,0);
-		}
-		public Return_StatContext(StatContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitReturn_Stat(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -441,15 +447,24 @@ public class BasicParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class Free_StatContext extends StatContext {
-		public TerminalNode FREE() { return getToken(BasicParser.FREE, 0); }
+	public static class If_StatContext extends StatContext {
+		public TerminalNode THEN() { return getToken(BasicParser.THEN, 0); }
+		public TerminalNode IF() { return getToken(BasicParser.IF, 0); }
+		public StatContext stat(int i) {
+			return getRuleContext(StatContext.class,i);
+		}
+		public TerminalNode FI() { return getToken(BasicParser.FI, 0); }
+		public TerminalNode ELSE() { return getToken(BasicParser.ELSE, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public Free_StatContext(StatContext ctx) { copyFrom(ctx); }
+		public List<StatContext> stat() {
+			return getRuleContexts(StatContext.class);
+		}
+		public If_StatContext(StatContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitFree_Stat(this);
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitIf_Stat(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -459,18 +474,6 @@ public class BasicParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitSkip_Stat(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class Print_StatContext extends StatContext {
-		public TerminalNode PRINT() { return getToken(BasicParser.PRINT, 0); }
-		public ExprContext expr() {
-			return getRuleContext(ExprContext.class,0);
-		}
-		public Print_StatContext(StatContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitPrint_Stat(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -661,11 +664,11 @@ public class BasicParser extends Parser {
 		public PairelemContext pairelem() {
 			return getRuleContext(PairelemContext.class,0);
 		}
-		public IdentContext ident() {
-			return getRuleContext(IdentContext.class,0);
-		}
 		public ArrayelemContext arrayelem() {
 			return getRuleContext(ArrayelemContext.class,0);
+		}
+		public IdentContext ident() {
+			return getRuleContext(IdentContext.class,0);
 		}
 		public AssignlhsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -726,14 +729,36 @@ public class BasicParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class ArrayLiter_assignrhsContext extends AssignrhsContext {
-		public ArrayliterContext arrayliter() {
-			return getRuleContext(ArrayliterContext.class,0);
+	public static class Call_assignrhsContext extends AssignrhsContext {
+		public TerminalNode CALL() { return getToken(BasicParser.CALL, 0); }
+		public TerminalNode CLOSE_PARENTHESES() { return getToken(BasicParser.CLOSE_PARENTHESES, 0); }
+		public TerminalNode OPEN_PARENTHESES() { return getToken(BasicParser.OPEN_PARENTHESES, 0); }
+		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
+		public ArglistContext arglist() {
+			return getRuleContext(ArglistContext.class,0);
 		}
-		public ArrayLiter_assignrhsContext(AssignrhsContext ctx) { copyFrom(ctx); }
+		public Call_assignrhsContext(AssignrhsContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitArrayLiter_assignrhs(this);
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitCall_assignrhs(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class NewPair_assignrhsContext extends AssignrhsContext {
+		public List<ExprContext> expr() {
+			return getRuleContexts(ExprContext.class);
+		}
+		public TerminalNode CLOSE_PARENTHESES() { return getToken(BasicParser.CLOSE_PARENTHESES, 0); }
+		public TerminalNode COMMA() { return getToken(BasicParser.COMMA, 0); }
+		public ExprContext expr(int i) {
+			return getRuleContext(ExprContext.class,i);
+		}
+		public TerminalNode OPEN_PARENTHESES() { return getToken(BasicParser.OPEN_PARENTHESES, 0); }
+		public TerminalNode NEWPAIR() { return getToken(BasicParser.NEWPAIR, 0); }
+		public NewPair_assignrhsContext(AssignrhsContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitNewPair_assignrhs(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -759,36 +784,14 @@ public class BasicParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class NewPair_assignrhsContext extends AssignrhsContext {
-		public TerminalNode NEWPAIR() { return getToken(BasicParser.NEWPAIR, 0); }
-		public TerminalNode CLOSE_PARENTHESES() { return getToken(BasicParser.CLOSE_PARENTHESES, 0); }
-		public List<ExprContext> expr() {
-			return getRuleContexts(ExprContext.class);
+	public static class ArrayLiter_assignrhsContext extends AssignrhsContext {
+		public ArrayliterContext arrayliter() {
+			return getRuleContext(ArrayliterContext.class,0);
 		}
-		public ExprContext expr(int i) {
-			return getRuleContext(ExprContext.class,i);
-		}
-		public TerminalNode COMMA() { return getToken(BasicParser.COMMA, 0); }
-		public TerminalNode OPEN_PARENTHESES() { return getToken(BasicParser.OPEN_PARENTHESES, 0); }
-		public NewPair_assignrhsContext(AssignrhsContext ctx) { copyFrom(ctx); }
+		public ArrayLiter_assignrhsContext(AssignrhsContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitNewPair_assignrhs(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class Call_assignrhsContext extends AssignrhsContext {
-		public TerminalNode CLOSE_PARENTHESES() { return getToken(BasicParser.CLOSE_PARENTHESES, 0); }
-		public TerminalNode CALL() { return getToken(BasicParser.CALL, 0); }
-		public ArglistContext arglist() {
-			return getRuleContext(ArglistContext.class,0);
-		}
-		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
-		public TerminalNode OPEN_PARENTHESES() { return getToken(BasicParser.OPEN_PARENTHESES, 0); }
-		public Call_assignrhsContext(AssignrhsContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitCall_assignrhs(this);
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitArrayLiter_assignrhs(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -883,10 +886,10 @@ public class BasicParser extends Parser {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
+		public List<TerminalNode> COMMA() { return getTokens(BasicParser.COMMA); }
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
-		public List<TerminalNode> COMMA() { return getTokens(BasicParser.COMMA); }
 		public TerminalNode COMMA(int i) {
 			return getToken(BasicParser.COMMA, i);
 		}
@@ -940,8 +943,8 @@ public class BasicParser extends Parser {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public TerminalNode SND() { return getToken(BasicParser.SND, 0); }
 		public TerminalNode FST() { return getToken(BasicParser.FST, 0); }
+		public TerminalNode SND() { return getToken(BasicParser.SND, 0); }
 		public PairelemContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -991,15 +994,6 @@ public class BasicParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class Char_baseTypeContext extends BasetypeContext {
-		public TerminalNode CHAR() { return getToken(BasicParser.CHAR, 0); }
-		public Char_baseTypeContext(BasetypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitChar_baseType(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class Int_baseTypeContext extends BasetypeContext {
 		public TerminalNode INT() { return getToken(BasicParser.INT, 0); }
 		public Int_baseTypeContext(BasetypeContext ctx) { copyFrom(ctx); }
@@ -1015,6 +1009,15 @@ public class BasicParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitString_baseType(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Char_baseTypeContext extends BasetypeContext {
+		public TerminalNode CHAR() { return getToken(BasicParser.CHAR, 0); }
+		public Char_baseTypeContext(BasetypeContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitChar_baseType(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1081,11 +1084,11 @@ public class BasicParser extends Parser {
 		public ArraytypeContext arraytype() {
 			return getRuleContext(ArraytypeContext.class,0);
 		}
-		public PairtypeContext pairtype() {
-			return getRuleContext(PairtypeContext.class,0);
-		}
 		public BasetypeContext basetype() {
 			return getRuleContext(BasetypeContext.class,0);
+		}
+		public PairtypeContext pairtype() {
+			return getRuleContext(PairtypeContext.class,0);
 		}
 		public TypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1136,17 +1139,17 @@ public class BasicParser extends Parser {
 	}
 
 	public static class ArraytypeContext extends ParserRuleContext {
-		public TerminalNode OPEN_SQUAREB() { return getToken(BasicParser.OPEN_SQUAREB, 0); }
 		public ArraytypeContext arraytype() {
 			return getRuleContext(ArraytypeContext.class,0);
-		}
-		public PairtypeContext pairtype() {
-			return getRuleContext(PairtypeContext.class,0);
 		}
 		public BasetypeContext basetype() {
 			return getRuleContext(BasetypeContext.class,0);
 		}
 		public TerminalNode CLOSE_SQUAREB() { return getToken(BasicParser.CLOSE_SQUAREB, 0); }
+		public PairtypeContext pairtype() {
+			return getRuleContext(PairtypeContext.class,0);
+		}
+		public TerminalNode OPEN_SQUAREB() { return getToken(BasicParser.OPEN_SQUAREB, 0); }
 		public ArraytypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1232,16 +1235,16 @@ public class BasicParser extends Parser {
 	}
 
 	public static class PairtypeContext extends ParserRuleContext {
-		public TerminalNode CLOSE_PARENTHESES() { return getToken(BasicParser.CLOSE_PARENTHESES, 0); }
 		public List<PairelemtypeContext> pairelemtype() {
 			return getRuleContexts(PairelemtypeContext.class);
 		}
+		public TerminalNode CLOSE_PARENTHESES() { return getToken(BasicParser.CLOSE_PARENTHESES, 0); }
+		public TerminalNode COMMA() { return getToken(BasicParser.COMMA, 0); }
+		public TerminalNode OPEN_PARENTHESES() { return getToken(BasicParser.OPEN_PARENTHESES, 0); }
+		public TerminalNode PAIR() { return getToken(BasicParser.PAIR, 0); }
 		public PairelemtypeContext pairelemtype(int i) {
 			return getRuleContext(PairelemtypeContext.class,i);
 		}
-		public TerminalNode PAIR() { return getToken(BasicParser.PAIR, 0); }
-		public TerminalNode COMMA() { return getToken(BasicParser.COMMA, 0); }
-		public TerminalNode OPEN_PARENTHESES() { return getToken(BasicParser.OPEN_PARENTHESES, 0); }
 		public PairtypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1289,14 +1292,12 @@ public class BasicParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class BaseType_pairElemTypeContext extends PairelemtypeContext {
-		public BasetypeContext basetype() {
-			return getRuleContext(BasetypeContext.class,0);
-		}
-		public BaseType_pairElemTypeContext(PairelemtypeContext ctx) { copyFrom(ctx); }
+	public static class Pair_pairElemTypeContext extends PairelemtypeContext {
+		public TerminalNode PAIR() { return getToken(BasicParser.PAIR, 0); }
+		public Pair_pairElemTypeContext(PairelemtypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitBaseType_pairElemType(this);
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitPair_pairElemType(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1311,12 +1312,14 @@ public class BasicParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class Pair_pairElemTypeContext extends PairelemtypeContext {
-		public TerminalNode PAIR() { return getToken(BasicParser.PAIR, 0); }
-		public Pair_pairElemTypeContext(PairelemtypeContext ctx) { copyFrom(ctx); }
+	public static class BaseType_pairElemTypeContext extends PairelemtypeContext {
+		public BasetypeContext basetype() {
+			return getRuleContext(BasetypeContext.class,0);
+		}
+		public BaseType_pairElemTypeContext(PairelemtypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitPair_pairElemType(this);
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitBaseType_pairElemType(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1372,14 +1375,88 @@ public class BasicParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class BoolLiter_ExprContext extends ExprContext {
-		public Bool_LiterContext bool_Liter() {
-			return getRuleContext(Bool_LiterContext.class,0);
+	public static class Factor_ExprContext extends ExprContext {
+		public TerminalNode MUL() { return getToken(BasicParser.MUL, 0); }
+		public TerminalNode DIV() { return getToken(BasicParser.DIV, 0); }
+		public List<ExprContext> expr() {
+			return getRuleContexts(ExprContext.class);
 		}
-		public BoolLiter_ExprContext(ExprContext ctx) { copyFrom(ctx); }
+		public ExprContext expr(int i) {
+			return getRuleContext(ExprContext.class,i);
+		}
+		public TerminalNode MOD() { return getToken(BasicParser.MOD, 0); }
+		public Factor_ExprContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitBoolLiter_Expr(this);
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitFactor_Expr(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Compare_ExprContext extends ExprContext {
+		public TerminalNode GRTEQ() { return getToken(BasicParser.GRTEQ, 0); }
+		public TerminalNode SMT() { return getToken(BasicParser.SMT, 0); }
+		public List<ExprContext> expr() {
+			return getRuleContexts(ExprContext.class);
+		}
+		public ExprContext expr(int i) {
+			return getRuleContext(ExprContext.class,i);
+		}
+		public TerminalNode SMTEQ() { return getToken(BasicParser.SMTEQ, 0); }
+		public TerminalNode GRT() { return getToken(BasicParser.GRT, 0); }
+		public Compare_ExprContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitCompare_Expr(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ArrayElem_ExprContext extends ExprContext {
+		public ArrayelemContext arrayelem() {
+			return getRuleContext(ArrayelemContext.class,0);
+		}
+		public ArrayElem_ExprContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitArrayElem_Expr(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class UnaryOper_ExprContext extends ExprContext {
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
+		public UnaryoperContext unaryoper() {
+			return getRuleContext(UnaryoperContext.class,0);
+		}
+		public UnaryOper_ExprContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitUnaryOper_Expr(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Term_ExprContext extends ExprContext {
+		public List<ExprContext> expr() {
+			return getRuleContexts(ExprContext.class);
+		}
+		public TerminalNode MINUS() { return getToken(BasicParser.MINUS, 0); }
+		public ExprContext expr(int i) {
+			return getRuleContext(ExprContext.class,i);
+		}
+		public TerminalNode PLUS() { return getToken(BasicParser.PLUS, 0); }
+		public Term_ExprContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitTerm_Expr(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class CharLiter_ExprContext extends ExprContext {
+		public TerminalNode CHAR_LITER() { return getToken(BasicParser.CHAR_LITER, 0); }
+		public CharLiter_ExprContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitCharLiter_Expr(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1399,66 +1476,18 @@ public class BasicParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class And_ExprContext extends ExprContext {
-		public List<ExprContext> expr() {
-			return getRuleContexts(ExprContext.class);
-		}
-		public ExprContext expr(int i) {
-			return getRuleContext(ExprContext.class,i);
-		}
-		public TerminalNode AND() { return getToken(BasicParser.AND, 0); }
-		public And_ExprContext(ExprContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitAnd_Expr(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class Ident_ExprContext extends ExprContext {
-		public IdentContext ident() {
-			return getRuleContext(IdentContext.class,0);
-		}
-		public Ident_ExprContext(ExprContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitIdent_Expr(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class PairLiter_ExprContext extends ExprContext {
-		public TerminalNode PAIR_LITER() { return getToken(BasicParser.PAIR_LITER, 0); }
-		public PairLiter_ExprContext(ExprContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitPairLiter_Expr(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class Or_ExprContext extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
+		public TerminalNode OR() { return getToken(BasicParser.OR, 0); }
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
-		public TerminalNode OR() { return getToken(BasicParser.OR, 0); }
 		public Or_ExprContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitOr_Expr(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class Parenth_ExprContext extends ExprContext {
-		public TerminalNode CLOSE_PARENTHESES() { return getToken(BasicParser.CLOSE_PARENTHESES, 0); }
-		public ExprContext expr() {
-			return getRuleContext(ExprContext.class,0);
-		}
-		public TerminalNode OPEN_PARENTHESES() { return getToken(BasicParser.OPEN_PARENTHESES, 0); }
-		public Parenth_ExprContext(ExprContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitParenth_Expr(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1471,47 +1500,18 @@ public class BasicParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class CharLiter_ExprContext extends ExprContext {
-		public TerminalNode CHAR_LITER() { return getToken(BasicParser.CHAR_LITER, 0); }
-		public CharLiter_ExprContext(ExprContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitCharLiter_Expr(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class Factor_ExprContext extends ExprContext {
+	public static class And_ExprContext extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
+		public TerminalNode AND() { return getToken(BasicParser.AND, 0); }
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
-		public TerminalNode MOD() { return getToken(BasicParser.MOD, 0); }
-		public TerminalNode DIV() { return getToken(BasicParser.DIV, 0); }
-		public TerminalNode MUL() { return getToken(BasicParser.MUL, 0); }
-		public Factor_ExprContext(ExprContext ctx) { copyFrom(ctx); }
+		public And_ExprContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitFactor_Expr(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class Compare_ExprContext extends ExprContext {
-		public List<ExprContext> expr() {
-			return getRuleContexts(ExprContext.class);
-		}
-		public ExprContext expr(int i) {
-			return getRuleContext(ExprContext.class,i);
-		}
-		public TerminalNode SMTEQ() { return getToken(BasicParser.SMTEQ, 0); }
-		public TerminalNode SMT() { return getToken(BasicParser.SMT, 0); }
-		public TerminalNode GRT() { return getToken(BasicParser.GRT, 0); }
-		public TerminalNode GRTEQ() { return getToken(BasicParser.GRTEQ, 0); }
-		public Compare_ExprContext(ExprContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitCompare_Expr(this);
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitAnd_Expr(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1524,44 +1524,47 @@ public class BasicParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class ArrayElem_ExprContext extends ExprContext {
-		public ArrayelemContext arrayelem() {
-			return getRuleContext(ArrayelemContext.class,0);
-		}
-		public ArrayElem_ExprContext(ExprContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitArrayElem_Expr(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class Term_ExprContext extends ExprContext {
-		public List<ExprContext> expr() {
-			return getRuleContexts(ExprContext.class);
-		}
-		public ExprContext expr(int i) {
-			return getRuleContext(ExprContext.class,i);
-		}
-		public TerminalNode PLUS() { return getToken(BasicParser.PLUS, 0); }
-		public TerminalNode MINUS() { return getToken(BasicParser.MINUS, 0); }
-		public Term_ExprContext(ExprContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitTerm_Expr(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class UnaryOper_ExprContext extends ExprContext {
+	public static class Parenth_ExprContext extends ExprContext {
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
-		public UnaryoperContext unaryoper() {
-			return getRuleContext(UnaryoperContext.class,0);
-		}
-		public UnaryOper_ExprContext(ExprContext ctx) { copyFrom(ctx); }
+		public TerminalNode CLOSE_PARENTHESES() { return getToken(BasicParser.CLOSE_PARENTHESES, 0); }
+		public TerminalNode OPEN_PARENTHESES() { return getToken(BasicParser.OPEN_PARENTHESES, 0); }
+		public Parenth_ExprContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitUnaryOper_Expr(this);
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitParenth_Expr(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class PairLiter_ExprContext extends ExprContext {
+		public TerminalNode PAIR_LITER() { return getToken(BasicParser.PAIR_LITER, 0); }
+		public PairLiter_ExprContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitPairLiter_Expr(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class BoolLiter_ExprContext extends ExprContext {
+		public Bool_LiterContext bool_Liter() {
+			return getRuleContext(Bool_LiterContext.class,0);
+		}
+		public BoolLiter_ExprContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitBoolLiter_Expr(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Ident_ExprContext extends ExprContext {
+		public IdentContext ident() {
+			return getRuleContext(IdentContext.class,0);
+		}
+		public Ident_ExprContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitIdent_Expr(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1806,11 +1809,11 @@ public class BasicParser extends Parser {
 	}
 
 	public static class UnaryoperContext extends ParserRuleContext {
-		public TerminalNode NOT() { return getToken(BasicParser.NOT, 0); }
-		public TerminalNode ORD() { return getToken(BasicParser.ORD, 0); }
 		public TerminalNode LEN() { return getToken(BasicParser.LEN, 0); }
 		public TerminalNode MINUS() { return getToken(BasicParser.MINUS, 0); }
+		public TerminalNode NOT() { return getToken(BasicParser.NOT, 0); }
 		public TerminalNode CHR() { return getToken(BasicParser.CHR, 0); }
+		public TerminalNode ORD() { return getToken(BasicParser.ORD, 0); }
 		public UnaryoperContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1849,8 +1852,8 @@ public class BasicParser extends Parser {
 	}
 
 	public static class Bool_LiterContext extends ParserRuleContext {
-		public TerminalNode FALSE() { return getToken(BasicParser.FALSE, 0); }
 		public TerminalNode TRUE() { return getToken(BasicParser.TRUE, 0); }
+		public TerminalNode FALSE() { return getToken(BasicParser.FALSE, 0); }
 		public Bool_LiterContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1889,23 +1892,23 @@ public class BasicParser extends Parser {
 	}
 
 	public static class ArrayelemContext extends ParserRuleContext {
-		public List<TerminalNode> OPEN_SQUAREB() { return getTokens(BasicParser.OPEN_SQUAREB); }
-		public TerminalNode OPEN_SQUAREB(int i) {
-			return getToken(BasicParser.OPEN_SQUAREB, i);
+		public TerminalNode CLOSE_SQUAREB(int i) {
+			return getToken(BasicParser.CLOSE_SQUAREB, i);
 		}
+		public List<TerminalNode> CLOSE_SQUAREB() { return getTokens(BasicParser.CLOSE_SQUAREB); }
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
-		public TerminalNode CLOSE_SQUAREB(int i) {
-			return getToken(BasicParser.CLOSE_SQUAREB, i);
+		public TerminalNode OPEN_SQUAREB(int i) {
+			return getToken(BasicParser.OPEN_SQUAREB, i);
 		}
+		public List<TerminalNode> OPEN_SQUAREB() { return getTokens(BasicParser.OPEN_SQUAREB); }
 		public IdentContext ident() {
 			return getRuleContext(IdentContext.class,0);
 		}
-		public List<TerminalNode> CLOSE_SQUAREB() { return getTokens(BasicParser.CLOSE_SQUAREB); }
 		public ArrayelemContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1960,8 +1963,8 @@ public class BasicParser extends Parser {
 	}
 
 	public static class ArrayliterContext extends ParserRuleContext {
-		public TerminalNode OPEN_SQUAREB() { return getToken(BasicParser.OPEN_SQUAREB, 0); }
 		public TerminalNode CLOSE_SQUAREB() { return getToken(BasicParser.CLOSE_SQUAREB, 0); }
+		public TerminalNode OPEN_SQUAREB() { return getToken(BasicParser.OPEN_SQUAREB, 0); }
 		public ArglistContext arglist() {
 			return getRuleContext(ArglistContext.class,0);
 		}
@@ -2007,10 +2010,10 @@ public class BasicParser extends Parser {
 	}
 
 	public static class ProgContext extends ParserRuleContext {
+		public TerminalNode EOF() { return getToken(BasicParser.EOF, 0); }
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
-		public TerminalNode EOF() { return getToken(BasicParser.EOF, 0); }
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
@@ -2067,12 +2070,6 @@ public class BasicParser extends Parser {
 		}
 		return true;
 	}
-	private boolean stat_sempred(StatContext _localctx, int predIndex) {
-		switch (predIndex) {
-		case 0: return precpred(_ctx, 1);
-		}
-		return true;
-	}
 	private boolean arraytype_sempred(ArraytypeContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 1: return precpred(_ctx, 2);
@@ -2087,6 +2084,12 @@ public class BasicParser extends Parser {
 		case 5: return precpred(_ctx, 10);
 		case 6: return precpred(_ctx, 9);
 		case 7: return precpred(_ctx, 8);
+		}
+		return true;
+	}
+	private boolean stat_sempred(StatContext _localctx, int predIndex) {
+		switch (predIndex) {
+		case 0: return precpred(_ctx, 1);
 		}
 		return true;
 	}

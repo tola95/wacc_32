@@ -1,3 +1,7 @@
+package WACCFrontEnd;
+
+import antlr.BasicParser;
+
 
 public class SyntaxChecker {
 	

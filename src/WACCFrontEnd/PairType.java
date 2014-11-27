@@ -1,3 +1,5 @@
+package WACCFrontEnd;
+
 
 public class PairType implements Type {
 	
@@ -30,6 +32,11 @@ public class PairType implements Type {
 			return (t == PrimType.ANY);
 		}
 		return false;
+	}
+
+	@Override
+	public int getSize() {
+		return 4;
 	}
 	
 

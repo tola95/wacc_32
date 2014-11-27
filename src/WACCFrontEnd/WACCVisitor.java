@@ -1,14 +1,22 @@
+package WACCFrontEnd;
+
 import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
+import codeGen.WACCAssembler;
+
+import antlr.BasicParser;
+import antlr.BasicParserBaseVisitor;
+
 
 
 public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	
-	private SymbolTable TOP_ST; 
+	public static SymbolTable TOP_ST; 
 	HashMap<String, Function> functions = new HashMap<String, Function>();
 	
 	
@@ -34,11 +42,13 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     @Override
 	public Type visitFunc(BasicParser.FuncContext ctx) {
     	SymbolTable symboltable1 = new SymbolTable(TOP_ST, visit(ctx.type()));
+    	TOP_ST.addChildren(symboltable1);
     	TOP_ST = symboltable1;
     	if (ctx.paramlist() != null) {
     		visit(ctx.paramlist());
     	}
     	SymbolTable symboltable2 = new SymbolTable(symboltable1);
+    	symboltable1.addChildren(symboltable2);
     	TOP_ST = symboltable2;
     	SyntaxChecker.checkReturnType(ctx.stat());
     	if (!SyntaxChecker.checkReturnType(ctx.stat())) {
@@ -315,7 +325,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 			System.err.println("Identifier " + id + " at line " + ctx.start.getLine() +
 					" and position " + ctx.start.getCharPositionInLine() + " already declared");
 			System.exit(200);
-		}		
+		}
 		return null;
 	}
 	
@@ -340,6 +350,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     @Override 
     public Type visitBegin_Stat(@NotNull BasicParser.Begin_StatContext ctx) { 
     	SymbolTable symbolTable1 = new SymbolTable(TOP_ST);
+    	TOP_ST.addChildren(symbolTable1);
     	TOP_ST = symbolTable1;
     	visit(ctx.stat());
     	TOP_ST = TOP_ST.getParent();
@@ -427,10 +438,12 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     	    System.exit(200); 
     	}
     	SymbolTable sym1 = new SymbolTable(TOP_ST);
+    	TOP_ST.addChildren(sym1);
     	TOP_ST = sym1;
     	visit(ctx.stat(0));
     	TOP_ST = TOP_ST.getParent();
     	SymbolTable sym2 = new SymbolTable(TOP_ST);
+    	TOP_ST.addChildren(sym2);
     	TOP_ST = sym2;
     	visit(ctx.stat(1));
    		TOP_ST = TOP_ST.getParent();
@@ -448,6 +461,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     	    System.exit(200);
     	}
     	SymbolTable sym1 = new SymbolTable(TOP_ST);
+    	TOP_ST.addChildren(sym1);
     	TOP_ST = sym1;
     	visit(ctx.stat());
     	TOP_ST = TOP_ST.getParent();
@@ -471,6 +485,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
     
     @Override 
     public Type visitStrLiter_Expr(@NotNull BasicParser.StrLiter_ExprContext ctx) { 
+    	WACCAssembler.data.add(ctx.getText());
     	return PrimType.STRING; 
     }
     

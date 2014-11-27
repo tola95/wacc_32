@@ -1,5 +1,8 @@
 lexer grammar BasicLexer;
 
+@header {
+package antlr;
+}
 //binary operators 
 
 DIV : '/' ;

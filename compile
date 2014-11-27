@@ -5,6 +5,6 @@
 
 a = ARGV[0]
 
-system "java -cp bin/:lib/antlr-4.4-complete.jar WACCMain #{a}"
+system "java -cp bin/:lib/antlr-4.4-complete.jar WACCFrontEnd.WACCMain #{a}"
 
 exit $?.exitstatus
