@@ -9,7 +9,7 @@ import java.util.Map;
 public class SymbolTable {
 	SymbolTable parent;
 	HashMap<String, Type> dictionary;
-	private int totalScope = 0;
+	public static int totalScope = 0;
 	private Type returnType;
 	private List<SymbolTable> children = new ArrayList<>();
 
@@ -86,11 +86,9 @@ public class SymbolTable {
 		while (st != null) {
 			for (Map.Entry<String, Type> entry : st.getDictionary().entrySet()) {
 				if (entry.getKey().equals(s)) {
-					n += entry.getValue().getSize();
 					return n;
-				} else {
-					n += entry.getValue().getSize();
 				}
+				n += entry.getValue().getSize();
 			}
 			st = st.getParent();
 		}

@@ -10,6 +10,15 @@ public class Address implements Operand{
 		this.imm = imm;
 	}
 	
+	public Address(Reg reg, int imm) {
+		this.reg = reg;
+		if (imm == 0){
+			this.imm = null;
+		} else {
+			this.imm = new Immediate(Integer.toString(imm));
+		}	
+	}
+	
 	@Override
 	public String toString() {
 		if (imm == null) {
