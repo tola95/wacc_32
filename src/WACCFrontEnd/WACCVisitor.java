@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.misc.NotNull;
 
+import codeGen.DataManager;
 import codeGen.WACCAssembler;
 
 import antlr.BasicParser;
@@ -350,6 +351,11 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	@Override
 	public Type visitRead_Stat(@NotNull BasicParser.Read_StatContext ctx) {
 		Type t = visit(ctx.assignlhs());
+		switch(t.toString()) {
+		case "INT":
+			DataManager.dataAdd(WACCAssembler.data, DataManager.INT);
+			break;
+		}
 		if (!(t.isOfType(PrimType.CHAR) || t.isOfType(PrimType.INT) || t
 				.isOfType(PrimType.STRING))) {
 			System.err.println("Cannot read at line " + ctx.start.getLine()
@@ -448,20 +454,11 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		Type t = visit(ctx.expr());
 		switch (t.toString()) {
 		case "STRING":
-			String str = ctx.expr().getText();
-			str = "\"%.*s\\0\"";
-			if (!WACCAssembler.data.contains(str)) {
-				WACCAssembler.data.add(str);
-				str = "\"\\0\"";
-				WACCAssembler.data.add(str.toString());
-			} break;
+			DataManager.dataAdd(WACCAssembler.data, DataManager.STRING);
+			break;
 		case "INT":
-			str = "\"%d\\0\"";
-			if (!WACCAssembler.data.contains(str)) {
-				WACCAssembler.data.add(str);
-				str = "\"\\0\"";
-				WACCAssembler.data.add(str.toString());
-			}
+			DataManager.dataAdd(WACCAssembler.data, DataManager.INT);
+			break;
 		}	
 		return null;
 	}

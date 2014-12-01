@@ -8,6 +8,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import Intsr.ARMInstruction;
 import Intsr.Address;
+import Intsr.Data;
 import Intsr.Directives;
 import Intsr.Immediate;
 import Intsr.Instruc;
@@ -16,6 +17,7 @@ import Intsr.Label;
 import Intsr.Operand;
 import Intsr.Reg;
 import WACCFrontEnd.PrimType;
+import WACCFrontEnd.Type;
 import WACCFrontEnd.WACCVisitor;
 import antlr.BasicParser;
 import antlr.BasicParserBaseVisitor;
@@ -35,7 +37,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	@Override
 	public Operand visitProgram(@NotNull BasicParser.ProgramContext ctx) {
 		WACCVisitor.TOP_ST.calculateScope();
-		showData();
+		addData();
 		assemblyCode.add(Directives.TEXT);
 		assemblyCode.add(Directives.GLOBALM);
 		List<BasicParser.FuncContext> functions = ctx.func();
@@ -46,17 +48,9 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		}
 		assemblyCode.add(new Label("main"));
 		enterScope(assemblyCode);
-		int scope = WACCVisitor.TOP_ST.getTotalScope();
-		if (scope > 0) {
-			assemblyCode.add(new ARMInstruction(Instruc.SUB, Reg.SP, Reg.SP,
-					new Immediate("#" + scope)));
-		}
+		createSub();
 		visit(ctx.stat());
-		int i = WACCVisitor.TOP_ST.getTotalScope();
-		if (i > 0) {
-			assemblyCode.add(new ARMInstruction(Instruc.ADD, Reg.SP, Reg.SP,
-					new Immediate("#" + i)));
-		}
+		createAdd();
 		assemblyCode.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Immediate(
 				"=0")));
 		exitScope(assemblyCode);
@@ -126,7 +120,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			endInstruc.add(new ARMInstruction(Instruc.BL, new Immediate("fflush")));
 			exitScope(endInstruc);
 		}
-		
 	}
 
 	public void p_print_int(String str, boolean bool) {
@@ -140,7 +133,32 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		}
 		
 	}
-
+    
+	@Override 
+	public Operand visitRead_Stat(@NotNull BasicParser.Read_StatContext ctx) { 
+		Reg avail = availRegs.get(0);
+		assemblyCode.add(new ARMInstruction(Instruc.ADD, availRegs.get(0), Reg.SP, new Immediate("#" + WACCVisitor.TOP_ST.calculateOffset(ctx.assignlhs().getText()))));
+		assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, avail));
+		String type = WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(ctx.assignlhs().getText()).toString();
+		switch (type) {
+		case "INT" :
+			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("p_read_int")));
+			p_read_int("\"%d\\0\"");
+		}
+		return avail; 
+	}
+	
+	private void p_read_int(String str) {
+		endInstruc.add(new Label("p_read_int"));
+		enterScope(endInstruc);
+		endInstruc.add(new ARMInstruction(Instruc.MOV, Reg.R1, Reg.R0));
+		endInstruc.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Immediate(
+				getData(str))));
+		endInstruc.add(new ARMInstruction(Instruc.ADD, Reg.R0, Reg.R0, new Immediate("#4")));
+		endInstruc.add(new ARMInstruction(Instruc.BL, new Immediate("scanf")));
+		exitScope(endInstruc);
+	}
+	
 	@Override
 	public Operand visitPrintln_Stat(
 			@NotNull BasicParser.Println_StatContext ctx) {
@@ -186,20 +204,17 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		return availReg;
 	}
 
-	public void showData() {
+	public void addData() {
 		if (!data.isEmpty()) {
-			System.out.print(Directives.DATA.toString());
+			assemblyCode.add(Directives.DATA);
 			for (int i = 0; i < data.size(); i++) {
-				System.out.print(new Label("msg_" + i).toString());
+				assemblyCode.add(new Label("msg_" + i));
 				String str = data.get(i);
 				int length = str.length() - 2;
 				if (str.contains("\\0")) {
 					length -= 1;
 				}
-				System.out.println(Directives.WORD.toString() + " "
-						+ Integer.toString(length));
-				System.out.println(Directives.ASCII.toString() + " "
-						+ str.toString() + "\n");
+				assemblyCode.add(new Data(length, str));
 			}
 		}
 
@@ -259,13 +274,30 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 				new Immediate("#" + ctx.getText())));
 		return availReg;
 	}
+	
+	private void createSub() {
+		int scope = WACCVisitor.TOP_ST.getTotalScope();
+		while (scope > 0) {
+			assemblyCode.add(new ARMInstruction(Instruc.SUB, Reg.SP, Reg.SP, new Immediate("#" + Math.min(scope, 1024))));
+			scope -= 1024;
+		}
+	}
+	
+	private void createAdd() {
+		int scope = WACCVisitor.TOP_ST.getTotalScope();
+		while (scope > 0) {
+			assemblyCode.add(new ARMInstruction(Instruc.ADD, Reg.SP, Reg.SP, new Immediate("#" + Math.min(scope, 1024))));
+			scope -= 1024;
+		}
+	}
 
 	@Override
 	public Operand visitAssignLhsRhs_Stat(
 			@NotNull BasicParser.AssignLhsRhs_StatContext ctx) {
 		visit(ctx.assignrhs());
-		if (WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(
-				ctx.assignlhs().getText()).equals(PrimType.BOOL)) {
+		Type type = WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(
+				ctx.assignlhs().getText());
+		if (type.equals(PrimType.BOOL) || type.equals(PrimType.CHAR)) {
 			assemblyCode.add(new ARMInstruction(Instruc.STRB, availRegs.get(0),
 					new Address(Reg.SP, null)));
 		} else {
@@ -280,6 +312,8 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	public Operand visitAssignlhs(@NotNull BasicParser.AssignlhsContext ctx) {
 		return visit(ctx.getChild(0));
 	}
+	
+	
 
 	@Override
 	public Operand visitIdent(@NotNull BasicParser.IdentContext ctx) {

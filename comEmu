@@ -1,0 +1,11 @@
+#!/usr/bin/ruby
+
+system "./compile #{ARGV[0]}" 
+var = File.basename(ARGV[0], File.extname(ARGV[0]))
+#var = File.join(File.dirname(ARGV[0]), var)
+system "arm-linux-gnueabi-gcc -o #{var} -mcpu=arm1176jzf-s -mtune=arm1176jzf-s #{var}.s"
+system "qemu-arm -L /usr/arm-linux-gnueabi/ #{var}"
+puts "\n"
+File.delete(var)
+
+

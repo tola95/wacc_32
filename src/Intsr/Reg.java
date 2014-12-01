@@ -17,6 +17,7 @@ public enum Reg implements Operand{
 	R9 ("r9"),
 	R10 ("r10"),
 	R11 ("r11"),
+	R12 ("r12"),
 	SP ("sp"),
 	LR ("lr"),
 	PC ("pc")
@@ -32,7 +33,7 @@ public enum Reg implements Operand{
 		List<Reg> regs = new ArrayList<>();
 		for (Reg r : Reg.values()) {
 			int i = r.ordinal();
-			if (i > 3 && i < 11) {
+			if (i > 3 && i < 13) {
 				regs.add(r);
 			}
 		}

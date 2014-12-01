@@ -45,15 +45,17 @@ public class WACCMain {
 		WACCAssembler waccAssembler = new WACCAssembler();
 		waccAssembler.visit(tree);	
 		// Creating a file
+		File inFile = new File(inputFile);
 		if (outputFile == null) {
-			outputFile = inputFile.replace(".wacc", ".s");
-			FileWriter file = new FileWriter(outputFile);
+			outputFile = inFile.getName();
+			outputFile = outputFile.replace(".wacc", ".s");
+			FileWriter file = new FileWriter(new File(outputFile));
 			for (Instruction arm : WACCAssembler.getCode()) {
 				// Writing to a file
-				file.write(arm.toString());
+				file.write("\t" + arm.toString());
 			}
 			file.close();
 		}
-		//waccAssembler.getInstructions();
+		//waccAssembler.getInstructions();		
 	}
 }
