@@ -16,6 +16,7 @@ import Intsr.Label;
 import Intsr.Operand;
 import Intsr.Reg;
 import WACCFrontEnd.PrimType;
+import WACCFrontEnd.Type;
 import WACCFrontEnd.WACCVisitor;
 import antlr.BasicParser;
 import antlr.BasicParserBaseVisitor;
@@ -46,17 +47,9 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		}
 		assemblyCode.add(new Label("main"));
 		enterScope(assemblyCode);
-		int scope = WACCVisitor.TOP_ST.getTotalScope();
-		if (scope > 0) {
-			assemblyCode.add(new ARMInstruction(Instruc.SUB, Reg.SP, Reg.SP,
-					new Immediate("#" + scope)));
-		}
+		createSub();
 		visit(ctx.stat());
-		int i = WACCVisitor.TOP_ST.getTotalScope();
-		if (i > 0) {
-			assemblyCode.add(new ARMInstruction(Instruc.ADD, Reg.SP, Reg.SP,
-					new Immediate("#" + i)));
-		}
+		createAdd();
 		assemblyCode.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Immediate(
 				"=0")));
 		exitScope(assemblyCode);
@@ -280,13 +273,30 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 				new Immediate("#" + ctx.getText())));
 		return availReg;
 	}
+	
+	private void createSub() {
+		int scope = WACCVisitor.TOP_ST.getTotalScope();
+		while (scope > 0) {
+			assemblyCode.add(new ARMInstruction(Instruc.SUB, Reg.SP, Reg.SP, new Immediate("#" + Math.min(scope, 1024))));
+			scope -= 1024;
+		}
+	}
+	
+	private void createAdd() {
+		int scope = WACCVisitor.TOP_ST.getTotalScope();
+		while (scope > 0) {
+			assemblyCode.add(new ARMInstruction(Instruc.ADD, Reg.SP, Reg.SP, new Immediate("#" + Math.min(scope, 1024))));
+			scope -= 1024;
+		}
+	}
 
 	@Override
 	public Operand visitAssignLhsRhs_Stat(
 			@NotNull BasicParser.AssignLhsRhs_StatContext ctx) {
 		visit(ctx.assignrhs());
-		if (WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(
-				ctx.assignlhs().getText()).equals(PrimType.BOOL)) {
+		Type type = WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(
+				ctx.assignlhs().getText());
+		if (type.equals(PrimType.BOOL) || type.equals(PrimType.CHAR)) {
 			assemblyCode.add(new ARMInstruction(Instruc.STRB, availRegs.get(0),
 					new Address(Reg.SP, null)));
 		} else {

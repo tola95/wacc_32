@@ -7,4 +7,5 @@ system "arm-linux-gnueabi-gcc -o #{var} -mcpu=arm1176jzf-s -mtune=arm1176jzf-s #
 system "qemu-arm -L /usr/arm-linux-gnueabi/ #{var}"
 puts "\n"
 File.delete(var)
-exit $?.exitstatus
+
+
