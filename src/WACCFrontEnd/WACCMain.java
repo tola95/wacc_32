@@ -45,19 +45,14 @@ public class WACCMain {
 		WACCAssembler waccAssembler = new WACCAssembler();
 		waccAssembler.visit(tree);	
 		// Creating a file
-		File inFile = new File(inputFile);
 		if (outputFile == null) {
-			outputFile = inFile.getName();
-			outputFile = outputFile.replace(".wacc", ".s");
-			String ofile = "/homes/ss11813/wacc_32/" + outputFile;
-			File file = new File(ofile);
-			FileOutputStream fos = new FileOutputStream(file);
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+			outputFile = inputFile.replace(".wacc", ".s");
+			FileWriter file = new FileWriter(outputFile);
 			for (Instruction arm : WACCAssembler.getCode()) {
 				// Writing to a file
-				bw.write(arm.toString());
+				file.write(arm.toString());
 			}
-			bw.close();
+			file.close();
 		}
 		//waccAssembler.getInstructions();
 	}
