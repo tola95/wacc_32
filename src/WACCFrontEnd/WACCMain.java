@@ -20,7 +20,7 @@ import antlr.BasicParser;
 
 public class WACCMain {
 	public static void main(String[] args) throws Exception {
-		//Input and output files created
+		// Input and output files created
 		String inputFile = null;
 		String outputFile = null;
 		if (args.length > 0) inputFile = args[0];
@@ -37,17 +37,21 @@ public class WACCMain {
 		ParseTree tree = parser.program();
 		if (WACCErrorListener.isError()) System.exit(100);
 		
-		//Creaing a new WACCVisitor
+		// Creaing a new WACCVisitor
 		WACCVisitor waccVisitor = new WACCVisitor();
 		waccVisitor.visit(tree);
 		
-		//Creating a new WACCAssembler
+		// Creating a new WACCAssembler
 		WACCAssembler waccAssembler = new WACCAssembler();
 		waccAssembler.visit(tree);	
+		// Creating a file
+		File inFile = new File(inputFile);
 		if (outputFile == null) {
+			outputFile = inFile.getName();
 			outputFile = inputFile.replace(".wacc", ".s");
 			FileWriter file = new FileWriter(outputFile);
 			for (Instruction arm : WACCAssembler.getCode()) {
+				// Writing to a file
 				file.write(arm.toString());
 			}
 			file.close();
