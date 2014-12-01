@@ -3,8 +3,10 @@ package WACCFrontEnd;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
@@ -44,15 +46,11 @@ public class WACCMain {
 		waccAssembler.visit(tree);	
 		if (outputFile == null) {
 			outputFile = inputFile.replace(".wacc", ".s");
-			File file = new File(outputFile);
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-			FileWriter fw = new FileWriter(file.getAbsoluteFile());
-			BufferedWriter bw = new BufferedWriter(fw);
+			FileWriter file = new FileWriter(outputFile);
 			for (Instruction arm : WACCAssembler.getCode()) {
-				bw.write(arm.toString());
+				file.write(arm.toString());
 			}
+			file.close();
 		}
 		//waccAssembler.getInstructions();
 	}
