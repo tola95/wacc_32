@@ -1,6 +1,9 @@
 package WACCFrontEnd;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.InputStream;
 
 import org.antlr.v4.runtime.*;
@@ -8,6 +11,8 @@ import org.antlr.v4.runtime.tree.*;
 
 import codeGen.WACCAssembler;
 
+import Intsr.ARMInstruction;
+import Intsr.Instruction;
 import antlr.BasicLexer;
 import antlr.BasicParser;
 
@@ -20,7 +25,6 @@ public class WACCMain {
 		InputStream is = System.in;
 		if (inputFile != null) {
 			is = new FileInputStream(inputFile);
-			outputFile = inputFile.replace(".wacc", ".s");
 		}
 		ANTLRInputStream input = new ANTLRInputStream(is);
 		BasicLexer lexer = new BasicLexer(input);
@@ -38,6 +42,18 @@ public class WACCMain {
 		//Creating a new WACCAssembler
 		WACCAssembler waccAssembler = new WACCAssembler();
 		waccAssembler.visit(tree);	
-		waccAssembler.getInstructions();
+		if (outputFile == null) {
+			outputFile = inputFile.replace(".wacc", ".s");
+			File file = new File(outputFile);
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+			for (Instruction arm : WACCAssembler.getCode()) {
+				bw.write(arm.toString());
+			}
+		}
+		//waccAssembler.getInstructions();
 	}
 }
