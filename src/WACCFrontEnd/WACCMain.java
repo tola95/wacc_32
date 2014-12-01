@@ -49,14 +49,13 @@ public class WACCMain {
 		if (outputFile == null) {
 			outputFile = inFile.getName();
 			outputFile = outputFile.replace(".wacc", ".s");
-			String ofile = "/homes/ss11813/wacc_32/" + outputFile;
-			FileWriter file = new FileWriter(new File(ofile));
+			FileWriter file = new FileWriter(new File(outputFile));
 			for (Instruction arm : WACCAssembler.getCode()) {
 				// Writing to a file
 				file.write(arm.toString());
 			}
 			file.close();
 		}
-		//waccAssembler.getInstructions();
+		//waccAssembler.getInstructions();		
 	}
 }
