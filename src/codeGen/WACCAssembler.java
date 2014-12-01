@@ -125,7 +125,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			endInstruc.add(new ARMInstruction(Instruc.BL, new Immediate("fflush")));
 			exitScope(endInstruc);
 		}
-		
 	}
 
 	public void p_print_int(String str, boolean bool) {
@@ -139,7 +138,32 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		}
 		
 	}
-
+    
+	@Override 
+	public Operand visitRead_Stat(@NotNull BasicParser.Read_StatContext ctx) { 
+		Reg avail = availRegs.get(0);
+		assemblyCode.add(new ARMInstruction(Instruc.ADD, availRegs.get(0), Reg.SP, new Immediate("#" + WACCVisitor.TOP_ST.calculateOffset(ctx.assignlhs().getText()))));
+		assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, avail));
+		String type = WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(ctx.assignlhs().getText()).toString();
+		switch (type) {
+		case "INT" :
+			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("p_read_int")));
+			p_read_int("\"%d\\0\"");
+		}
+		return avail; 
+	}
+	
+	private void p_read_int(String str) {
+		endInstruc.add(new Label("p_read_int"));
+		enterScope(endInstruc);
+		endInstruc.add(new ARMInstruction(Instruc.MOV, Reg.R1, Reg.R0));
+		endInstruc.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Immediate(
+				getData(str))));
+		endInstruc.add(new ARMInstruction(Instruc.ADD, Reg.R0, Reg.R0, new Immediate("#4")));
+		endInstruc.add(new ARMInstruction(Instruc.BL, new Immediate("scanf")));
+		exitScope(endInstruc);
+	}
+	
 	@Override
 	public Operand visitPrintln_Stat(
 			@NotNull BasicParser.Println_StatContext ctx) {
@@ -279,6 +303,8 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	public Operand visitAssignlhs(@NotNull BasicParser.AssignlhsContext ctx) {
 		return visit(ctx.getChild(0));
 	}
+	
+	
 
 	@Override
 	public Operand visitIdent(@NotNull BasicParser.IdentContext ctx) {

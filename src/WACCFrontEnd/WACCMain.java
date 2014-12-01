@@ -45,9 +45,12 @@ public class WACCMain {
 		WACCAssembler waccAssembler = new WACCAssembler();
 		waccAssembler.visit(tree);	
 		// Creating a file
+		File inFile = new File(inputFile);
 		if (outputFile == null) {
-			outputFile = inputFile.replace(".wacc", ".s");
-			FileWriter file = new FileWriter(outputFile);
+			outputFile = inFile.getName();
+			outputFile = outputFile.replace(".wacc", ".s");
+			String ofile = "/homes/ss11813/wacc_32/" + outputFile;
+			FileWriter file = new FileWriter(new File(ofile));
 			for (Instruction arm : WACCAssembler.getCode()) {
 				// Writing to a file
 				file.write(arm.toString());
