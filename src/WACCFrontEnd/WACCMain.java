@@ -52,7 +52,7 @@ public class WACCMain {
 			FileWriter file = new FileWriter(new File(outputFile));
 			for (Instruction arm : WACCAssembler.getCode()) {
 				// Writing to a file
-				file.write(arm.toString());
+				file.write("\t" + arm.toString());
 			}
 			file.close();
 		}
