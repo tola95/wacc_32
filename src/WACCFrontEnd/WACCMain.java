@@ -48,8 +48,10 @@ public class WACCMain {
 		File inFile = new File(inputFile);
 		if (outputFile == null) {
 			outputFile = inFile.getName();
-			outputFile = inputFile.replace(".wacc", ".s");
-			FileWriter file = new FileWriter(outputFile);
+			outputFile = outputFile.replace(".wacc", ".s");
+			String ofile = "/homes/ss11813/wacc_32/" + outputFile;
+			System.out.println(outputFile);
+			FileWriter file = new FileWriter(ofile);
 			for (Instruction arm : WACCAssembler.getCode()) {
 				// Writing to a file
 				file.write(arm.toString());
