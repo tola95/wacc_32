@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import java.util.List;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 import Intsr.ARMInstruction;
 import Intsr.Address;
@@ -311,6 +312,31 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			assemblyCode.add(new ARMInstruction(Instruc.MOV, availRegs.get(0),
 					new Immediate("#1")));
 		return availRegs.get(0);
+	}
+	
+	@Override
+	public Operand visitCompare_Expr(@NotNull BasicParser.Compare_ExprContext ctx) {
+		Operand arg1 = visit(ctx.expr(0));
+		Operand arg2 = visit(ctx.expr(1));
+		
+		assemblyCode.add(new ARMInstruction(Instruc.CMP, arg1, arg2));
+		
+		switch (ctx.getChild(1).getText()) {
+		case "<"  : assemblyCode.add(new ARMInstruction(Instruc.MOVLT, arg1, new Immediate("#1")));
+		            assemblyCode.add(new ARMInstruction(Instruc.MOVGE, arg1, new Immediate("#0")));
+		            break;
+		case "<=" : assemblyCode.add(new ARMInstruction(Instruc.MOVLE, arg1, new Immediate("#1")));
+                    assemblyCode.add(new ARMInstruction(Instruc.MOVGT, arg1, new Immediate("#0")));         
+                    break;
+		case ">"  : assemblyCode.add(new ARMInstruction(Instruc.MOVGT, arg1, new Immediate("#1")));
+                    assemblyCode.add(new ARMInstruction(Instruc.MOVLE, arg1, new Immediate("#0")));
+                    break;
+		case ">=" : assemblyCode.add(new ARMInstruction(Instruc.MOVGE, arg1, new Immediate("#1")));
+                    assemblyCode.add(new ARMInstruction(Instruc.MOVLT, arg1, new Immediate("#0")));
+                    break;
+		default   : 
+		}
+		return arg1;
 	}
 
 	public String getData(String s) {
