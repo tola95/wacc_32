@@ -50,13 +50,14 @@ public class WACCMain {
 			outputFile = inFile.getName();
 			outputFile = outputFile.replace(".wacc", ".s");
 			String ofile = "/homes/ss11813/wacc_32/" + outputFile;
-			System.out.println(outputFile);
-			FileWriter file = new FileWriter(ofile);
+			File file = new File(ofile);
+			FileOutputStream fos = new FileOutputStream(file);
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 			for (Instruction arm : WACCAssembler.getCode()) {
 				// Writing to a file
-				file.write(arm.toString());
+				bw.write(arm.toString());
 			}
-			file.close();
+			bw.close();
 		}
 		//waccAssembler.getInstructions();
 	}
