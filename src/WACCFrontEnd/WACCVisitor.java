@@ -355,6 +355,8 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		case "INT":
 			DataManager.dataAdd(WACCAssembler.data, DataManager.INT);
 			break;
+		case "CHAR":
+			DataManager.dataAdd(WACCAssembler.data, DataManager.CHAR);
 		}
 		if (!(t.isOfType(PrimType.CHAR) || t.isOfType(PrimType.INT) || t
 				.isOfType(PrimType.STRING))) {

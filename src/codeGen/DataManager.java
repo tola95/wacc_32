@@ -2,15 +2,14 @@ package codeGen;
 
 import java.util.List;
 
-import Intsr.Instruction;
-
 public enum DataManager {
 
-	STRING, INT;
+	STRING, INT, CHAR;
 
 	private static boolean nullAdded = false;
 	private static boolean stringAdded = false;
 	private static boolean intAdded = false;
+	private static boolean charAdded = false;
 
 	public static void dataAdd(List<String> list, DataManager dm) {
 		switch (dm) {
@@ -26,6 +25,13 @@ public enum DataManager {
 				list.add("\"%.*s\\0\"");
 			}
 			stringAdded = true;
+			addNull(list);
+			break;
+		case CHAR:
+			if (!charAdded) {
+				list.add("\" %c\\0\"");
+			}
+			charAdded = true;
 			addNull(list);
 		}
 
