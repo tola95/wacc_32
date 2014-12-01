@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 
 import Intsr.ARMInstruction;
 import Intsr.Address;
+import Intsr.Data;
 import Intsr.Directives;
 import Intsr.Immediate;
 import Intsr.Instruc;
@@ -34,7 +35,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	@Override
 	public Operand visitProgram(@NotNull BasicParser.ProgramContext ctx) {
 		WACCVisitor.TOP_ST.calculateScope();
-		showData();
+		addData();
 		assemblyCode.add(Directives.TEXT);
 		assemblyCode.add(Directives.GLOBALM);
 		List<BasicParser.FuncContext> functions = ctx.func();
@@ -209,20 +210,17 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		return availReg;
 	}
 
-	public void showData() {
+	public void addData() {
 		if (!data.isEmpty()) {
-			System.out.print(Directives.DATA.toString());
+			assemblyCode.add(Directives.DATA);
 			for (int i = 0; i < data.size(); i++) {
-				System.out.print(new Label("msg_" + i).toString());
+				assemblyCode.add(new Label("msg_" + i));
 				String str = data.get(i);
 				int length = str.length() - 2;
 				if (str.contains("\\0")) {
 					length -= 1;
 				}
-				System.out.println(Directives.WORD.toString() + " "
-						+ Integer.toString(length));
-				System.out.println(Directives.ASCII.toString() + " "
-						+ str.toString() + "\n");
+				assemblyCode.add(new Data(length, str));
 			}
 		}
 
