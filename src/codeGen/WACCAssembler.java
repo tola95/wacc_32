@@ -174,8 +174,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, reg));
 		// The expression after println can be many things. One of which is
 		// identifiers.
-		
-			System.out.println(reg.getType());
 			switch (reg.getType()) {
 			case INT:
 				assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
@@ -241,7 +239,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 				ctx.assignlhs().getText()).toString();
 		switch (type) {
 		case "INT":
-
 			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
 					"p_read_int")));
 			if (!manage.read_int())
@@ -423,10 +420,9 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	@Override
 	public Operand visitAssignLhsRhs_Stat(
 			@NotNull BasicParser.AssignLhsRhs_StatContext ctx) {
-		visit(ctx.assignrhs());
 		Type type = WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(ctx
 				.assignlhs().getText());
-		Reg avail = availRegs.useRegs();
+		Operand avail = visit(ctx.assignrhs());
 		if (type.equals(PrimType.BOOL) || type.equals(PrimType.CHAR)) {
 			assemblyCode.add(new ARMInstruction(Instruc.STRB, avail,
 					new Address(Reg.SP, null)));
@@ -439,7 +435,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 
 	@Override
 	public Operand visitAssignlhs(@NotNull BasicParser.AssignlhsContext ctx) {
-		return visit(ctx.getChild(0));
+		return visit(ctx.ident());
 	}
 
 	@Override

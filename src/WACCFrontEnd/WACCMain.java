@@ -46,7 +46,7 @@ public class WACCMain {
 		waccAssembler.visit(tree);	
 		// Creating a file
 		File inFile = new File(inputFile);
-		/*if (outputFile == null) {
+		if (outputFile == null) {
 			outputFile = inFile.getName();
 			outputFile = outputFile.replace(".wacc", ".s");
 			FileWriter file = new FileWriter(new File(outputFile));
@@ -55,7 +55,7 @@ public class WACCMain {
 				file.write("\t" + arm.toString());
 			}
 			file.close();
-		}*/
-		waccAssembler.getInstructions();		
+		}
+		//waccAssembler.getInstructions();		
 	}
 }
