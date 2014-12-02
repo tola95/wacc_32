@@ -158,6 +158,14 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 
 	@Override
 	public Type visitFactor_Expr(@NotNull BasicParser.Factor_ExprContext ctx) {
+		String oper = ctx.getChild(1).getText();
+		if (oper.equals("/")) {
+			DataManager.dataAdd(WACCAssembler.data, DataManager.STRING);
+			DataManager.dataAdd(WACCAssembler.data, DataManager.DIVIDE);
+		} else {
+			DataManager.dataAdd(WACCAssembler.data, DataManager.STRING);
+			DataManager.dataAdd(WACCAssembler.data, DataManager.OVERFLOW);
+		}
 		Type expr1 = visit(ctx.expr(0));
 		Type expr2 = visit(ctx.expr(1));
 		if (!expr1.isOfType(PrimType.INT)) {
@@ -177,6 +185,11 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 
 	@Override
 	public Type visitTerm_Expr(@NotNull BasicParser.Term_ExprContext ctx) {
+		String oper = ctx.getChild(1).getText();
+		if (oper.equals("+")) {
+			DataManager.dataAdd(WACCAssembler.data, DataManager.STRING);
+			DataManager.dataAdd(WACCAssembler.data, DataManager.OVERFLOW);
+		}
 		Type expr1 = visit(ctx.expr(0));
 		Type expr2 = visit(ctx.expr(1));
 		if (!expr1.isOfType(PrimType.INT)) {

@@ -4,13 +4,15 @@ import java.util.List;
 
 public enum DataManager {
 
-	STRING, INT, CHAR, BOOL;
+	STRING, INT, CHAR, BOOL, DIVIDE, OVERFLOW;
 
 	private static boolean nullAdded = false;
 	private static boolean stringAdded = false;
 	private static boolean intAdded = false;
 	private static boolean charAdded = false;
 	private static boolean boolAdded = false;
+	private static boolean divideByAdded = false;
+	private static boolean overflowAdded = false;
 
 	public static void dataAdd(List<String> list, DataManager dm) {
 		switch (dm) {
@@ -42,8 +44,22 @@ public enum DataManager {
 			}
 			boolAdded = true;
 			addNull(list);
+			break;
+		case DIVIDE:
+			if (!divideByAdded) {
+				list.add("\"DivideByZeroError: divide or modul by zero\\n\\0\"");
+			}
+			divideByAdded = true;
+			addNull(list);
+			break;
+		case OVERFLOW:
+			if (!overflowAdded) {
+				list.add("\"OverflowError: the result is too small/large to store in a 4-byte signed-integer.\\n\"");
+			}
+			overflowAdded = true;
+			addNull(list);
+			break;
 		}
-
 	}
 	
 	private static void addNull(List<String> list) {
