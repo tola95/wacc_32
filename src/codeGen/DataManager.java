@@ -4,12 +4,13 @@ import java.util.List;
 
 public enum DataManager {
 
-	STRING, INT, CHAR;
+	STRING, INT, CHAR, BOOL;
 
 	private static boolean nullAdded = false;
 	private static boolean stringAdded = false;
 	private static boolean intAdded = false;
 	private static boolean charAdded = false;
+	private static boolean boolAdded = false;
 
 	public static void dataAdd(List<String> list, DataManager dm) {
 		switch (dm) {
@@ -32,6 +33,13 @@ public enum DataManager {
 				list.add("\" %c\\0\"");
 			}
 			charAdded = true;
+			addNull(list);
+		case BOOL:
+			if (!boolAdded) {
+				list.add("\"true\\0\"");
+				list.add("\"false\\0\"");
+			}
+			boolAdded = true;
 			addNull(list);
 		}
 
