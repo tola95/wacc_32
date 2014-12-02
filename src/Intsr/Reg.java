@@ -24,9 +24,19 @@ public enum Reg implements Operand{
 	;
 
 	private final String reg;
+	private Types type = null;
 	
 	private Reg(String reg) {
 		this.reg = reg;
+	}
+	
+	public void setType(Types type) { 
+		this.type = type;
+	}
+	
+	@Override
+	public Types getType() {
+		return type;
 	}
 	
 	public static List<Reg> getRegs() {
@@ -38,10 +48,6 @@ public enum Reg implements Operand{
 			}
 		}
 		return regs;
-	}
-	
-	public String getType() {
-		return type;
 	}
 	
 	public String toString() {

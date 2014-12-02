@@ -16,6 +16,7 @@ import Intsr.Label;
 import Intsr.Operand;
 import Intsr.Reg;
 import Intsr.RegManager;
+import Intsr.Types;
 import WACCFrontEnd.PrimType;
 import WACCFrontEnd.Type;
 import WACCFrontEnd.WACCVisitor;
@@ -98,7 +99,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 					new Immediate(getData(str))));
 			partOfPrint();
 		}
-
 	}
 
 	public void partOfPrint() {
@@ -134,7 +134,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		return print(ctx.expr());
 	}
 
-	public Operand print(BasicParser.ExprContext ctx) {
+	/*public Operand print(BasicParser.ExprContext ctx) {
 		Operand reg = visit(ctx);
 		assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, reg));
 		// The expression after println can be many things. One of which is
@@ -143,19 +143,19 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		if (ctx.getChild(0) instanceof BasicParser.IdentContext) {
 			String type = WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(
 					ctx.getText()).toString();
-			System.out.println(type);
-			switch (type) {
-			case "INT":
+			System.out.println(reg.getType());
+			switch (reg.getType()) {
+			case INT:
 				assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
 						"p_print_int")));
 				p_print_int("\"%d\\0\"");
 				break;
-			case "CHAR":
+			case CHAR:
 				assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
 						"putchar")));
 				p_print_statement("\"%.*s\\0\"");
 				break;
-			case "STRING":
+			case STRING:
 				assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
 						"p_print_string")));
 				p_print_statement("\"%.*s\\0\"");
@@ -166,6 +166,33 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 					"p_print_string")));
 			p_print_statement("\"%.*s\\0\"");
 		}
+		return reg;
+	}*/
+	
+	public Operand print(BasicParser.ExprContext ctx) {
+		Operand reg = visit(ctx);
+		assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, reg));
+		// The expression after println can be many things. One of which is
+		// identifiers.
+		
+			System.out.println(reg.getType());
+			switch (reg.getType()) {
+			case INT:
+				assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
+						"p_print_int")));
+				p_print_int("\"%d\\0\"");
+				break;
+			case CHAR:
+				assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
+						"putchar")));
+				p_print_statement("\"%.*s\\0\"");
+				break;
+			case STRING:
+				assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
+						"p_print_string")));
+				p_print_statement("\"%.*s\\0\"");
+				break;
+			}
 		return reg;
 	}
 
@@ -233,6 +260,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	@Override
 	public Operand visitBool_Liter(@NotNull BasicParser.Bool_LiterContext ctx) {
 		Reg avail = availRegs.useRegs();
+		avail.setType(Types.BOOL);
 		if (ctx.getText().equals("false")) {
 			assemblyCode.add(new ARMInstruction(Instruc.MOV, avail,
 					new Immediate("#0")));
@@ -271,6 +299,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	public Operand visitIntLiter_Expr(
 			@NotNull BasicParser.IntLiter_ExprContext ctx) {
 		Reg availReg = availRegs.useRegs();
+		availReg.setType(Types.INT);
 		String s = ctx.getText();
 		int i = Integer.parseInt(s);
 		s = Integer.toString(i);
@@ -341,6 +370,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	public Operand visitCharLiter_Expr(
 			@NotNull BasicParser.CharLiter_ExprContext ctx) {
 		Reg availReg = availRegs.useRegs();
+		availReg.setType(Types.CHAR);
 		String str = "0";
 		if (!ctx.getText().equals("'\\0'")) {
 			str = ctx.getText();
@@ -399,6 +429,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		switch (WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(str)
 				.toString()) {
 		case "INT":
+			avail.setType(Types.INT);
 			assemblyCode.add(new ARMInstruction(Instruc.LDR, avail, add));
 		}
 		return avail;
@@ -408,6 +439,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	public Operand visitStrLiter_Expr(
 			@NotNull BasicParser.StrLiter_ExprContext ctx) {
 		Reg avail = availRegs.useRegs();
+		avail.setType(Types.STRING);
 		assemblyCode.add(new ARMInstruction(Instruc.LDR, avail,
 				new Immediate(getData(ctx.getText()))));
 		return avail;

@@ -28,4 +28,9 @@ public class Address implements Operand{
 		}
 	}
 
+	@Override
+	public Types getType() {
+		return null;
+	}
+
 }

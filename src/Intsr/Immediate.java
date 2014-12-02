@@ -17,4 +17,9 @@ public class Immediate implements Operand{
 		}
 
 	}
+	
+	@Override
+	public Types getType() {
+		return null;
+	}
 }
