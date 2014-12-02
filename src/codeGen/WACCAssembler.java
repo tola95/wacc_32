@@ -638,6 +638,13 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		h.setType(Types.BOOL);
 		return arg1;
 	}
+	
+	//*******//
+	@Override
+	public Operand visitArrayElem_Expr(
+			@NotNull BasicParser.ArrayElem_ExprContext ctx) {
+		return visit(ctx.arrayelem());
+	}
 
 	public String getData(String s) {
 		StringBuilder str = new StringBuilder();
