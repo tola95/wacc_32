@@ -190,8 +190,30 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 						"p_print_string")));
 				p_print_statement("\"%.*s\\0\"");
 				break;
+			case BOOL:
+				assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
+						"p_print_bool")));
+				p_print_bool();
+				break;
 			}
 		return reg;
+	}
+
+	private void p_print_bool() {
+		// TODO Auto-generated method stub
+		if (!manage.print_bool()) {
+			endInstruc.add(new Label("p_print_bool"));
+			enterScope(endInstruc);
+			System.out.println("You smart\n\tYou loyal\n\t");
+			endInstruc.add(new ARMInstruction(Instruc.CMP, Reg.R0, 
+					new Immediate("#1")));
+			endInstruc.add(new ARMInstruction(Instruc.LDRNE, Reg.R0, 
+					new Immediate("=msg_0")));
+			endInstruc.add(new ARMInstruction(Instruc.LDRNE, Reg.R0, 
+					new Immediate("=msg_1")));
+			partOfPrint();
+			
+		}
 	}
 
 	public void p_print_int(String str) {
@@ -476,6 +498,8 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			break;
 		default:
 		}
+		Reg h = (Reg) arg1;
+		h.setType(Types.BOOL);
 		return arg1;
 	}
 
