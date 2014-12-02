@@ -208,10 +208,10 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			enterScope(endInstruc);
 			System.out.println("You smart\n\tYou loyal\n\t");
 			endInstruc.add(new ARMInstruction(Instruc.CMP, Reg.R0, 
-					new Immediate("#1")));
+					new Immediate("#0")));
 			endInstruc.add(new ARMInstruction(Instruc.LDRNE, Reg.R0, 
 					new Immediate("=msg_0")));
-			endInstruc.add(new ARMInstruction(Instruc.LDRNE, Reg.R0, 
+			endInstruc.add(new ARMInstruction(Instruc.LDREQ, Reg.R0, 
 					new Immediate("=msg_1")));
 			partOfPrint();
 			
