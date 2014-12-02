@@ -100,6 +100,12 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		return andOr(Instruc.OR, ctx.expr(0), ctx.expr(2));
 	}
 	
+	private void L1_While(BasicParser.While_StatContext ctx) {
+		assemblyCode.add(new Label("L1"));
+		visit(ctx.stat());
+		L0_While(ctx);
+	}
+	
 	@Override 
 	public Operand visitEquality_Expr(@NotNull BasicParser.Equality_ExprContext ctx) {
 		String oper = ctx.getChild(1).getText();
@@ -113,12 +119,18 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			assemblyCode.add(new ARMInstruction(Instruc.MOVNE, reg1, new Immediate("#1")));
 			assemblyCode.add(new ARMInstruction(Instruc.MOVEQ, reg1, new Immediate("#0")));
 		}
-		
-		assemblyCode.add(new ARMInstruction(Instruc.CMP, reg1, new Immediate("#0")));
-		assemblyCode.add(new ARMInstruction(Instruc.BEQ, new Immediate("L0")));
 		Reg r = (Reg) reg1;
 		r.setType(Types.BOOL);
 		return reg1; 
+	}
+	
+	private void L0_While(BasicParser.While_StatContext ctx) {
+		assemblyCode.add(new Label("L0"));
+		Reg r = availRegs.useRegs();
+		assemblyCode.add(new ARMInstruction(Instruc.LDRSB, r, new Address(Reg.SP, new Immediate("4"))));
+		Operand charReg = visit(ctx.expr());
+		assemblyCode.add(new ARMInstruction(Instruc.CMP, r, new Immediate("#1")));
+		assemblyCode.add(new ARMInstruction(Instruc.BEQ, new Immediate("L1")));
 	}
 	
 	@Override
@@ -341,24 +353,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		p_print_ln("\"\\0\"", printedAlready);
 		printedAlready = true;
 		return reg;
-	}
-	
-	private void L1_While(BasicParser.While_StatContext ctx) {
-		assemblyCode.add(new Label("L1"));
-		visit(ctx.stat());
-		L0_While(ctx);
-	}
-	
-	private void L0_While(BasicParser.While_StatContext ctx) {
-		assemblyCode.add(new Label("L0"));
-		Reg r = availRegs.useRegs();
-		assemblyCode.add(new ARMInstruction(Instruc.LDRSB, r, new Address(Reg.SP, new Immediate("4"))));
-		Operand charReg = visit(ctx.expr());
-		assemblyCode.add(new ARMInstruction(Instruc.CMP, r, charReg));
-		assemblyCode.add(new ARMInstruction(Instruc.MOVNE, r, new Immediate("#1")));
-		assemblyCode.add(new ARMInstruction(Instruc.MOVEQ, r, new Immediate("#0")));
-		assemblyCode.add(new ARMInstruction(Instruc.CMP, r, new Immediate("#1")));
-		assemblyCode.add(new ARMInstruction(Instruc.BEQ, new Immediate("L1")));
 	}
 
 	@Override 

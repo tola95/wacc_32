@@ -34,6 +34,7 @@ public enum DataManager {
 			}
 			charAdded = true;
 			addNull(list);
+			break;
 		case BOOL:
 			if (!boolAdded) {
 				list.add("\"true\\0\"");
