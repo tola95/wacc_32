@@ -195,6 +195,12 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 						"p_print_bool")));
 				p_print_bool();
 				break;
+			case ARRAY:
+				break;
+			case PAIR:
+				break;
+			default:
+				break;
 			}
 		return reg;
 	}
@@ -501,6 +507,13 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		Reg h = (Reg) arg1;
 		h.setType(Types.BOOL);
 		return arg1;
+	}
+	
+	//*******//
+	@Override
+	public Operand visitArrayElem_Expr(
+			@NotNull BasicParser.ArrayElem_ExprContext ctx) {
+		return visit(ctx.arrayelem());
 	}
 
 	public String getData(String s) {
