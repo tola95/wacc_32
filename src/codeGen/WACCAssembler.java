@@ -201,6 +201,41 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	public Operand visitPrint_Stat(@NotNull BasicParser.Print_StatContext ctx) {
 		return print(ctx.expr());
 	}
+
+	/*public Operand print(BasicParser.ExprContext ctx) {
+		Operand reg = visit(ctx);
+		assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, reg));
+		// The expression after println can be many things. One of which is
+		// identifiers.
+		// This if statement checks that case and identifies its type.
+		if (ctx.getChild(0) instanceof BasicParser.IdentContext) {
+			String type = WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(
+					ctx.getText()).toString();
+			System.out.println(reg.getType());
+			switch (reg.getType()) {
+			case INT:
+				assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
+						"p_print_int")));
+				p_print_int("\"%d\\0\"");
+				break;
+			case CHAR:
+				assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
+						"putchar")));
+				p_print_statement("\"%.*s\\0\"");
+				break;
+			case STRING:
+				assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
+						"p_print_string")));
+				p_print_statement("\"%.*s\\0\"");
+				break;
+			}
+		} else {
+			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
+					"p_print_string")));
+			p_print_statement("\"%.*s\\0\"");
+		}
+		return reg;
+	}*/
 	
 	public Operand print(BasicParser.ExprContext ctx) {
 		Operand reg = visit(ctx);
