@@ -40,6 +40,10 @@ public enum Reg implements Operand{
 		return regs;
 	}
 	
+	public String getType() {
+		return type;
+	}
+	
 	public String toString() {
 		return reg;
 	}

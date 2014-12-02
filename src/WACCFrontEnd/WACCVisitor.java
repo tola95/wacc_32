@@ -448,12 +448,12 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 
 	@Override
 	public Type visitPrint_Stat(@NotNull BasicParser.Print_StatContext ctx) {
-		return visit(ctx.expr());
+		helperPrint(ctx.expr());
+		return null;
 	}
-
-	@Override
-	public Type visitPrintln_Stat(@NotNull BasicParser.Println_StatContext ctx) {
-		Type t = visit(ctx.expr());
+	
+	private void helperPrint(BasicParser.ExprContext ctx) {
+		Type t = visit(ctx);
 		switch (t.toString()) {
 		case "STRING":
 			DataManager.dataAdd(WACCAssembler.data, DataManager.STRING);
@@ -462,6 +462,11 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 			DataManager.dataAdd(WACCAssembler.data, DataManager.INT);
 			break;
 		}	
+	}
+ 
+	@Override
+	public Type visitPrintln_Stat(@NotNull BasicParser.Println_StatContext ctx) {
+		helperPrint(ctx.expr());
 		return null;
 	}
 
