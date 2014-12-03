@@ -703,7 +703,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		return arg1;
 	}
 
-	public Operand visitArrayliter(
+	/*public Operand visitArrayliter(
 			@NotNull BasicParser.ArrayliterContext ctx) {
 		return visit(ctx.arglist());
 	}
@@ -719,10 +719,10 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 /*			assemblyCode.add(new ARMInstruction(Instruc.STR, reg2,
 					new Address(reg, new Immediate(
 							(WACCVisitor.TOP_ST.calculateOffset(reg.toString()
-									))))));*/
+									))))));
 		}
 		return reg;
-	}
+	}*/
 	
 	public String getData(String s) {
 		StringBuilder str = new StringBuilder();
