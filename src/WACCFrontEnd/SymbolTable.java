@@ -13,7 +13,7 @@ import java.util.TreeMap;
 public class SymbolTable {
 	SymbolTable parent;
 	HashMap<String, Type> dictionary;
-	public static int totalScope = 0;
+	public int totalScope = 0;
 	private Type returnType;
 	private List<SymbolTable> children = new ArrayList<>();
 
@@ -35,6 +35,10 @@ public class SymbolTable {
 
 	public void addChildren(SymbolTable child) {
 		children.add(child);
+	}
+	
+	public void removeChild() {
+		children.remove(0);
 	}
 
 	public List<SymbolTable> getChildren() {

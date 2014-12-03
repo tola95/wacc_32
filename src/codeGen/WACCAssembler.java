@@ -107,13 +107,19 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 
 	private void L1_While(BasicParser.While_StatContext ctx) {
 		assemblyCode.add(new Label("L1"));
+		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getChildren().get(0);
+		createSub();
 		visit(ctx.stat());
+		createAdd();
+		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getParent();
+		WACCVisitor.TOP_ST.removeChild();
 		L0_While(ctx);
 	}
 
 	@Override
 	public Operand visitEquality_Expr(
 			@NotNull BasicParser.Equality_ExprContext ctx) {
+		System.out.println("Hello");
 		String oper = ctx.getChild(1).getText();
 		Operand reg1 = visit(ctx.expr(0));
 		Operand reg2 = visit(ctx.expr(1));
@@ -136,9 +142,8 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 
 	private void L0_While(BasicParser.While_StatContext ctx) {
 		assemblyCode.add(new Label("L0"));
-		Reg r = availRegs.useRegs();
-		assemblyCode.add(new ARMInstruction(Instruc.LDRSB, r, new Address(
-				Reg.SP, new Immediate("4"))));
+		
+		Reg r = (Reg) visit(ctx.expr());
 		assemblyCode
 				.add(new ARMInstruction(Instruc.CMP, r, new Immediate("#1")));
 		assemblyCode.add(new ARMInstruction(Instruc.BEQ, new Immediate("L1")));
@@ -702,27 +707,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		h.setType(Types.BOOL);
 		return arg1;
 	}
-
-	/*public Operand visitArrayliter(
-			@NotNull BasicParser.ArrayliterContext ctx) {
-		return visit(ctx.arglist());
-	}
-	
-	public Operand visitArglist(
-			@NotNull BasicParser.ArglistContext ctx) {
-		List<BasicParser.ExprContext> l = ctx.expr();
-		Reg reg = availRegs.useRegs();
-		Reg reg2 = availRegs.useRegs();
-		for (BasicParser.ExprContext elem : l) {
-			assemblyCode.add(new ARMInstruction(Instruc.LDR, reg, 
-					new Immediate(elem.getText())));
-/*			assemblyCode.add(new ARMInstruction(Instruc.STR, reg2,
-					new Address(reg, new Immediate(
-							(WACCVisitor.TOP_ST.calculateOffset(reg.toString()
-									))))));
-		}
-		return reg;
-	}*/
 	
 	public String getData(String s) {
 		StringBuilder str = new StringBuilder();
