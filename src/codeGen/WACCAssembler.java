@@ -90,13 +90,18 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	}
 
 	@Override
+	public Operand visitParenth_Expr(@NotNull BasicParser.Parenth_ExprContext ctx) {
+		return visit(ctx.expr());
+	}
+
+	@Override
 	public Operand visitAnd_Expr(@NotNull BasicParser.And_ExprContext ctx) {
 		return andOr(Instruc.AND, ctx.expr(0), ctx.expr(1));
 	}
 
 	@Override
 	public Operand visitOr_Expr(@NotNull BasicParser.Or_ExprContext ctx) {
-		return andOr(Instruc.OR, ctx.expr(0), ctx.expr(2));
+		return andOr(Instruc.ORR, ctx.expr(0), ctx.expr(1));
 	}
 
 	private void L1_While(BasicParser.While_StatContext ctx) {
@@ -219,25 +224,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	public Operand visitPrint_Stat(@NotNull BasicParser.Print_StatContext ctx) {
 		return print(ctx.expr());
 	}
-
-	/*
-	 * public Operand print(BasicParser.ExprContext ctx) { Operand reg =
-	 * visit(ctx); assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0,
-	 * reg)); // The expression after println can be many things. One of which
-	 * is // identifiers. // This if statement checks that case and identifies
-	 * its type. if (ctx.getChild(0) instanceof BasicParser.IdentContext) {
-	 * String type = WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(
-	 * ctx.getText()).toString(); System.out.println(reg.getType()); switch
-	 * (reg.getType()) { case INT: assemblyCode.add(new
-	 * ARMInstruction(Instruc.BL, new Immediate( "p_print_int")));
-	 * p_print_int("\"%d\\0\""); break; case CHAR: assemblyCode.add(new
-	 * ARMInstruction(Instruc.BL, new Immediate( "putchar")));
-	 * p_print_statement("\"%.*s\\0\""); break; case STRING:
-	 * assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
-	 * "p_print_string"))); p_print_statement("\"%.*s\\0\""); break; } } else {
-	 * assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
-	 * "p_print_string"))); p_print_statement("\"%.*s\\0\""); } return reg; }
-	 */
 
 	public Operand print(BasicParser.ExprContext ctx) {
 		Operand reg = visit(ctx);
@@ -543,7 +529,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 					"__aeabi_idivmod")));
 			assemblyCode.add(new ARMInstruction(Instruc.MOV, reg1, Reg.R1));
 		}
-
 		Reg r = (Reg) reg1;
 		r.setType(Types.INT);
 		return r;
@@ -616,10 +601,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		Reg avail = availRegs.useRegs();
 		switch (WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(str)
 				.toString()) {
-		case "INT":
-			avail.setType(Types.INT);
-			assemblyCode.add(new ARMInstruction(Instruc.LDR, avail, add));
-			break;
 		case "CHAR":
 			avail.setType(Types.CHAR);
 			assemblyCode.add(new ARMInstruction(Instruc.LDRSB, avail, add));
@@ -627,6 +608,13 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		case "BOOL":
 			avail.setType(Types.BOOL);
 			assemblyCode.add(new ARMInstruction(Instruc.LDRSB, avail, add));
+			break;
+		case "INT":
+			avail.setType(Types.INT);
+			assemblyCode.add(new ARMInstruction(Instruc.LDR, avail, add));
+		case "STRING":
+			avail.setType(Types.STRING);
+			assemblyCode.add(new ARMInstruction(Instruc.LDR, avail, add));
 			break;
 		}
 		return avail;
