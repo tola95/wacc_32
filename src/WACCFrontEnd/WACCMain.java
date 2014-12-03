@@ -50,7 +50,7 @@ public class WACCMain {
 			outputFile = inFile.getName();
 			outputFile = outputFile.replace(".wacc", ".s");
 			FileWriter file = new FileWriter(new File(outputFile));
-			for (Instruction arm : WACCAssembler.getCode()) {
+			for (Instruction arm : WACCAssembler.assemblyCode) {
 				// Writing to a file
 				file.write("\t" + arm.toString());
 			}

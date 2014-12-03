@@ -60,6 +60,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		exitScope(assemblyCode);
 		assemblyCode.add(Directives.LTORG);
 		assemblyCode.addAll(endInstruc);
+		finishCode();
 		return null;
 	}
 
@@ -119,7 +120,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	@Override
 	public Operand visitEquality_Expr(
 			@NotNull BasicParser.Equality_ExprContext ctx) {
-		System.out.println("Hello");
 		String oper = ctx.getChild(1).getText();
 		Operand reg1 = visit(ctx.expr(0));
 		Operand reg2 = visit(ctx.expr(1));
@@ -357,11 +357,32 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		return availReg;
 	}
 
-	public void addData() {
+//	public void addData() {
+//		if (!data.isEmpty()) {
+//			assemblyCode.add(Directives.DATA);
+//			for (int i = 0; i < data.size(); i++) {
+//				assemblyCode.add(new Label("msg_" + i));
+//				String str = data.get(i);
+//				int length = str.length() - 2;
+//				int remove = 0;
+//				for (int j = 0; j < str.length(); j++) {
+//					if (str.charAt(j) == '\\') {
+//						remove++;
+//						j++;
+//					}
+//				}
+//				length -= remove;
+//				assemblyCode.add(new Data(length, str));
+//			}
+//		}
+//	}
+	
+	public List<Instruction> addData() {
+		List<Instruction> list = new ArrayList<Instruction>();
 		if (!data.isEmpty()) {
-			assemblyCode.add(Directives.DATA);
+			list.add(Directives.DATA);
 			for (int i = 0; i < data.size(); i++) {
-				assemblyCode.add(new Label("msg_" + i));
+				list.add(new Label("msg_" + i));
 				String str = data.get(i);
 				int length = str.length() - 2;
 				int remove = 0;
@@ -372,13 +393,16 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 					}
 				}
 				length -= remove;
-				assemblyCode.add(new Data(length, str));
+				list.add(new Data(length, str));
 			}
 		}
+		return list;
 	}
 	
-	public static List<Instruction> getCode() {
-		return assemblyCode;
+	public void finishCode() {
+		List<Instruction> code = addData();
+		code.addAll(assemblyCode);
+		assemblyCode = code;
 	}
 
 	public void getInstructions() {
@@ -666,10 +690,12 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	@Override
 	public Operand visitStrLiter_Expr(
 			@NotNull BasicParser.StrLiter_ExprContext ctx) {
+		WACCAssembler.data.add(ctx.getText());
 		Reg avail = availRegs.useRegs();
 		avail.setType(Types.STRING);
-		assemblyCode.add(new ARMInstruction(Instruc.LDR, avail, new Immediate(
-				getData(ctx.getText()))));
+		//assemblyCode.add(new ARMInstruction(Instruc.LDR, avail, new Immediate(
+		//		getData(ctx.getText()))));
+		assemblyCode.add(new ARMInstruction(Instruc.LDR, avail, new Immediate("=msg_" + Integer.toString(data.size() - 1))));
 		return avail;
 	}
 

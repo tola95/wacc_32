@@ -26,7 +26,7 @@ public class SymbolTable {
 	SymbolTable(SymbolTable st) {
 		parent = st;
 		returnType = st.getReturnType();
-		dictionary = new HashMap<String, Type>();
+		dictionary = new LinkedHashMap<String, Type>();
 	}
 
 	public int getTotalScope() {

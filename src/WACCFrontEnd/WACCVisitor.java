@@ -555,8 +555,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 
 	@Override
 	public Type visitStrLiter_Expr(@NotNull BasicParser.StrLiter_ExprContext ctx) {
-		String str = ctx.getText();
-		WACCAssembler.data.add(str);
 		return PrimType.STRING;
 	}
 
