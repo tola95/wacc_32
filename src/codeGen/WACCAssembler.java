@@ -646,6 +646,27 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		return visit(ctx.arrayelem());
 	}
 
+	public Operand visitArrayliter(
+			@NotNull BasicParser.ArrayliterContext ctx) {
+		return visit(ctx.arglist());
+	}
+	
+	public Operand visitArglist(
+			@NotNull BasicParser.ArglistContext ctx) {
+		List<BasicParser.ExprContext> l = ctx.expr();
+		Reg reg = availRegs.useRegs();
+		Reg reg2 = availRegs.useRegs();
+		for (BasicParser.ExprContext elem : l) {
+			assemblyCode.add(new ARMInstruction(Instruc.LDR, reg, 
+					new Immediate(elem.getText())));
+/*			assemblyCode.add(new ARMInstruction(Instruc.STR, reg2,
+					new Address(reg, new Immediate(
+							(WACCVisitor.TOP_ST.calculateOffset(reg.toString()
+									))))));*/
+		}
+		return reg;
+	}
+	
 	public String getData(String s) {
 		StringBuilder str = new StringBuilder();
 		str.append("=msg_");
