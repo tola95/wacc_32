@@ -7,6 +7,11 @@ public class PrintManager {
 	
 	private List<Boolean> prints = Arrays.asList(false, false, false, false, false, false);
 	private List<Boolean> reads = Arrays.asList(false, false, false);
+	private List<Boolean> errors = Arrays.asList(false, false);
+	
+	public boolean runtime() {
+		return helperPrint(errors, 0);
+	}
 	
 	public boolean print_string() {
 		return helperPrint(prints, 0);
@@ -44,7 +49,7 @@ public class PrintManager {
 		return helperPrint(reads, 2);
 	}
 	
-	public boolean helperPrint(List<Boolean> list, int i) {
+	private boolean helperPrint(List<Boolean> list, int i) {
 		boolean value = list.get(i);
 		if (!value) {
 			list.set(i, true);
