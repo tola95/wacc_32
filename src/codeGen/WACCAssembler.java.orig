@@ -90,18 +90,13 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	}
 
 	@Override
-	public Operand visitParenth_Expr(@NotNull BasicParser.Parenth_ExprContext ctx) {
-		return visit(ctx.expr());
-	}
-
-	@Override
 	public Operand visitAnd_Expr(@NotNull BasicParser.And_ExprContext ctx) {
 		return andOr(Instruc.AND, ctx.expr(0), ctx.expr(1));
 	}
 
 	@Override
 	public Operand visitOr_Expr(@NotNull BasicParser.Or_ExprContext ctx) {
-		return andOr(Instruc.ORR, ctx.expr(0), ctx.expr(1));
+		return andOr(Instruc.OR, ctx.expr(0), ctx.expr(2));
 	}
 
 	private void L1_While(BasicParser.While_StatContext ctx) {
@@ -138,6 +133,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		Reg r = availRegs.useRegs();
 		assemblyCode.add(new ARMInstruction(Instruc.LDRSB, r, new Address(
 				Reg.SP, new Immediate("4"))));
+		Operand charReg = visit(ctx.expr());
 		assemblyCode
 				.add(new ARMInstruction(Instruc.CMP, r, new Immediate("#1")));
 		assemblyCode.add(new ARMInstruction(Instruc.BEQ, new Immediate("L1")));
@@ -187,7 +183,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			endInstruc.add(new ARMInstruction(Instruc.ADD, Reg.R2, Reg.R0,
 					new Immediate("#4")));
 			endInstruc.add(new ARMInstruction(Instruc.LDR, Reg.R0,
-					new Immediate(getData("\"%.*s\\0\""))));
+					new Immediate(getData(str))));
 			partOfPrint();
 		}
 	}
@@ -225,6 +221,25 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		return print(ctx.expr());
 	}
 
+	/*
+	 * public Operand print(BasicParser.ExprContext ctx) { Operand reg =
+	 * visit(ctx); assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0,
+	 * reg)); // The expression after println can be many things. One of which
+	 * is // identifiers. // This if statement checks that case and identifies
+	 * its type. if (ctx.getChild(0) instanceof BasicParser.IdentContext) {
+	 * String type = WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(
+	 * ctx.getText()).toString(); System.out.println(reg.getType()); switch
+	 * (reg.getType()) { case INT: assemblyCode.add(new
+	 * ARMInstruction(Instruc.BL, new Immediate( "p_print_int")));
+	 * p_print_int("\"%d\\0\""); break; case CHAR: assemblyCode.add(new
+	 * ARMInstruction(Instruc.BL, new Immediate( "putchar")));
+	 * p_print_statement("\"%.*s\\0\""); break; case STRING:
+	 * assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
+	 * "p_print_string"))); p_print_statement("\"%.*s\\0\""); break; } } else {
+	 * assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
+	 * "p_print_string"))); p_print_statement("\"%.*s\\0\""); } return reg; }
+	 */
+
 	public Operand print(BasicParser.ExprContext ctx) {
 		Operand reg = visit(ctx);
 		assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, reg));
@@ -253,6 +268,45 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			break;
 		}
 		return reg;
+<<<<<<< HEAD
+=======
+	}*/
+	
+	public Operand print(BasicParser.ExprContext ctx) {
+		Operand reg = visit(ctx);
+		assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, reg));
+		// The expression after println can be many things. One of which is
+		// identifiers.
+			switch (reg.getType()) {
+			case INT:
+				assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
+						"p_print_int")));
+				p_print_int("\"%d\\0\"");
+				break;
+			case CHAR:
+				assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
+						"putchar")));
+				p_print_statement("\"%.*s\\0\"");
+				break;
+			case STRING:
+				assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
+						"p_print_string")));
+				p_print_statement("\"%.*s\\0\"");
+				break;
+			case BOOL:
+				assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
+						"p_print_bool")));
+				p_print_bool();
+				break;
+			case ARRAY:
+				break;
+			case PAIR:
+				break;
+			default:
+				break;
+			}
+		return reg;
+>>>>>>> e0c09e84dfd52be16397b445ac34d9887031e07a
 	}
 
 	private void p_print_bool() {
@@ -377,33 +431,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	}
 
 	@Override
-	public Operand visitUnaryOper_Expr(
-			@NotNull BasicParser.UnaryOper_ExprContext ctx) {
-		Operand reg = visit(ctx.expr());
-		switch (ctx.start.getType()) {
-		case BasicParser.NOT:
-			assemblyCode.add(new ARMInstruction(Instruc.EOR, reg, reg,
-					new Immediate("#1")));
-			break;
-		case BasicParser.MINUS:
-			assemblyCode.add(new ARMInstruction(Instruc.RSBS, reg, reg,
-					new Immediate("#0")));
-			break;
-		case BasicParser.ORD:
-			Reg r = (Reg) reg;
-			r.setType(Types.INT);
-			reg = r;
-			break;
-		case BasicParser.CHR:
-			Reg ch = (Reg) reg;
-			ch.setType(Types.CHAR);
-			reg = ch;
-			break;
-		}
-		return reg;
-	}
-
-	@Override
 	public Operand visitIdentEq_Stat(
 			@NotNull BasicParser.IdentEq_StatContext ctx) {
 		Operand reg = visit(ctx.assignrhs());
@@ -500,15 +527,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		Operand reg1 = visit(ctx.expr(0));
 		Operand reg2 = visit(ctx.expr(1));
 		switch (ctx.getChild(1).getText()) {
-		case "*":
-			assemblyCode.add(new ARMInstruction(Instruc.SMULL, reg1, reg2,
-					reg1, reg2));
-			assemblyCode.add(new ARMInstruction(Instruc.CMP, reg2, reg1,
-					new Immediate("ASR #31")));
-			assemblyCode.add(new ARMInstruction(Instruc.BLNE, new Immediate(
-					"p_throw_overflow_error")));
-			p_throw_overflow_error();
-			break;
 		case "/":
 			assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, reg1));
 			assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R1, reg2));
@@ -519,15 +537,15 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 					"__aeabi_idiv")));
 			assemblyCode.add(new ARMInstruction(Instruc.MOV, reg1, Reg.R0));
 			break;
-		case "%":
-			assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, reg1));
-			assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R1, reg2));
-			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
-					"p_check_divide_by_zero")));
-			p_check_divide_by_zero();
-			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
-					"__aeabi_idivmod")));
-			assemblyCode.add(new ARMInstruction(Instruc.MOV, reg1, Reg.R1));
+		case "*":
+			assemblyCode.add(new ARMInstruction(Instruc.SMULL, reg1, reg2,
+					reg1, reg2));
+			assemblyCode.add(new ARMInstruction(Instruc.CMP, reg2, reg1,
+					new Immediate("ASR #31")));
+			assemblyCode.add(new ARMInstruction(Instruc.BLNE, new Immediate(
+					"p_throw_overflow_error")));
+			p_throw_overflow_error();
+			break;
 		}
 		Reg r = (Reg) reg1;
 		r.setType(Types.INT);
@@ -542,22 +560,18 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		case "+":
 			assemblyCode
 					.add(new ARMInstruction(Instruc.ADDS, reg1, reg1, reg2));
-			break;
-		case "-":
-			assemblyCode
-					.add(new ARMInstruction(Instruc.SUBS, reg1, reg1, reg2));
+			assemblyCode.add(new ARMInstruction(Instruc.BLVS, new Immediate(
+					"p_throw_overflow_error")));
+			p_throw_overflow_error();
 			break;
 		}
-		assemblyCode.add(new ARMInstruction(Instruc.BLVS, new Immediate(
-				"p_throw_overflow_error")));
-		p_throw_overflow_error();
 		Reg r = (Reg) reg1;
 		r.setType(Types.INT);
 		return r;
 	}
 
 	private void p_throw_overflow_error() {
-		if (!manage.runtime()) {
+		if (!endInstruc.contains(new Label("p_throw_overflow_error"))) {
 			String str = "\"OverflowError: the result is too small/large to store in a 4-byte signed-integer.\\n\"";
 			endInstruc.add(new Label("p_throw_overflow_error"));
 			endInstruc.add(new ARMInstruction(Instruc.LDR, Reg.R0,
@@ -601,21 +615,14 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		Reg avail = availRegs.useRegs();
 		switch (WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(str)
 				.toString()) {
-		case "CHAR":
-			avail.setType(Types.CHAR);
-			assemblyCode.add(new ARMInstruction(Instruc.LDRSB, avail, add));
-			break;
-		case "BOOL":
-			avail.setType(Types.BOOL);
-			assemblyCode.add(new ARMInstruction(Instruc.LDRSB, avail, add));
-			break;
 		case "INT":
 			avail.setType(Types.INT);
 			assemblyCode.add(new ARMInstruction(Instruc.LDR, avail, add));
 			break;
-		case "STRING":
-			avail.setType(Types.STRING);
-			assemblyCode.add(new ARMInstruction(Instruc.LDR, avail, add));
+		case "CHAR":
+		case "BOOL":
+			avail.setType(Types.BOOL);
+			assemblyCode.add(new ARMInstruction(Instruc.LDRSB, avail, add));
 			break;
 		}
 		return avail;
@@ -670,35 +677,20 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		h.setType(Types.BOOL);
 		return arg1;
 	}
+	
+	//*******//
+	@Override
+	public Operand visitArrayElem_Expr(
+			@NotNull BasicParser.ArrayElem_ExprContext ctx) {
+		return visit(ctx.arrayelem());
+	}
 
-	public Operand visitArrayliter(
-			@NotNull BasicParser.ArrayliterContext ctx) {
-		return visit(ctx.arglist());
-	}
-	
-	public Operand visitArglist(
-			@NotNull BasicParser.ArglistContext ctx) {
-		List<BasicParser.ExprContext> l = ctx.expr();
-		Reg reg = availRegs.useRegs();
-		Reg reg2 = availRegs.useRegs();
-		for (BasicParser.ExprContext elem : l) {
-			assemblyCode.add(new ARMInstruction(Instruc.LDR, reg, 
-					new Immediate(elem.getText())));
-/*			assemblyCode.add(new ARMInstruction(Instruc.STR, reg2,
-					new Address(reg, new Immediate(
-							(WACCVisitor.TOP_ST.calculateOffset(reg.toString()
-									))))));*/
-		}
-		return reg;
-	}
-	
 	public String getData(String s) {
 		StringBuilder str = new StringBuilder();
 		str.append("=msg_");
 		for (int i = 0; i < data.size(); i++) {
 			if (data.get(i).equals(s)) {
 				str.append(Integer.toString(i));
-				break;
 			}
 		}
 		return str.toString();

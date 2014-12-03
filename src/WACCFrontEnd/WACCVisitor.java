@@ -159,7 +159,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	@Override
 	public Type visitFactor_Expr(@NotNull BasicParser.Factor_ExprContext ctx) {
 		String oper = ctx.getChild(1).getText();
-		if (oper.equals("/")) {
+		if (oper.equals("/") || oper.equals("%")) {
 			DataManager.dataAdd(WACCAssembler.data, DataManager.STRING);
 			DataManager.dataAdd(WACCAssembler.data, DataManager.DIVIDE);
 		} else {
@@ -186,7 +186,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	@Override
 	public Type visitTerm_Expr(@NotNull BasicParser.Term_ExprContext ctx) {
 		String oper = ctx.getChild(1).getText();
-		if (oper.equals("+")) {
+		if (oper.equals("+") || oper.equals("-")) {
 			DataManager.dataAdd(WACCAssembler.data, DataManager.STRING);
 			DataManager.dataAdd(WACCAssembler.data, DataManager.OVERFLOW);
 		}
