@@ -364,14 +364,19 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 				assemblyCode.add(new Label("msg_" + i));
 				String str = data.get(i);
 				int length = str.length() - 2;
-				if (str.contains("\\0")) {
-					length -= 1;
+				int remove = 0;
+				for (int j = 0; j < str.length(); j++) {
+					if (str.charAt(j) == '\\') {
+						remove++;
+						j++;
+					}
 				}
+				length -= remove;
 				assemblyCode.add(new Data(length, str));
 			}
 		}
 	}
-
+	
 	public static List<Instruction> getCode() {
 		return assemblyCode;
 	}
