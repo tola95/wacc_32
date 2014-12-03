@@ -15,4 +15,8 @@ public class RegManager {
 	public void refreshReg() {
 		regs = Reg.getRegs();
 	}
+	
+	public void addReg(Reg r) {
+		regs.add(0, r);
+	}
 }

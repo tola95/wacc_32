@@ -17,6 +17,7 @@ import Intsr.Operand;
 import Intsr.Reg;
 import Intsr.RegManager;
 import Intsr.Types;
+import WACCFrontEnd.ArrayType;
 import WACCFrontEnd.PrimType;
 import WACCFrontEnd.Type;
 import WACCFrontEnd.WACCVisitor;
@@ -406,8 +407,34 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	@Override
 	public Operand visitIdentEq_Stat(
 			@NotNull BasicParser.IdentEq_StatContext ctx) {
-		Operand reg = visit(ctx.assignrhs());
 		int offset = WACCVisitor.TOP_ST.calculateOffset(ctx.IDENT().getText());
+		if (ctx.type().getChild(0) instanceof BasicParser.ArraytypeContext) {
+			BasicParser.ArrayLiter_assignrhsContext a = (BasicParser.ArrayLiter_assignrhsContext) ctx.assignrhs();
+			int length = 0;
+			if (a.arrayliter().arglist() != null) {
+				length = a.arrayliter().arglist().expr().size();				
+			}
+			Reg reg = availRegs.useRegs();
+			Type type = WACCVisitor.TOP_ST.lookUpCurrLevelOnly(ctx.IDENT().getText());
+			Type innerType = ((ArrayType) type).getType();
+			assemblyCode.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Immediate("=" + calculateArray(length, innerType.getSize()))));
+			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("malloc")));
+			assemblyCode.add(new ARMInstruction(Instruc.MOV, reg, Reg.R0));
+			int i = 0;
+			if (a.arrayliter().arglist() != null) {
+				for (i = 0; i < a.arrayliter().arglist().expr().size(); i++) {
+					Operand r = visit(a.arrayliter().arglist().expr(i));
+					availRegs.addReg((Reg) r);
+					assemblyCode.add(new ARMInstruction(Instruc.STR, r, new Address(reg ,new Immediate(Integer.toString((i+1) * innerType.getSize())))));
+				}				
+			}
+			Reg r = availRegs.useRegs();
+			assemblyCode.add(new ARMInstruction(Instruc.LDR, r, new Immediate("=" + i)));
+			assemblyCode.add(new ARMInstruction(Instruc.STR, r, new Address(reg, 0)));
+			assemblyCode.add(new ARMInstruction(Instruc.STR, reg, new Address(Reg.SP, offset)));
+			return reg;
+		}
+		Operand reg = visit(ctx.assignrhs());
 		switch (ctx.start.getType()) {
 		case BasicParser.CHAR:
 		case BasicParser.BOOL:
@@ -425,9 +452,14 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			}
 			break;
 		}
+		
 		return null;
 	}
-
+	
+	private int calculateArray(int elems, int type) {
+		return (elems * type) + 4;
+	}
+	
 	@Override
 	public Operand visitBegin_Stat(@NotNull BasicParser.Begin_StatContext ctx) {
 		Reg availReg = availRegs.useRegs();
