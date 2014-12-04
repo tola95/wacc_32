@@ -282,6 +282,9 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 
 	@Override
 	public Type visitArrayelem(@NotNull BasicParser.ArrayelemContext ctx) {
+		DataManager.dataAdd(WACCAssembler.data, DataManager.ARRAYNEG);
+		DataManager.dataAdd(WACCAssembler.data, DataManager.ARRAYLARGE);
+		DataManager.dataAdd(WACCAssembler.data, DataManager.STRING);
 		Type t1 = visit(ctx.expr(0));
 		if (t1 != PrimType.INT) {
 			System.err.println("Needed index of type int. Got type " + t1
