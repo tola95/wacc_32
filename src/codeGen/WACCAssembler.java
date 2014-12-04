@@ -647,12 +647,13 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	// Visits Begin statement
 	@Override
 	public Operand visitBegin_Stat(@NotNull BasicParser.Begin_StatContext ctx) {
-		createSub();
 		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getChildren().get(0);
+		WACCVisitor.TOP_ST.calculateScope();
+		createSub();
 		visit(ctx.stat());
+		createAdd();
 		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getParent();
 		WACCVisitor.TOP_ST.removeChild();
-		createAdd();
 		return null;
 	}
 

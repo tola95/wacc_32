@@ -34,7 +34,7 @@ public class SymbolTable {
 	}
 
 	public void addChildren(SymbolTable child) {
-		children.add(child);
+		children.add(children.size(), child);
 	}
 	
 	public void removeChild() {
