@@ -4,7 +4,7 @@ import java.util.List;
 
 public enum DataManager {
 
-	STRING, INT, CHAR, BOOL, DIVIDE, OVERFLOW;
+	STRING, INT, CHAR, BOOL, DIVIDE, OVERFLOW, ARRAYNEG, ARRAYLARGE;
 
 	private static boolean nullAdded = false;
 	private static boolean stringAdded = false;
@@ -13,6 +13,8 @@ public enum DataManager {
 	private static boolean boolAdded = false;
 	private static boolean divideByAdded = false;
 	private static boolean overflowAdded = false;
+	private static boolean arrayneg = false;
+	private static boolean arraylarge = false;
 
 	public static void dataAdd(List<String> list, DataManager dm) {
 		switch (dm) {
@@ -57,6 +59,20 @@ public enum DataManager {
 				list.add("\"OverflowError: the result is too small/large to store in a 4-byte signed-integer.\\n\"");
 			}
 			overflowAdded = true;
+			addNull(list);
+			break;
+		case ARRAYNEG:
+			if (!arrayneg) {
+				list.add("\"ArrayIndexOutOfBoundsError: negative index\\n\\0\"");
+			}
+			arrayneg = true;
+			addNull(list);
+			break;
+		case ARRAYLARGE:
+			if (!arraylarge) {
+				list.add("\"ArrayIndexOutOfBoundsError: index too large\\n\\0\"");
+			}
+			arraylarge = true;
 			addNull(list);
 			break;
 		}

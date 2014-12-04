@@ -33,5 +33,10 @@ public class ArrayType implements Type{
 	public int getSize() {
 		return 4;
 	}
+	
+	@Override
+	public String toString() {
+		return "Array";
+	}
 
 }

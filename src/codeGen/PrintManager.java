@@ -7,10 +7,18 @@ public class PrintManager {
 	
 	private List<Boolean> prints = Arrays.asList(false, false, false, false, false, false);
 	private List<Boolean> reads = Arrays.asList(false, false, false);
-	private List<Boolean> errors = Arrays.asList(false, false);
+	private List<Boolean> errors = Arrays.asList(false, false, false);
+	
+	public boolean overflow() {
+		return helperPrint(errors, 0);
+	}
 	
 	public boolean runtime() {
-		return helperPrint(errors, 0);
+		return helperPrint(errors, 2);
+	}
+	
+	public boolean array_bounds() {
+		return helperPrint(errors, 1);
 	}
 	
 	public boolean print_string() {
