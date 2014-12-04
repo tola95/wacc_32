@@ -5,7 +5,7 @@ public enum Directives implements Instruction{
 	
 	TEXT (".text\n\n"), 
 	GLOBALM (".global main\n"),
-	LTORG ("\t.ltorg\n\n"),
+	LTORG ("\t.ltorg\n"),
 	DATA (".data\n\n"),
 	WORD ("\t.word"),
 	ASCII ("\t.ascii")
