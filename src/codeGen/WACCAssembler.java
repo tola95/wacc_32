@@ -300,6 +300,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		if ((type == Types.INT) || (type == Types.CHAR) || (type == Types.STRING)) {
 			print(ctx.expr(), r);
 		} else if (type == Types.BOOL) {
+			assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, r));
 			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
 					"p_print_bool")));
 			p_print_bool();
