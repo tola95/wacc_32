@@ -37,93 +37,108 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	private List<Instruction> endInstruc = new ArrayList<>();
 	// This should only be printed once.
 	boolean printedAlready = false;
+	int label = 0;
 	PrintManager manage = new PrintManager();
 
+	//Visit a Program Context
 	@Override
 	public Operand visitProgram(@NotNull BasicParser.ProgramContext ctx) {
-		WACCVisitor.TOP_ST.calculateScope();
-		addData();
-		assemblyCode.add(Directives.TEXT);
-		assemblyCode.add(Directives.GLOBALM);
+		WACCVisitor.TOP_ST.calculateScope(); //Calculate 
+		addData(); //Add program data to .data
+		assemblyCode.add(Directives.TEXT); //Add .text directive 
+		assemblyCode.add(Directives.GLOBALM);//Add .global main to code
 		List<BasicParser.FuncContext> functions = ctx.func();
 		if (functions != null) {
 			for (BasicParser.FuncContext func : functions) {
-				visitFunc(func);
+				visitFunc(func); //Visit every function in the program
 			}
 		}
-		assemblyCode.add(new Label("main"));
-		enterScope(assemblyCode);
-		createSub();
-		visit(ctx.stat());
-		createAdd();
+		assemblyCode.add(new Label("main"));//Create main Label
+		enterScope(assemblyCode);//add Push {LR} to assembly code
+		createSub(); //Add "sub scope from stack pointer statement" to code
+		visit(ctx.stat()); //visit Program Statement
+		createAdd(); //Add "add scope from stack pointer statement" to code
 		assemblyCode.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Immediate(
-				"=0")));
-		exitScope(assemblyCode);
-		assemblyCode.add(Directives.LTORG);
-		assemblyCode.addAll(endInstruc);
+				"=0")));//Load register RO with 0
+		exitScope(assemblyCode); //add Pop {PC} to assembly code
+		assemblyCode.add(Directives.LTORG);//Add .ltorg directive to code
+		assemblyCode.addAll(endInstruc);//Add all end Instructions if any
 		finishCode();
 		return null;
 	}
 
 	public void enterScope(List<Instruction> list) {
+		//Push LR to stack
 		list.add(new ARMInstruction(Instruc.PUSH, Reg.LR));
 	}
 
 	public void exitScope(List<Instruction> list) {
+		//Pop PC from stack
 		list.add(new ARMInstruction(Instruc.POP, Reg.PC));
 	}
 
+	//Visit Sequence statement separated by semicolons
 	@Override
 	public Operand visitSemicolon_Stat(
 			@NotNull BasicParser.Semicolon_StatContext ctx) {
-		visit(ctx.stat(0));
-		availRegs.refreshReg();
-		visit(ctx.stat(1));
+		visit(ctx.stat(0)); //Visit first statement
+		availRegs.refreshReg(); //Refresh registers
+		visit(ctx.stat(1)); //Visit second statement
 		return null;
 	}
 
+	//Visit and/or expression
 	private Operand andOr(Instruc i, BasicParser.ExprContext ctx1,
 			BasicParser.ExprContext ctx2) {
-		Operand reg1 = visit(ctx1);
-		Operand reg2 = visit(ctx2);
+		Operand reg1 = visit(ctx1); //First Register
+		Operand reg2 = visit(ctx2); //Second Register
+		//Add new line of code with instruction and both register
 		assemblyCode.add(new ARMInstruction(i, reg1, reg1, reg2));
+		//Set type of regs (necessary further on in the code)
 		Reg r = (Reg) reg1;
-		r.setType(Types.BOOL);
+		r.setType(Types.BOOL); 
 		return r;
 	}
 
 	@Override
-	public Operand visitParenth_Expr(@NotNull BasicParser.Parenth_ExprContext ctx) {
+	public Operand visitParenth_Expr(
+			@NotNull BasicParser.Parenth_ExprContext ctx) {
+		//Visit expr as parenth expr is an instanceof expr
 		return visit(ctx.expr());
 	}
 
 	@Override
 	public Operand visitAnd_Expr(@NotNull BasicParser.And_ExprContext ctx) {
+		//Visit and statement with both exprs as arguments
 		return andOr(Instruc.AND, ctx.expr(0), ctx.expr(1));
 	}
 
 	@Override
 	public Operand visitOr_Expr(@NotNull BasicParser.Or_ExprContext ctx) {
+		//Visit or statement with both exprs as arguments
 		return andOr(Instruc.ORR, ctx.expr(0), ctx.expr(1));
 	}
 
+	//While Statement, initial proceedings
 	private void L1_While(BasicParser.While_StatContext ctx) {
-		assemblyCode.add(new Label("L1"));
+		assemblyCode.add(new Label("L" + (label + 1))); //Add new Label 'L1'
+		//Top symboltable becomes the first child symboltable
 		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getChildren().get(0);
-		createSub();
-		visit(ctx.stat());
-		createAdd();
+		createSub();//Add "sub scope from stack pointer statement" to code
+		visit(ctx.stat()); //Visit the statement
+		createAdd();//Add "add scope from stack pointer statement" to code
+		//return symboltable to the parent (top) symboltable
 		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getParent();
-		WACCVisitor.TOP_ST.removeChild();
+		WACCVisitor.TOP_ST.removeChild(); //Delete the child node
 		L0_While(ctx);
 	}
 
 	@Override
 	public Operand visitEquality_Expr(
 			@NotNull BasicParser.Equality_ExprContext ctx) {
-		String oper = ctx.getChild(1).getText();
-		Operand reg1 = visit(ctx.expr(0));
-		Operand reg2 = visit(ctx.expr(1));
+		String oper = ctx.getChild(1).getText(); //oper is the comparator
+		Operand reg1 = visit(ctx.expr(0)); //Reg first expr evaluates to
+		Operand reg2 = visit(ctx.expr(1)); //Reg second expr evaluates to
 		assemblyCode.add(new ARMInstruction(Instruc.CMP, reg1, reg2));
 		if (oper.equals("==")) {
 			assemblyCode.add(new ARMInstruction(Instruc.MOVEQ, reg1,
@@ -137,51 +152,70 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 					new Immediate("#0")));
 		}
 		Reg r = (Reg) reg1;
-		r.setType(Types.BOOL);
+		r.setType(Types.BOOL); //Set type of r
 		return reg1;
 	}
 
+	//While statement, final proceedings
 	private void L0_While(BasicParser.While_StatContext ctx) {
-		assemblyCode.add(new Label("L0"));
+		assemblyCode.add(new Label("L" + label)); //Add Label 'L0'
+		availRegs.refreshReg();
 		
-		Reg r = (Reg) visit(ctx.expr());
+		Reg r = (Reg) visit(ctx.expr()); //visit expr and store result as r
+		//Add 'CMP r #1' which checks if expression is true
 		assemblyCode
 				.add(new ARMInstruction(Instruc.CMP, r, new Immediate("#1")));
-		assemblyCode.add(new ARMInstruction(Instruc.BEQ, new Immediate("L1")));
+		//Add 'BEQ L1'. Code branches to L1 if above line is true
+		assemblyCode.add(new ARMInstruction(Instruc.BEQ,  // Add L1 branch
+				                           new Immediate("L" + (label + 1))));
+		label += 2;
 	}
 
 	@Override
-	public Operand visitBool_Liter(@NotNull BasicParser.Bool_LiterContext ctx) {
-		Reg avail = availRegs.useRegs();
-		avail.setType(Types.BOOL);
+	public Operand visitBool_Liter(
+			@NotNull BasicParser.Bool_LiterContext ctx) {
+		Reg avail = availRegs.useRegs(); //avail is the next available register
+		avail.setType(Types.BOOL); //set type of avail to BOOL
 		if (ctx.getText().equals("false")) {
+			//MOV avail #0 if context evaluates to false
 			assemblyCode.add(new ARMInstruction(Instruc.MOV, avail,
 					new Immediate("#0")));
 		} else
+			//MOV avail #1 if context evaluates to true
 			assemblyCode.add(new ARMInstruction(Instruc.MOV, avail,
 					new Immediate("#1")));
-		return avail;
+		return avail; //return avail register
 	}
 
 	@Override
 	public Operand visitIf_Stat(@NotNull BasicParser.If_StatContext ctx) {
 		Operand reg = visit(ctx.expr());
 		assemblyCode.add(new ARMInstruction(Instruc.CMP, reg, new Immediate(
-				"#0")));
-		assemblyCode.add(new ARMInstruction(Instruc.BEQ, new Immediate("L0")));
-		visit(ctx.stat(0));
-		assemblyCode.add(new ARMInstruction(Instruc.B, new Immediate("L1")));
-		assemblyCode.add(new Label("L0"));
-		visit(ctx.stat(1));
-		assemblyCode.add(new Label("L1"));
+				"#0"))); //Add CMP reg 0 to code. Checks if ctx is false
+		//Add BEQ L0 to code. If ctx is false, code will go to label L0
+		int fiLabel = label + 1, elseLabel = label;
+		label += 2;
+		assemblyCode.add(new ARMInstruction(Instruc.BEQ, 
+		                                    new Immediate("L" + elseLabel)));
+		availRegs.refreshReg();
+		visit(ctx.stat(0)); //Visit 'then' stat
+		//Add B L1 to code. If ctx is true, code will go to label L1
+		assemblyCode.add(new ARMInstruction(Instruc.B,
+		                                    new Immediate("L" + fiLabel)));
+		assemblyCode.add(new Label("L" + elseLabel));//Add Label L0
+		availRegs.refreshReg();
+		visit(ctx.stat(1));//Visit 'else' stat
+		assemblyCode.add(new Label("L" + fiLabel));//Add Label L1
 		return null;
 	}
 
 	@Override
 	public Operand visitExit_Stat(@NotNull BasicParser.Exit_StatContext ctx) {
 		assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, visit(ctx
-				.expr())));
-		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("exit")));
+				.expr()))); //MOV RO 'whatever operand expr evaluates to'
+		//BL exit
+		assemblyCode.add(
+				new ARMInstruction(Instruc.BL, new Immediate("exit")));
 		return null;
 	}
 
@@ -383,7 +417,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 
 	@Override
 	public Operand visitWhile_Stat(@NotNull BasicParser.While_StatContext ctx) {
-		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("L0")));
+		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("L" + label))); // Add L0 branch
 		L1_While(ctx);
 		return null;
 	}
@@ -751,6 +785,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 					new Immediate("#0")));
 			break;
 		case "<=":
+			
 			assemblyCode.add(new ARMInstruction(Instruc.MOVLE, arg1,
 					new Immediate("#1")));
 			assemblyCode.add(new ARMInstruction(Instruc.MOVGT, arg1,
