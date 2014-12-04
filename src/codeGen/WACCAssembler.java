@@ -36,6 +36,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	private List<Instruction> endInstruc = new ArrayList<>();
 	// This should only be printed once.
 	boolean printedAlready = false;
+	int label = 0;
 	PrintManager manage = new PrintManager();
 
 	//Visit a Program Context
@@ -119,7 +120,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 
 	//While Statement, initial proceedings
 	private void L1_While(BasicParser.While_StatContext ctx) {
-		assemblyCode.add(new Label("L1")); //Add new Label 'L1'
+		assemblyCode.add(new Label("L" + (label + 1))); //Add new Label 'L1'
 		//Top symboltable becomes the first child symboltable
 		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getChildren().get(0);
 		createSub();//Add "sub scope from stack pointer statement" to code
@@ -156,14 +157,17 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 
 	//While statement, final proceedings
 	private void L0_While(BasicParser.While_StatContext ctx) {
-		assemblyCode.add(new Label("L0")); //Add Label 'L0'
+		assemblyCode.add(new Label("L" + label)); //Add Label 'L0'
+		availRegs.refreshReg();
 		
 		Reg r = (Reg) visit(ctx.expr()); //visit expr and store result as r
 		//Add 'CMP r #1' which checks if expression is true
 		assemblyCode
 				.add(new ARMInstruction(Instruc.CMP, r, new Immediate("#1")));
 		//Add 'BEQ L1'. Code branches to L1 if above line is true
-		assemblyCode.add(new ARMInstruction(Instruc.BEQ, new Immediate("L1")));
+		assemblyCode.add(new ARMInstruction(Instruc.BEQ,  // Add L1 branch
+				                           new Immediate("L" + (label + 1))));
+		label += 2;
 	}
 
 	@Override
@@ -188,13 +192,19 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		assemblyCode.add(new ARMInstruction(Instruc.CMP, reg, new Immediate(
 				"#0"))); //Add CMP reg 0 to code. Checks if ctx is false
 		//Add BEQ L0 to code. If ctx is false, code will go to label L0
-		assemblyCode.add(new ARMInstruction(Instruc.BEQ, new Immediate("L0")));
+		int fiLabel = label + 1, elseLabel = label;
+		label += 2;
+		assemblyCode.add(new ARMInstruction(Instruc.BEQ, 
+		                                    new Immediate("L" + elseLabel)));
+		availRegs.refreshReg();
 		visit(ctx.stat(0)); //Visit 'then' stat
 		//Add B L1 to code. If ctx is true, code will go to label L1
-		assemblyCode.add(new ARMInstruction(Instruc.B, new Immediate("L1")));
-		assemblyCode.add(new Label("L0"));//Add Label L0
+		assemblyCode.add(new ARMInstruction(Instruc.B,
+		                                    new Immediate("L" + fiLabel)));
+		assemblyCode.add(new Label("L" + elseLabel));//Add Label L0
+		availRegs.refreshReg();
 		visit(ctx.stat(1));//Visit 'else' stat
-		assemblyCode.add(new Label("L1"));//Add Label L1
+		assemblyCode.add(new Label("L" + fiLabel));//Add Label L1
 		return null;
 	}
 
@@ -363,7 +373,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 
 	@Override
 	public Operand visitWhile_Stat(@NotNull BasicParser.While_StatContext ctx) {
-		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("L0")));
+		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("L" + label))); // Add L0 branch
 		L1_While(ctx);
 		return null;
 	}
