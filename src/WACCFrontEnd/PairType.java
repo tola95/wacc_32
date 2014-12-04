@@ -39,5 +39,9 @@ public class PairType implements Type {
 		return 4;
 	}
 	
+	@Override
+	public String toString() {
+		return "PAIR";
+	}
 
 }

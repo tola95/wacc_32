@@ -480,6 +480,9 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		case "BOOL":
 			DataManager.dataAdd(WACCAssembler.data, DataManager.BOOL);
 			break;
+		case "ARRAY":
+			DataManager.dataAdd(WACCAssembler.data, DataManager.ARRAY);
+			break;
 		}	
 	}
  

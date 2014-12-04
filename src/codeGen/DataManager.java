@@ -4,13 +4,14 @@ import java.util.List;
 
 public enum DataManager {
 
-	STRING, INT, CHAR, BOOL, DIVIDE, OVERFLOW, ARRAYNEG, ARRAYLARGE;
+	STRING, INT, CHAR, BOOL, ARRAY, DIVIDE, OVERFLOW, ARRAYNEG, ARRAYLARGE;
 
 	private static boolean nullAdded = false;
 	private static boolean stringAdded = false;
 	private static boolean intAdded = false;
 	private static boolean charAdded = false;
 	private static boolean boolAdded = false;
+	private static boolean arrayAdded = false;
 	private static boolean divideByAdded = false;
 	private static boolean overflowAdded = false;
 	private static boolean arrayneg = false;
@@ -45,6 +46,13 @@ public enum DataManager {
 				list.add("\"false\\0\"");
 			}
 			boolAdded = true;
+			addNull(list);
+			break;
+		case ARRAY:
+			if (!arrayAdded) {
+				list.add("\"%p\\0\"");
+			}
+			arrayAdded = true;
 			addNull(list);
 			break;
 		case DIVIDE:

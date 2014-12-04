@@ -36,7 +36,7 @@ public class ArrayType implements Type{
 	
 	@Override
 	public String toString() {
-		return "Array";
+		return "ARRAY";
 	}
 
 }
