@@ -480,9 +480,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	public Operand visitWhile_Stat(@NotNull BasicParser.While_StatContext ctx) {
 		int i = label;
 		label += 2;
-		assemblyCode.add(new ARMInstruction(Instruc.B, new Immediate("L" + i))); // Add
-																					// L0
-																					// branch
+		assemblyCode.add(new ARMInstruction(Instruc.B, new Immediate("L" + i))); // Add																	// 																	// branch
 		L1_While(ctx, i + 1);
 		return null;
 	}
@@ -649,10 +647,13 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	// Visits Begin statement
 	@Override
 	public Operand visitBegin_Stat(@NotNull BasicParser.Begin_StatContext ctx) {
-		Reg availReg = availRegs.useRegs();
-		assemblyCode.add(new ARMInstruction(Instruc.LDR, availReg,
-				new Immediate("=" + ctx.getText())));
-		return availReg;
+		createSub();
+		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getChildren().get(0);
+		visit(ctx.stat());
+		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getParent();
+		WACCVisitor.TOP_ST.removeChild();
+		createAdd();
+		return null;
 	}
 
 	@Override
