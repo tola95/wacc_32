@@ -4,7 +4,7 @@ import java.util.List;
 
 public enum DataManager {
 
-	STRING, INT, CHAR, BOOL, ARRAY, DIVIDE, OVERFLOW, ARRAYNEG, ARRAYLARGE;
+	STRING, INT, CHAR, BOOL, ARRAY, DIVIDE, OVERFLOW, ARRAYNEG, ARRAYLARGE, NULLREF;
 
 	private static boolean nullAdded = false;
 	private static boolean stringAdded = false;
@@ -16,6 +16,7 @@ public enum DataManager {
 	private static boolean overflowAdded = false;
 	private static boolean arrayneg = false;
 	private static boolean arraylarge = false;
+	private static boolean nullref = false;
 
 	public static void dataAdd(List<String> list, DataManager dm) {
 		switch (dm) {
@@ -81,6 +82,14 @@ public enum DataManager {
 				list.add("\"ArrayIndexOutOfBoundsError: index too large\\n\\0\"");
 			}
 			arraylarge = true;
+			addNull(list);
+			break;
+		case NULLREF:
+			if (!nullref) {
+				list.add("\"NullReferenceError: dereference a null reference\\n\\0\"");
+				list.add("\"%.*s\\0\"");
+			}
+			nullref = true;
 			addNull(list);
 			break;
 		}
