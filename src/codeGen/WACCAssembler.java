@@ -79,6 +79,20 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		//Pop PC from stack
 		list.add(new ARMInstruction(Instruc.POP, Reg.PC));
 	}
+	
+	public Operand visitFunc(@NotNull BasicParser.FuncContext ctx) {
+		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getChildren().get(0);
+		WACCVisitor.TOP_ST.calculateScope();
+		enterScope(assemblyCode);
+		createSub();
+		visit(ctx.stat());
+		exitScope(assemblyCode);
+		createAdd();
+		assemblyCode.add(Directives.LTORG);
+		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getParent();
+		WACCVisitor.TOP_ST.removeChild();
+		return null;
+	}
 
 	//Visit Sequence statement separated by semicolons
 	@Override
@@ -88,6 +102,14 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		availRegs.refreshReg(); //Refresh registers
 		visit(ctx.stat(1)); //Visit second statement
 		return null;
+	}
+	
+	@Override 
+	public Operand visitReturn_Stat(@NotNull BasicParser.Return_StatContext ctx) {
+		Reg reg = (Reg) visit(ctx.expr());
+		assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, (Reg) reg));
+		exitScope(assemblyCode);
+		return null; 
 	}
 
 	//Visit and/or expression
@@ -623,13 +645,15 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		assemblyCode.add(new ARMInstruction(Instruc.MOV, reg, Reg.R0));
 		visit(ctx.expr(0));
 		PairType pairType = (PairType) t;
-		assemblyCode.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Immediate("=" + pairType.getFst().getSize())));
+		assemblyCode.add(new ARMInstruction(Instruc.LDR, Reg.R0, 
+				new Immediate("=" + pairType.getFst().getSize())));
 		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("malloc")));
 		Reg r = availRegs.useRegs();
 		assemblyCode.add(new ARMInstruction(Instruc.STR, r, new Address(Reg.R0, 0)));
 		assemblyCode.add(new ARMInstruction(Instruc.STR, Reg.R0, new Address(reg, 0)));
 		visit(ctx.expr(1));
-		assemblyCode.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Immediate("=" + pairType.getSnd().getSize())));
+		assemblyCode.add(new ARMInstruction(Instruc.LDR, Reg.R0, 
+				new Immediate("=" + pairType.getSnd().getSize())));
 		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("malloc")));
 		assemblyCode.add(new ARMInstruction(Instruc.STRB, r, new Address(Reg.R0, 0)));
 		return null;
@@ -638,7 +662,8 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	
 	//////////////
 	@Override 
-	public Operand visitPairElem_assignrhs(@NotNull BasicParser.PairElem_assignrhsContext ctx) { 
+	public Operand visitPairElem_assignrhs(
+			@NotNull BasicParser.PairElem_assignrhsContext ctx) { 
 		Reg reg = availRegs.useRegs();
 		return visitChildren(ctx); 
 	}
@@ -661,7 +686,8 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 					"malloc")));
 			Type type = WACCVisitor.TOP_ST
 					.lookUpCurrLevelAndEnclosingLevels(ctx.IDENT().getText());
-			BasicParser.NewPair_assignrhsContext newpair = (BasicParser.NewPair_assignrhsContext) ctx
+			BasicParser.NewPair_assignrhsContext newpair 
+			= (BasicParser.NewPair_assignrhsContext) ctx
 					.assignrhs();
 			return newPair(newpair, type);
 		}
