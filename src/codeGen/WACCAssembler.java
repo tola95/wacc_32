@@ -628,6 +628,8 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		assemblyCode.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Immediate("=" + pairType.getSnd().getSize())));
 		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("malloc")));
 		assemblyCode.add(new ARMInstruction(Instruc.STRB, r, new Address(Reg.R0, 0)));
+		assemblyCode.add(new ARMInstruction(Instruc.STR, Reg.R0, new Address(reg, new Immediate("#4"))));
+		assemblyCode.add(new ARMInstruction(Instruc.STR, reg, new Address(Reg.SP, 0)));
 		return null;
 			
 	}
@@ -636,7 +638,25 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	@Override 
 	public Operand visitPairElem_assignrhs(@NotNull BasicParser.PairElem_assignrhsContext ctx) { 
 		Reg reg = availRegs.useRegs();
-		return visitChildren(ctx); 
+		if (ctx.start.getText().equals("fst")) {
+			assemblyCode.add(new ARMInstruction(Instruc.LDR, reg, new Address(Reg.SP, 0)));
+		} else {
+			assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, reg));
+		}
+		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("p_check_null_pointer")));
+		p_check_null_pointer();
+		return reg; 
+	}
+	
+	private void p_check_null_pointer() {
+		String str = "\"NullReferenceError: dereference a nullreference\\n\\0\"";
+		endInstruc.add(new Label("p_check_null_pointer"));
+		enterScope(endInstruc);
+		endInstruc.add(new ARMInstruction(Instruc.CMP, Reg.R0, new Immediate("#0")));
+		endInstruc.add(new ARMInstruction(Instruc.LDREQ, Reg.R0, new Immediate(getData(str))));
+		endInstruc.add(new ARMInstruction(Instruc.BLEQ, new Immediate("p_check_runtime_error")));
+		exitScope(endInstruc);
+		p_throw_runtime_error();
 	}
 
 	// Visit IdentEq Stat
