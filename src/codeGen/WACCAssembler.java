@@ -301,7 +301,8 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			@NotNull BasicParser.Println_StatContext ctx) {
 		Operand r = visit(ctx.expr());
 		Types type = r.getType();
-		if ((type == Types.INT) || (type == Types.CHAR) || (type == Types.STRING)) {
+		if ((type == Types.INT) || (type == Types.CHAR) || 
+				(type == Types.STRING)) {
 			print(ctx.expr(), r);
 		} else if (type == Types.BOOL) {
 			assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, r));
@@ -321,37 +322,52 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	@Override 
 	public Operand visitArrayelem(@NotNull BasicParser.ArrayelemContext ctx) {
 	    Reg reg = availRegs.useRegs();
-	    Type type = WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(ctx.ident().getText());
+	    Type type = WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(
+	    		ctx.ident().getText());
 	    type = ((ArrayType) type).getType();
 	    int t = type.getSize();
 		int offset = WACCVisitor.TOP_ST.calculateOffset(ctx.ident().getText());
-		assemblyCode.add(new ARMInstruction(Instruc.ADD, reg, Reg.SP, new Immediate("#" + offset)));
+		assemblyCode.add(new ARMInstruction(Instruc.ADD, reg, Reg.SP, 
+				new Immediate("#" + offset)));
 		Operand r = visit(ctx.expr(0));
-		assemblyCode.add(new ARMInstruction(Instruc.LDR, reg, new Address(reg, 0)));
+		assemblyCode.add(new ARMInstruction(Instruc.LDR, reg, 
+				new Address(reg, 0)));
 		assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, r));
 		assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R1, reg));
-		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("p_check_array_bounds")));
+		assemblyCode.add(new ARMInstruction(Instruc.BL, 
+				new Immediate("p_check_array_bounds")));
 		p_check_array_bounds();
-		assemblyCode.add(new ARMInstruction(Instruc.ADD, reg, reg, new Immediate("#4")));
-		assemblyCode.add(new ARMInstruction(Instruc.ADD, reg, reg, r, new Immediate("LSL #" + t/2)));
-		assemblyCode.add(new ARMInstruction(Instruc.LDR, reg, new Address(reg, 0)));
+		assemblyCode.add(new ARMInstruction(Instruc.ADD, reg, reg, 
+				new Immediate("#4")));
+		assemblyCode.add(new ARMInstruction(Instruc.ADD, reg, reg, r, 
+				new Immediate("LSL #" + t/2)));
+		assemblyCode.add(new ARMInstruction(Instruc.LDR, reg, 
+				new Address(reg, 0)));
 		reg.setType(Types.INT);
 		return reg; 
 	}
 	
 	private void p_check_array_bounds() {
 		if (!manage.array_bounds()) {
-			String str1 = "\"ArrayIndexOutOfBoundsError: negative index\\n\\0\"";
-			String str2 = "\"ArrayIndexOutOfBoundsError: index too large\\n\\0\"";
+			String str1 = "\"ArrayIndexOutOfBoundsError: " +
+					"negative index\\n\\0\"";
+			String str2 = "\"ArrayIndexOutOfBoundsError: " +
+					"index too large\\n\\0\"";
 			endInstruc.add(new Label("p_check_array_bounds"));
 			enterScope(endInstruc);
-			endInstruc.add(new ARMInstruction(Instruc.CMP, Reg.R0, new Immediate("#0")));
-			endInstruc.add(new ARMInstruction(Instruc.LDRLT, Reg.R0, new Immediate(getData(str1))));
-			endInstruc.add(new ARMInstruction(Instruc.BLLT, new Immediate("p_throw_runtime_error")));
-			endInstruc.add(new ARMInstruction(Instruc.LDR, Reg.R1, new Address(Reg.R1, 0)));
+			endInstruc.add(new ARMInstruction(Instruc.CMP, Reg.R0, 
+					new Immediate("#0")));
+			endInstruc.add(new ARMInstruction(Instruc.LDRLT, Reg.R0, 
+					new Immediate(getData(str1))));
+			endInstruc.add(new ARMInstruction(Instruc.BLLT, 
+					new Immediate("p_throw_runtime_error")));
+			endInstruc.add(new ARMInstruction(Instruc.LDR, Reg.R1, 
+					new Address(Reg.R1, 0)));
 			endInstruc.add(new ARMInstruction(Instruc.CMP, Reg.R0, Reg.R1));
-			endInstruc.add(new ARMInstruction(Instruc.LDRCS, Reg.R0, new Immediate(getData(str2))));
-			endInstruc.add(new ARMInstruction(Instruc.BLCS, new Immediate("p_throw_runtime_error")));
+			endInstruc.add(new ARMInstruction(Instruc.LDRCS, Reg.R0, 
+					new Immediate(getData(str2))));
+			endInstruc.add(new ARMInstruction(Instruc.BLCS, 
+					new Immediate("p_throw_runtime_error")));
 			exitScope(endInstruc);
 			p_throw_runtime_error();
 		}
@@ -428,7 +444,8 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	//Visit while stat
 	@Override
 	public Operand visitWhile_Stat(@NotNull BasicParser.While_StatContext ctx) {
-		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("L" + label))); // Add L0 branch
+		assemblyCode.add(new ARMInstruction(Instruc.BL,
+				 new Immediate("L" + label))); // Add L0 branch
 		L1_While(ctx);
 		return null;
 	}
@@ -507,8 +524,10 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			reg = ch;
 			break;
 		case BasicParser.LEN:
-			assemblyCode.add(new ARMInstruction(Instruc.LDR, reg, new Address(Reg.SP, 0)));
-			assemblyCode.add(new ARMInstruction(Instruc.LDR, reg, new Address((Reg) reg, 0)));
+			assemblyCode.add(new ARMInstruction(Instruc.LDR, reg, 
+					new Address(Reg.SP, 0)));
+			assemblyCode.add(new ARMInstruction(Instruc.LDR, reg, 
+					new Address((Reg) reg, 0)));
 			Reg len = ((Reg) reg);
 			len.setType(Types.INT);
 			reg = len;
@@ -519,7 +538,8 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	
 	private Reg arrayType(BasicParser.IdentEq_StatContext ctx) {
 		int offset = WACCVisitor.TOP_ST.calculateOffset(ctx.IDENT().getText());
-		BasicParser.ArrayLiter_assignrhsContext a = (BasicParser.ArrayLiter_assignrhsContext) ctx.assignrhs();
+		BasicParser.ArrayLiter_assignrhsContext a = 
+				(BasicParser.ArrayLiter_assignrhsContext) ctx.assignrhs();
 		int length = 0;
 		if (a.arrayliter().arglist() != null) {
 			length = a.arrayliter().arglist().expr().size();				
@@ -527,21 +547,28 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		Reg reg = availRegs.useRegs();
 		Type type = WACCVisitor.TOP_ST.lookUpCurrLevelOnly(ctx.IDENT().getText());
 		Type innerType = ((ArrayType) type).getType();
-		assemblyCode.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Immediate("=" + calculateArray(length, innerType.getSize()))));
-		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("malloc")));
+		assemblyCode.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Immediate(
+				"=" + calculateArray(length, innerType.getSize()))));
+		assemblyCode.add(new ARMInstruction(Instruc.BL,
+				 new Immediate("malloc")));
 		assemblyCode.add(new ARMInstruction(Instruc.MOV, reg, Reg.R0));
 		int i = 0;
 		if (a.arrayliter().arglist() != null) {
 			for (i = 0; i < a.arrayliter().arglist().expr().size(); i++) {
 				Operand r = visit(a.arrayliter().arglist().expr(i));
 				availRegs.addReg((Reg) r);
-				assemblyCode.add(new ARMInstruction(Instruc.STR, r, new Address(reg ,new Immediate(Integer.toString((i+1) * innerType.getSize())))));
+				assemblyCode.add(new ARMInstruction(Instruc.STR, r, new Address
+						(reg ,new Immediate(Integer.toString((i+1) * 
+								innerType.getSize())))));
 			}				
 		}
 		Reg r = availRegs.useRegs();
-		assemblyCode.add(new ARMInstruction(Instruc.LDR, r, new Immediate("=" + i)));
-		assemblyCode.add(new ARMInstruction(Instruc.STR, r, new Address(reg, 0)));
-		assemblyCode.add(new ARMInstruction(Instruc.STR, reg, new Address(Reg.SP, offset)));
+		assemblyCode.add(new ARMInstruction(Instruc.LDR, r, 
+				new Immediate("=" + i)));
+		assemblyCode.add(new ARMInstruction(Instruc.STR, r, 
+				new Address(reg, 0)));
+		assemblyCode.add(new ARMInstruction(Instruc.STR, reg, 
+				new Address(Reg.SP, offset)));
 		return reg;
 	}
 
@@ -725,7 +752,8 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	//Implementation of what happens when you have an overflow error
 	private void p_throw_overflow_error() {
 		if (!manage.overflow()) {
-			String str = "\"OverflowError: the result is too small/large to store in a 4-byte signed-integer.\\n\"";
+			String str = "\"OverflowError: the result is too small" +
+					"/large to store in a 4-byte signed-integer.\\n\"";
 			endInstruc.add(new Label("p_throw_overflow_error"));
 			endInstruc.add(new ARMInstruction(Instruc.LDR, Reg.R0,
 					new Immediate(getData(str))));
