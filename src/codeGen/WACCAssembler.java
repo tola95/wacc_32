@@ -645,7 +645,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		return reg;
 	}
 
-	private Operand newPair(BasicParser.NewPair_assignrhsContext ctx, Type t) {
+	private Operand newPair(BasicParser.NewPair_assignrhsContext ctx, Type t, int offset) {
 		Reg reg = availRegs.useRegs();
 		Type type =  WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(ctx.expr(0).getText());
 		Type type2 =  WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(ctx.expr(1).getText());
@@ -677,7 +677,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	}
 
 	@Override 
-	public Operand visitPairElem_assignrhs(@NotNull BasicParser.PairElem_assignrhsContext ctx) { 
+	public Operand visitPairelem(@NotNull BasicParser.PairelemContext ctx) { 
 		Reg reg = availRegs.useRegs();
 		int offset = WACCVisitor.TOP_ST.calculateOffset(ctx.expr().getText());
 		Type type = ((PairType) WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(ctx.expr().getText())).getSnd();
