@@ -481,6 +481,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 			DataManager.dataAdd(WACCAssembler.data, DataManager.BOOL);
 			break;
 		case "ARRAY":
+		case "PAIR":
 			DataManager.dataAdd(WACCAssembler.data, DataManager.ARRAY);
 			break;
 		}	
@@ -619,6 +620,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 
 	@Override
 	public Type visitPairelem(BasicParser.PairelemContext ctx) {
+		DataManager.dataAdd(WACCAssembler.data, DataManager.NULLREF);
 		Type t = visit(ctx.expr());
 		if (!(t instanceof PairType)) {
 			System.err.println("Not a pair type at line " + ctx.start.getLine()

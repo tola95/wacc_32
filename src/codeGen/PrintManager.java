@@ -18,7 +18,7 @@ public class PrintManager {
 	}
 	
 	public boolean nullReference() {
-		return helperPrint(errors, 3);
+		return helperPrint(errors, 1);
 	}
 	
 	public boolean array_bounds() {
