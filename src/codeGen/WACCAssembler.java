@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import java.util.List;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 import Intsr.ARMInstruction;
 import Intsr.Address;
@@ -18,11 +19,13 @@ import Intsr.Reg;
 import Intsr.RegManager;
 import Intsr.Types;
 import WACCFrontEnd.ArrayType;
+import WACCFrontEnd.PairType;
 import WACCFrontEnd.PrimType;
 import WACCFrontEnd.Type;
 import WACCFrontEnd.WACCVisitor;
 import antlr.BasicParser;
 import antlr.BasicParser.ArrayelemContext;
+import antlr.BasicParser.PairtypeContext;
 import antlr.BasicParserBaseVisitor;
 
 public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
@@ -480,7 +483,10 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	public Operand visitWhile_Stat(@NotNull BasicParser.While_StatContext ctx) {
 		int i = label;
 		label += 2;
-		assemblyCode.add(new ARMInstruction(Instruc.B, new Immediate("L" + i))); // Add																	// 																	// branch
+		assemblyCode.add(new ARMInstruction(Instruc.B, new Immediate("L" + i))); // Add
+																					// //
+																					// //
+																					// branch
 		L1_While(ctx, i + 1);
 		return null;
 	}
@@ -608,14 +614,52 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		return reg;
 	}
 
+	private Operand newPair(BasicParser.NewPair_assignrhsContext ctx, Type t) {
+		Reg reg = availRegs.useRegs();
+		assemblyCode.add(new ARMInstruction(Instruc.MOV, reg, Reg.R0));
+		visit(ctx.expr(0));
+		PairType pairType = (PairType) t;
+		assemblyCode.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Immediate("=" + pairType.getFst().getSize())));
+		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("malloc")));
+		Reg r = availRegs.useRegs();
+		assemblyCode.add(new ARMInstruction(Instruc.STR, r, new Address(Reg.R0, 0)));
+		assemblyCode.add(new ARMInstruction(Instruc.STR, Reg.R0, new Address(reg, 0)));
+		visit(ctx.expr(1));
+		assemblyCode.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Immediate("=" + pairType.getSnd().getSize())));
+		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("malloc")));
+		assemblyCode.add(new ARMInstruction(Instruc.STRB, r, new Address(Reg.R0, 0)));
+		return null;
+			
+	}
+	
+	//////////////
+	@Override 
+	public Operand visitPairElem_assignrhs(@NotNull BasicParser.PairElem_assignrhsContext ctx) { 
+		Reg reg = availRegs.useRegs();
+		return visitChildren(ctx); 
+	}
+
 	// Visit IdentEq Stat
 	@Override
 	public Operand visitIdentEq_Stat(
 			@NotNull BasicParser.IdentEq_StatContext ctx) {
 		// offset between ident and bp
 		int offset = WACCVisitor.TOP_ST.calculateOffset(ctx.IDENT().getText());
-		if (ctx.type().getChild(0) instanceof BasicParser.ArraytypeContext) {
+		ParseTree context = ctx.type().getChild(0);
+		if (context instanceof BasicParser.ArraytypeContext) {
 			return arrayType(ctx);
+		}
+		if (context instanceof BasicParser.PairtypeContext) {
+
+			assemblyCode.add(new ARMInstruction(Instruc.LDR, Reg.R0,
+					new Immediate("=8")));
+			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
+					"malloc")));
+			Type type = WACCVisitor.TOP_ST
+					.lookUpCurrLevelAndEnclosingLevels(ctx.IDENT().getText());
+			BasicParser.NewPair_assignrhsContext newpair = (BasicParser.NewPair_assignrhsContext) ctx
+					.assignrhs();
+			return newPair(newpair, type);
 		}
 		Operand reg = visit(ctx.assignrhs());
 		// switch on the type of the first node of ctx
@@ -703,7 +747,8 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		}
 		Type type = WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(ctx
 				.assignlhs().getText());
-		int offset = WACCVisitor.TOP_ST.calculateOffset(ctx.assignlhs().getText());
+		int offset = WACCVisitor.TOP_ST.calculateOffset(ctx.assignlhs()
+				.getText());
 		if (type.equals(PrimType.BOOL) || type.equals(PrimType.CHAR)) {
 			assemblyCode.add(new ARMInstruction(Instruc.STRB, avail,
 					new Address(Reg.SP, offset))); // STRB for bools and chars
@@ -865,7 +910,8 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			break;
 		case "ARRAY":
 			avail.setType(Types.ARRAY);
-			assemblyCode.add(new ARMInstruction(Instruc.LDR, avail, new Address(Reg.SP, 0)));
+			assemblyCode.add(new ARMInstruction(Instruc.LDR, avail,
+					new Address(Reg.SP, 0)));
 			break;
 		}
 		return avail;
