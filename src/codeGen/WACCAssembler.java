@@ -619,6 +619,10 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		s = Integer.toString(i);
 		assemblyCode.add(new ARMInstruction(Instruc.LDR, availReg,
 				new Immediate("=" + s)));
+		if (availReg.equals(Reg.R10)) {
+			availRegs.addReg(availReg);
+			assemblyCode.add(new ARMInstruction(Instruc.PUSH, new Immediate(availReg.toString())));
+		}
 		return availReg; // return the register
 	}
 
