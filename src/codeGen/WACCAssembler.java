@@ -651,6 +651,13 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 				Reg.SP, offset)));
 		return null;
 	}
+	
+	@Override 
+	public Operand visitReturn_Stat(@NotNull BasicParser.Return_StatContext ctx) { 
+		visit(ctx.expr());
+		exitScope(assemblyCode); 
+		return null; 
+	}
 
 	@Override 
 	public Operand visitPairelem(@NotNull BasicParser.PairelemContext ctx) { 
@@ -979,24 +986,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		}
 		return avail;
 	}
-
-	// private Reg setArrayElemType(String s, Reg r) {
-	// switch (s) {
-	// case "INT":
-	// r.setType(Types.INT);
-	// break;
-	// case "CHAR":
-	// r.setType(Types.CHAR);
-	// break;
-	// case "BOOL":
-	// r.setType(Types.BOOL);
-	// break;
-	// case "STRING":
-	// r.setType(Types.STRING);
-	// break;
-	// }
-	// return r;
-	// }
 
 	@Override
 	public Operand visitStrLiter_Expr(
