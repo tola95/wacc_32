@@ -458,7 +458,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R1, reg));
 			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
 					"p_check_array_bounds")));
-			p_check_array_bounds();
+			
 			assemblyCode.add(new ARMInstruction(Instruc.ADD, reg, reg,
 					new Immediate("#4")));
 			if (t / 2 > 1) {
@@ -466,6 +466,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 						new Immediate("LSL #" + t / 2)));
 			}
 			availRegs.addReg((Reg) r);
+			p_check_array_bounds();
 		}
 		return setRegType(reg, type);
 	}
@@ -912,7 +913,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	public Operand visitAssignLhsRhs_Stat(
 			@NotNull BasicParser.AssignLhsRhs_StatContext ctx) {
 		Operand avail = visit(ctx.assignrhs());
-		System.out.println(avail);
 		ParseTree context = ctx.assignlhs().getChild(0);
 		if (context instanceof BasicParser.ArrayelemContext) {
 			Operand r = visit(ctx.assignlhs().arrayelem());

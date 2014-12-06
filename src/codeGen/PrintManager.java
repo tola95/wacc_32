@@ -7,7 +7,7 @@ public class PrintManager {
 	
 	private List<Boolean> prints = Arrays.asList(false, false, false, false, false, false);
 	private List<Boolean> reads = Arrays.asList(false, false, false);
-	private List<Boolean> errors = Arrays.asList(false, false, false);
+	private List<Boolean> errors = Arrays.asList(false, false, false, false);
 	private List<Boolean> free = Arrays.asList(false, false);
 	
 	public boolean freepair() {
@@ -27,7 +27,7 @@ public class PrintManager {
 	}
 	
 	public boolean array_bounds() {
-		return helperPrint(errors, 1);
+		return helperPrint(errors, 3);
 	}
 	
 	public boolean print_string() {
