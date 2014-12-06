@@ -11,10 +11,10 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class SymbolTable {
-	SymbolTable parent;
-	HashMap<String, Type> dictionary;
-	public int totalScope = 0;
-	private Type returnType;
+	SymbolTable parent; //Parent SymbolTable
+	HashMap<String, Type> dictionary; //Dictionary of Strings to types
+	public int totalScope = 0; 
+	private Type returnType; //Return type of symbol table
 	private List<SymbolTable> children = new ArrayList<>();
 
 	SymbolTable(SymbolTable st, Type t) {
