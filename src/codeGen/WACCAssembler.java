@@ -460,7 +460,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R1, reg));
 			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
 					"p_check_array_bounds")));
-			
+
 			assemblyCode.add(new ARMInstruction(Instruc.ADD, reg, reg,
 					new Immediate("#4")));
 			if (t / 2 > 1) {
@@ -549,11 +549,12 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 
 	@Override
 	public Operand visitRead_Stat(@NotNull BasicParser.Read_StatContext ctx) {
-		 // next available register
+		// next available register
 		if (ctx.assignlhs().getChild(0) instanceof BasicParser.PairelemContext) {
 			Reg r = (Reg) visit(ctx.assignlhs().pairelem());
 			assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, r));
-			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("p_check_null_pointer")));
+			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
+					"p_check_null_pointer")));
 			p_check_null_pointer();
 			return r;
 		}
@@ -564,7 +565,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 				new Immediate("#" + offset)));
 		assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, avail));
 		// lhs type as stated by top symboltable
-		
+
 		String type = WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(
 				ctx.assignlhs().getText()).toString();
 		switch (type) {
@@ -619,10 +620,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		s = Integer.toString(i);
 		assemblyCode.add(new ARMInstruction(Instruc.LDR, availReg,
 				new Immediate("=" + s)));
-		if (availReg.equals(Reg.R10)) {
-			availRegs.addReg(availReg);
-			assemblyCode.add(new ARMInstruction(Instruc.PUSH, new Immediate(availReg.toString())));
-		}
 		return availReg; // return the register
 	}
 
@@ -1021,7 +1018,15 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	@Override
 	public Operand visitTerm_Expr(@NotNull BasicParser.Term_ExprContext ctx) {
 		Operand reg1 = visit(ctx.expr(0));
+		if (!availRegs.hasNext()) {
+			assemblyCode.add(new ARMInstruction(Instruc.PUSH, new Immediate(
+					reg1.toString())));
+		}
 		Operand reg2 = visit(ctx.expr(1));
+		if (reg1.toString().equals(reg2.toString())) {
+			assemblyCode.add(new ARMInstruction(Instruc.POP, Reg.R11));
+			reg2 = Reg.R11;
+		}
 		switch (ctx.getChild(1).getText()) {
 		case "+":
 			assemblyCode
@@ -1032,6 +1037,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 					.add(new ARMInstruction(Instruc.SUBS, reg1, reg1, reg2));
 			break;
 		}
+
 		// In case the ints supplied are higher than the int values we can hold
 		assemblyCode.add(new ARMInstruction(Instruc.BLVS, new Immediate(
 				"p_throw_overflow_error")));

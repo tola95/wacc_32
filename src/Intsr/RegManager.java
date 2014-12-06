@@ -7,6 +7,9 @@ public class RegManager {
 	private List<Reg> regs = Reg.getRegs();
 	
 	public Reg useRegs() {
+		if (!hasNext()) {
+			return Reg.R10;
+		}
 		Reg reg = regs.get(0);
 		regs.remove(0);
 		return reg;
@@ -18,5 +21,9 @@ public class RegManager {
 	
 	public void addReg(Reg r) {
 		regs.add(0, r);
+	}
+	
+	public boolean hasNext() {
+		return !regs.isEmpty();
 	}
 }

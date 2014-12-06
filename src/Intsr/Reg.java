@@ -43,7 +43,7 @@ public enum Reg implements Operand{
 		List<Reg> regs = new ArrayList<>();
 		for (Reg r : Reg.values()) {
 			int i = r.ordinal();
-			if (i > 3 && i < 13) {
+			if (i > 3 && i < 11) {
 				regs.add(r);
 			}
 		}
