@@ -675,13 +675,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		return null;
 			
 	}
-	
-	@Override 
-	public Operand visitReturn_Stat(@NotNull BasicParser.Return_StatContext ctx) { 
-		visit(ctx.expr());
-		exitScope(assemblyCode); 
-		return null; 
-	}
 
 	@Override 
 	public Operand visitPairelem(@NotNull BasicParser.PairelemContext ctx) { 
