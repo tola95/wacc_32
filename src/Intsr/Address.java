@@ -4,10 +4,12 @@ public class Address implements Operand{
 	
 	private Reg reg;
 	private Immediate imm;
+	private char ch = ' ';
 	
-	public Address(Reg reg, Immediate imm) {
+	public Address(Reg reg, Immediate imm, char ch) {
 		this.reg = reg;
 		this.imm = imm;
+		this.ch = ch;
 	}
 	
 	public Address(Reg reg, int imm) {
@@ -24,7 +26,7 @@ public class Address implements Operand{
 		if (imm == null) {
 			return "[" + reg + "]";
 		} else {
-			return "[" + reg + ", #" + imm + "]";
+			return "[" + reg + ", #" + imm + "]" + ch;
 		}
 	}
 

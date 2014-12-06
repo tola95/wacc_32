@@ -80,17 +80,41 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		list.add(new ARMInstruction(Instruc.POP, Reg.PC));
 	}
 
+	@Override
+	public Operand visitCall_assignrhs(
+			@NotNull BasicParser.Call_assignrhsContext ctx) {
+		Reg r = availRegs.useRegs();
+		if (ctx.getChild(3) instanceof BasicParser.ArglistContext) {
+			for (BasicParser.ExprContext expr : ctx.arglist().expr()) {
+				availRegs.refreshReg();
+				r = (Reg) visit(expr);
+			}
+		}
+		availRegs.refreshReg();
+		int off = (r.getType() == Types.BOOL || r.getType() == Types.CHAR) ? 1
+				: 4;
+		Reg reg = availRegs.useRegs();
+		assemblyCode.add(new ARMInstruction((r.getType() == Types.BOOL || r
+				.getType() == Types.CHAR) ? Instruc.STRB : Instruc.STR, reg,
+				new Address(Reg.SP, new Immediate("-" + off), '!')));
+		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("f_"
+				+ ctx.IDENT().getText())));
+		createAdd();
+		assemblyCode.add(new ARMInstruction(Instruc.MOV, r, Reg.R0));
+		return r;
+	}
+
 	public Operand visitFunc(@NotNull BasicParser.FuncContext ctx) {
+		assemblyCode.add(new Label("f_" + ctx.IDENT().getText()));
 		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getChildren().get(0);
 		WACCVisitor.TOP_ST.calculateScope();
 		enterScope(assemblyCode);
-		createSub();
 		visit(ctx.stat());
 		exitScope(assemblyCode);
-		createAdd();
 		assemblyCode.add(Directives.LTORG);
 		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getParent();
 		WACCVisitor.TOP_ST.removeChild();
+		availRegs.refreshReg();
 		return null;
 	}
 
@@ -247,7 +271,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			endInstruc.add(new Label("p_print_string"));
 			enterScope(endInstruc);
 			endInstruc.add(new ARMInstruction(Instruc.LDR, Reg.R1, new Address(
-					Reg.R0, null)));
+					Reg.R0, 0)));
 			endInstruc.add(new ARMInstruction(Instruc.ADD, Reg.R2, Reg.R0,
 					new Immediate("#4")));
 			endInstruc.add(new ARMInstruction(Instruc.LDR, Reg.R0,
@@ -323,36 +347,49 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			p_print_reference();
 		}
 	}
-	
-	@Override 
-	public Operand visitFree_Stat(@NotNull BasicParser.Free_StatContext ctx) { 
-		Type type = WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(ctx.expr().getText());
+
+	@Override
+	public Operand visitFree_Stat(@NotNull BasicParser.Free_StatContext ctx) {
+		Type type = WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(ctx
+				.expr().getText());
 		Reg r = (Reg) visit(ctx.expr());
 		assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, r));
 		if (type.toString().equals("PAIR")) {
-			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("p_free_pair")));
+			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
+					"p_free_pair")));
 			p_free_pair();
 		}
-		return null; 
+		return null;
 	}
-	
+
 	private void p_free_pair() {
 		DataManager.dataAdd(data, DataManager.NULLREF);
 		String str = "\"NullReferenceError: dereference a null reference\\n\\0\"";
 		if (!manage.freepair()) {
 			endInstruc.add(new Label("p_free_pair"));
 			enterScope(endInstruc);
-			endInstruc.add(new ARMInstruction(Instruc.CMP, Reg.R0, new Immediate("#0")));
-			endInstruc.add(new ARMInstruction(Instruc.LDREQ, Reg.R0, new Immediate(getData(str))));
-			endInstruc.add(new ARMInstruction(Instruc.BEQ, new Immediate("p_throw_runtime_error")));
-			endInstruc.add(new ARMInstruction(Instruc.PUSH, new Immediate(Reg.R0.toString())));
-			endInstruc.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Address(Reg.R0, 0)));
-			endInstruc.add(new ARMInstruction(Instruc.BL, new Immediate("free")));
-			endInstruc.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Address(Reg.SP, 0)));
-			endInstruc.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Address(Reg.R0, 4)));
-			endInstruc.add(new ARMInstruction(Instruc.BL, new Immediate("free")));
-			endInstruc.add(new ARMInstruction(Instruc.POP, new Immediate(Reg.R0.toString())));
-			endInstruc.add(new ARMInstruction(Instruc.BL, new Immediate("free")));
+			endInstruc.add(new ARMInstruction(Instruc.CMP, Reg.R0,
+					new Immediate("#0")));
+			endInstruc.add(new ARMInstruction(Instruc.LDREQ, Reg.R0,
+					new Immediate(getData(str))));
+			endInstruc.add(new ARMInstruction(Instruc.BEQ, new Immediate(
+					"p_throw_runtime_error")));
+			endInstruc.add(new ARMInstruction(Instruc.PUSH, new Immediate(
+					Reg.R0.toString())));
+			endInstruc.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Address(
+					Reg.R0, 0)));
+			endInstruc
+					.add(new ARMInstruction(Instruc.BL, new Immediate("free")));
+			endInstruc.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Address(
+					Reg.SP, 0)));
+			endInstruc.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Address(
+					Reg.R0, 4)));
+			endInstruc
+					.add(new ARMInstruction(Instruc.BL, new Immediate("free")));
+			endInstruc.add(new ARMInstruction(Instruc.POP, new Immediate(Reg.R0
+					.toString())));
+			endInstruc
+					.add(new ARMInstruction(Instruc.BL, new Immediate("free")));
 			exitScope(endInstruc);
 			p_throw_runtime_error();
 		}
@@ -406,7 +443,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		if (type == PrimType.STRING) {
 			type = new ArrayType(PrimType.CHAR);
 		}
-		for (int i = 0; i < ctx.expr().size(); i ++) {
+		for (int i = 0; i < ctx.expr().size(); i++) {
 			type = ((ArrayType) type).getType();
 		}
 		int t = type.getSize();
@@ -669,8 +706,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 				Operand r = visit(a.arrayliter().arglist().expr(i));
 				availRegs.addReg((Reg) r);
 				assemblyCode.add(new ARMInstruction(Instruc.STR, r,
-						new Address(reg, new Immediate(Integer.toString((i + 1)
-								* innerType.getSize())))));
+						new Address(reg, (i + 1) * innerType.getSize())));
 			}
 		}
 		Reg r = availRegs.useRegs();
@@ -686,10 +722,10 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	private Operand newPair(BasicParser.NewPair_assignrhsContext ctx, Type t,
 			int offset) {
 		Reg reg = availRegs.useRegs();
-		assemblyCode.add(new ARMInstruction(Instruc.LDR, Reg.R0,
-				new Immediate("=8")));
-		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
-				"malloc")));
+		assemblyCode.add(new ARMInstruction(Instruc.LDR, Reg.R0, new Immediate(
+				"=8")));
+		assemblyCode
+				.add(new ARMInstruction(Instruc.BL, new Immediate("malloc")));
 		assemblyCode.add(new ARMInstruction(Instruc.MOV, reg, Reg.R0));
 		Reg r = (Reg) visit(ctx.expr(0));
 		PairType pairType = (PairType) t;
@@ -712,7 +748,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 				.getType() == Types.CHAR) ? Instruc.STRB : Instruc.STR, r,
 				new Address(Reg.R0, 0)));
 		assemblyCode.add(new ARMInstruction(Instruc.STR, Reg.R0, new Address(
-				reg, new Immediate("4"))));
+				reg, 4)));
 		assemblyCode.add(new ARMInstruction(Instruc.STR, reg, new Address(
 				Reg.SP, offset)));
 		return null;
@@ -763,13 +799,15 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			p_throw_runtime_error();
 		}
 	}
-	
-	@Override 
-	public Operand visitPairLiter_Expr(@NotNull BasicParser.PairLiter_ExprContext ctx) {
+
+	@Override
+	public Operand visitPairLiter_Expr(
+			@NotNull BasicParser.PairLiter_ExprContext ctx) {
 		Reg reg = availRegs.useRegs();
-		assemblyCode.add(new ARMInstruction(Instruc.LDR, reg, new Immediate("=0")));
+		assemblyCode.add(new ARMInstruction(Instruc.LDR, reg, new Immediate(
+				"=0")));
 		reg.setType(Types.NULL);
-		return reg; 
+		return reg;
 	}
 
 	// Visit IdentEq Stat
@@ -782,7 +820,8 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		if (context instanceof BasicParser.ArraytypeContext) {
 			return arrayType(ctx);
 		}
-		if (context instanceof BasicParser.PairtypeContext && ctx.assignrhs().getStart().getType() == BasicParser.NEWPAIR) {
+		if (context instanceof BasicParser.PairtypeContext
+				&& ctx.assignrhs().getStart().getType() == BasicParser.NEWPAIR) {
 			Type type = WACCVisitor.TOP_ST
 					.lookUpCurrLevelAndEnclosingLevels(ctx.IDENT().getText());
 			BasicParser.NewPair_assignrhsContext newpair = (BasicParser.NewPair_assignrhsContext) ctx
@@ -801,10 +840,10 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		case BasicParser.STRING:
 			if (offset == 0) {
 				assemblyCode.add(new ARMInstruction(Instruc.STR, reg,
-						new Address(Reg.SP, null)));
+						new Address(Reg.SP, 0)));
 			} else {
 				assemblyCode.add(new ARMInstruction(Instruc.STR, reg,
-						new Address(Reg.SP, new Immediate("" + offset))));
+						new Address(Reg.SP, offset)));
 			}
 			break;
 		}
@@ -866,6 +905,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	@Override
 	public Operand visitAssignLhsRhs_Stat(
 			@NotNull BasicParser.AssignLhsRhs_StatContext ctx) {
+
 		Operand avail = visit(ctx.assignrhs());
 		ParseTree context = ctx.assignlhs().getChild(0);
 		if (context instanceof BasicParser.ArrayelemContext) {

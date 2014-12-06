@@ -12,7 +12,7 @@ import java.util.TreeMap;
 
 public class SymbolTable {
 	SymbolTable parent; //Parent SymbolTable
-	HashMap<String, Type> dictionary; //Dictionary of Strings to types
+	Map<String, Type> dictionary = new LinkedHashMap<String, Type>(); //Dictionary of Strings to types
 	public int totalScope = 0; 
 	private Type returnType; //Return type of symbol table
 	private List<SymbolTable> children = new ArrayList<>();
@@ -61,7 +61,7 @@ public class SymbolTable {
 		dictionary.put(str, obj);
 	}
 	
-	public HashMap<String, Type> getDictionary() {
+	public Map<String, Type> getDictionary() {
 		return dictionary;
 	}
 
