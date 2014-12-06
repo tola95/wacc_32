@@ -24,7 +24,9 @@ import WACCFrontEnd.PrimType;
 import WACCFrontEnd.Type;
 import WACCFrontEnd.WACCVisitor;
 import antlr.BasicParser;
+import antlr.BasicParser.ArrayLiter_assignrhsContext;
 import antlr.BasicParser.ArrayelemContext;
+import antlr.BasicParser.PairelemContext;
 import antlr.BasicParser.PairtypeContext;
 import antlr.BasicParserBaseVisitor;
 
@@ -547,13 +549,22 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 
 	@Override
 	public Operand visitRead_Stat(@NotNull BasicParser.Read_StatContext ctx) {
-		Reg avail = availRegs.useRegs(); // next available register
+		 // next available register
+		if (ctx.assignlhs().getChild(0) instanceof BasicParser.PairelemContext) {
+			Reg r = (Reg) visit(ctx.assignlhs().pairelem());
+			assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, r));
+			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("p_check_null_pointer")));
+			p_check_null_pointer();
+			return r;
+		}
+		Reg avail = availRegs.useRegs();
 		int offset = WACCVisitor.TOP_ST.calculateOffset(ctx.assignlhs()
 				.getText()); // offset of lhs
 		assemblyCode.add(new ARMInstruction(Instruc.ADD, avail, Reg.SP,
 				new Immediate("#" + offset)));
 		assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, avail));
 		// lhs type as stated by top symboltable
+		
 		String type = WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(
 				ctx.assignlhs().getText()).toString();
 		switch (type) {
@@ -658,8 +669,13 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 					new Immediate("#1")));
 			break;
 		case BasicParser.MINUS:
+			DataManager.dataAdd(data, DataManager.OVERFLOW);
+			DataManager.dataAdd(data, DataManager.STRING);
 			assemblyCode.add(new ARMInstruction(Instruc.RSBS, reg, reg,
 					new Immediate("#0")));
+			assemblyCode.add(new ARMInstruction(Instruc.BLVS, new Immediate(
+					"p_throw_overflow_error")));
+			p_throw_overflow_error();
 			break;
 		case BasicParser.ORD:
 			Reg r = (Reg) reg;
