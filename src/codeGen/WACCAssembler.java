@@ -762,6 +762,11 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		Type type = ((PairType) WACCVisitor.TOP_ST
 				.lookUpCurrLevelAndEnclosingLevels(ctx.expr().getText()))
 				.getSnd();
+		if (ctx.start.getType() == BasicParser.FST) {
+			type = ((PairType) WACCVisitor.TOP_ST
+					.lookUpCurrLevelAndEnclosingLevels(ctx.expr().getText()))
+					.getFst();
+		}
 		assemblyCode.add(new ARMInstruction(Instruc.LDR, reg, new Address(
 				Reg.SP, offset)));
 		assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, reg));
@@ -817,7 +822,8 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		// offset between ident and bp
 		int offset = WACCVisitor.TOP_ST.calculateOffset(ctx.IDENT().getText());
 		ParseTree context = ctx.type().getChild(0);
-		if (context instanceof BasicParser.ArraytypeContext) {
+		if (context instanceof BasicParser.ArraytypeContext
+				&& ctx.assignrhs() instanceof BasicParser.ArrayLiter_assignrhsContext) {
 			return arrayType(ctx);
 		}
 		if (context instanceof BasicParser.PairtypeContext
@@ -837,7 +843,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 					Reg.SP, offset)));
 			break;
 		case BasicParser.INT:
-		case BasicParser.STRING:
+		default:
 			if (offset == 0) {
 				assemblyCode.add(new ARMInstruction(Instruc.STR, reg,
 						new Address(Reg.SP, 0)));
@@ -905,8 +911,8 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	@Override
 	public Operand visitAssignLhsRhs_Stat(
 			@NotNull BasicParser.AssignLhsRhs_StatContext ctx) {
-
 		Operand avail = visit(ctx.assignrhs());
+		System.out.println(avail);
 		ParseTree context = ctx.assignlhs().getChild(0);
 		if (context instanceof BasicParser.ArrayelemContext) {
 			Operand r = visit(ctx.assignlhs().arrayelem());
