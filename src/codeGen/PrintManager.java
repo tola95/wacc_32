@@ -8,6 +8,11 @@ public class PrintManager {
 	private List<Boolean> prints = Arrays.asList(false, false, false, false, false, false);
 	private List<Boolean> reads = Arrays.asList(false, false, false);
 	private List<Boolean> errors = Arrays.asList(false, false, false);
+	private List<Boolean> free = Arrays.asList(false, false);
+	
+	public boolean freepair() {
+		return helperPrint(free, 0);
+	}
 	
 	public boolean overflow() {
 		return helperPrint(errors, 0);
