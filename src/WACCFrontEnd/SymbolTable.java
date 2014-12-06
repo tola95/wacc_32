@@ -20,7 +20,7 @@ public class SymbolTable {
 	SymbolTable(SymbolTable st, Type t) {
 		parent = st;
 		returnType = t;
-		dictionary = new HashMap<String, Type>();
+		dictionary = new LinkedHashMap<String, Type>();
 	}
 
 	SymbolTable(SymbolTable st) {
