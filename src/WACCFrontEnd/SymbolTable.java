@@ -100,12 +100,6 @@ public class SymbolTable {
 				}
 				n += entry.getValue().getSize();
 			}
-//			for (Map.Entry<String, Type> entry : st.getDictionary().entrySet()) {
-//				if (entry.getKey().equals(s)) {
-//					return n;
-//				}
-//				n += entry.getValue().getSize();
-//			}
 			st = st.getParent();
 		}
 		return n;

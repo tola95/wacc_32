@@ -45,10 +45,10 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		SymbolTable symboltable1 = new SymbolTable(TOP_ST, visit(ctx.type()));
 		TOP_ST.addChildren(symboltable1);
 		TOP_ST = symboltable1;
-		WACCVisitor.TOP_ST.getDictionary().put("1", PrimType.INT);
 		if (ctx.paramlist() != null) {
 			visit(ctx.paramlist());
 		}
+		WACCVisitor.TOP_ST.getDictionary().put("1", PrimType.INT);
 		SymbolTable symboltable2 = new SymbolTable(symboltable1);
 		symboltable1.addChildren(symboltable2);
 		TOP_ST = symboltable2;
