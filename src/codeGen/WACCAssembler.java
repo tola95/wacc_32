@@ -101,11 +101,13 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		}
 		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("f_"
 				+ ctx.IDENT().getText())));
-		if (ctx.getChild(3) instanceof BasicParser.ArglistContext) {
-			WACCVisitor.TOP_ST.totalScope = WACCVisitor.TOP_ST.getTotalScope() - 4;
-			createAdd();
-			WACCVisitor.TOP_ST.totalScope = WACCVisitor.TOP_ST.getTotalScope() + 4;
+		int i = 0;
+		for (Type type : WACCVisitor.functions.get(ctx.IDENT().toString())
+				.getParamList()) {
+			i += type.getSize();
 		}
+		assemblyCode.add(new ARMInstruction(Instruc.ADD, Reg.SP, Reg.SP, new Immediate(
+				"#" + i)));
 		assemblyCode.add(new ARMInstruction(Instruc.MOV, r, Reg.R0));
 		return r;
 	}
@@ -119,6 +121,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		createSub();
 		visit(ctx.stat());
 		createAdd();
+		exitScope(assemblyCode);
 		exitScope(assemblyCode);
 		assemblyCode.add(Directives.LTORG);
 		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getParent().getParent();
@@ -141,7 +144,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	public Operand visitReturn_Stat(@NotNull BasicParser.Return_StatContext ctx) {
 		Reg reg = (Reg) visit(ctx.expr());
 		assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, (Reg) reg));
-		exitScope(assemblyCode);
 		return null;
 	}
 

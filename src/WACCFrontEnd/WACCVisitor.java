@@ -16,7 +16,7 @@ import antlr.BasicParserBaseVisitor;
 public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 
 	public static SymbolTable TOP_ST;
-	HashMap<String, Function> functions = new HashMap<String, Function>();
+	public static HashMap<String, Function> functions = new HashMap<String, Function>();
 
 	@Override
 	public Type visitProgram(BasicParser.ProgramContext ctx) {
