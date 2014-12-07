@@ -109,6 +109,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		assemblyCode.add(new ARMInstruction(Instruc.ADD, Reg.SP, Reg.SP, new Immediate(
 				"#" + i)));
 		assemblyCode.add(new ARMInstruction(Instruc.MOV, r, Reg.R0));
+		setRegType(r, WACCVisitor.functions.get(ctx.IDENT().toString()).getReturnType());
 		return r;
 	}
 
@@ -248,6 +249,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	@Override
 	public Operand visitIf_Stat(@NotNull BasicParser.If_StatContext ctx) {
 		Operand reg = visit(ctx.expr());
+		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getChildren().get(0);
 		assemblyCode.add(new ARMInstruction(Instruc.CMP, reg, new Immediate(
 				"#0"))); // Add CMP reg 0 to code. Checks if ctx is false
 		// Add BEQ L0 to code. If ctx is false, code will go to label L0
@@ -262,8 +264,16 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 				+ fiLabel)));
 		assemblyCode.add(new Label("L" + elseLabel));// Add Label L0
 		availRegs.refreshReg();
+		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getParent();
+		WACCVisitor.TOP_ST.removeChild();
+		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getChildren().get(0);
+		WACCVisitor.TOP_ST.calculateScope();
+		createSub();
 		visit(ctx.stat(1));// Visit 'else' stat
+		createAdd();
 		assemblyCode.add(new Label("L" + fiLabel));// Add Label L1
+		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getParent();
+		WACCVisitor.TOP_ST.removeChild();
 		return null;
 	}
 
@@ -849,6 +859,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	@Override
 	public Operand visitIdentEq_Stat(
 			@NotNull BasicParser.IdentEq_StatContext ctx) {
+		WACCVisitor.TOP_ST.addToDeclare(ctx.IDENT().getText());
 		// offset between ident and bp
 		int offset = WACCVisitor.TOP_ST.calculateOffset(ctx.IDENT().getText());
 		ParseTree context = ctx.type().getChild(0);

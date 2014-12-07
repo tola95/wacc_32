@@ -14,6 +14,7 @@ public class SymbolTable {
 	SymbolTable parent; //Parent SymbolTable
 	Map<String, Type> dictionary = new LinkedHashMap<String, Type>(); //Dictionary of Strings to types
 	public int totalScope = 0; 
+	private List<String> declared = new ArrayList<>();
 	private Type returnType; //Return type of symbol table
 	private List<SymbolTable> children = new ArrayList<>();
 
@@ -28,9 +29,17 @@ public class SymbolTable {
 		returnType = st.getReturnType();
 		dictionary = new LinkedHashMap<String, Type>();
 	}
+	
+	public void addToDeclare(String str) {
+		declared.add(str);
+	}
 
 	public int getTotalScope() {
 		return totalScope;
+	}
+	
+	public List<String> getDeclaredList() {
+		return declared;
 	}
 
 	public void addChildren(SymbolTable child) {
@@ -92,13 +101,17 @@ public class SymbolTable {
 		int n = 0;
 		SymbolTable st = this;
 		while (st != null) {
-			List<Map.Entry<String, Type>> list = new ArrayList<>(st.getDictionary().entrySet());
-			for (int i = list.size() - 1; i >=0; i--) {
-				Map.Entry<String, Type> entry = list.get(i);
-				if (entry.getKey().equals(s)) {
-					return n;
-				}
-				n += entry.getValue().getSize();
+			if (st.getDeclaredList().contains(s)) {
+				List<Map.Entry<String, Type>> list = new ArrayList<>(st.getDictionary().entrySet());
+				for (int i = list.size() - 1; i >=0; i--) {
+					Map.Entry<String, Type> entry = list.get(i);
+					if (entry.getKey().equals(s)) {
+						return n;
+					}
+					n += entry.getValue().getSize();
+				}				
+			} else {
+				n += st.getTotalScope();
 			}
 			st = st.getParent();
 		}
