@@ -1125,6 +1125,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			assemblyCode.add(new ARMInstruction(Instruc.LDR, avail, add));
 			break;
 		case "STRING":
+			
 			avail.setType(Types.STRING);
 			assemblyCode.add(new ARMInstruction(Instruc.LDR, avail, add));
 			break;
