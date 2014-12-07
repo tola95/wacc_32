@@ -11,12 +11,26 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class SymbolTable {
-	SymbolTable parent; //Parent SymbolTable
-	Map<String, Type> dictionary = new LinkedHashMap<String, Type>(); //Dictionary of Strings to types
-	public int totalScope = 0; 
+	SymbolTable parent; // Parent SymbolTable
+	Map<String, Type> dictionary = new LinkedHashMap<String, Type>(); // Dictionary
+																		// of
+																		// Strings
+																		// to
+																		// types
+	public int totalScope = 0;
 	private List<String> declared = new ArrayList<>();
-	private Type returnType; //Return type of symbol table
+	private Type returnType; // Return type of symbol table
 	private List<SymbolTable> children = new ArrayList<>();
+	private boolean calculated = false;
+	private int cumulative = 0;
+	
+	public void add(int n) {
+		cumulative += n;
+	}
+	
+	public void resetCumulative() {
+		cumulative = 0;
+	}
 
 	SymbolTable(SymbolTable st, Type t) {
 		parent = st;
@@ -29,7 +43,7 @@ public class SymbolTable {
 		returnType = st.getReturnType();
 		dictionary = new LinkedHashMap<String, Type>();
 	}
-	
+
 	public void addToDeclare(String str) {
 		declared.add(str);
 	}
@@ -37,7 +51,7 @@ public class SymbolTable {
 	public int getTotalScope() {
 		return totalScope;
 	}
-	
+
 	public List<String> getDeclaredList() {
 		return declared;
 	}
@@ -45,7 +59,7 @@ public class SymbolTable {
 	public void addChildren(SymbolTable child) {
 		children.add(children.size(), child);
 	}
-	
+
 	public void removeChild() {
 		children.remove(0);
 	}
@@ -69,7 +83,7 @@ public class SymbolTable {
 	public void add(String str, Type obj) {
 		dictionary.put(str, obj);
 	}
-	
+
 	public Map<String, Type> getDictionary() {
 		return dictionary;
 	}
@@ -92,8 +106,11 @@ public class SymbolTable {
 	}
 
 	public void calculateScope() {
-		for (Type type : dictionary.values()) {
-			totalScope += type.getSize();
+		if (!calculated) {
+			for (Type type : dictionary.values()) {
+				totalScope += type.getSize();
+			}
+			calculated = true;
 		}
 	}
 
@@ -102,20 +119,21 @@ public class SymbolTable {
 			declared.add(s);
 		}
 	}
-	
+
 	public int calculateOffset(String s) {
 		int n = 0;
 		SymbolTable st = this;
 		while (st != null) {
 			if (st.getDeclaredList().contains(s)) {
-				List<Map.Entry<String, Type>> list = new ArrayList<>(st.getDictionary().entrySet());
-				for (int i = list.size() - 1; i >=0; i--) {
+				List<Map.Entry<String, Type>> list = new ArrayList<>(st
+						.getDictionary().entrySet());
+				for (int i = list.size() - 1; i >= 0; i--) {
 					Map.Entry<String, Type> entry = list.get(i);
 					if (entry.getKey().equals(s)) {
-						return n;
+						return n + cumulative;
 					}
 					n += entry.getValue().getSize();
-				}				
+				}
 			} else {
 				n += st.getTotalScope();
 			}

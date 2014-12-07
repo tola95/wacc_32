@@ -92,12 +92,14 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 				r = (Reg) visit(expr);
 				int off = (r.getType() == Types.BOOL || r.getType() == Types.CHAR) ? 1
 						: 4;
+				WACCVisitor.TOP_ST.add(off);
 				assemblyCode
 						.add(new ARMInstruction((r.getType() == Types.BOOL || r
 								.getType() == Types.CHAR) ? Instruc.STRB
 								: Instruc.STR, r, new Address(Reg.SP,
 								new Immediate("-" + off), '!')));
 			}
+			WACCVisitor.TOP_ST.resetCumulative();
 		}
 		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate("f_"
 				+ ctx.IDENT().getText())));
@@ -105,9 +107,10 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		for (Type type : WACCVisitor.functions.get(ctx.IDENT().toString())
 				.getParamList()) {
 			i += type.getSize();
-		}
-		assemblyCode.add(new ARMInstruction(Instruc.ADD, Reg.SP, Reg.SP, new Immediate(
+		} if (i > 0) {
+			assemblyCode.add(new ARMInstruction(Instruc.ADD, Reg.SP, Reg.SP, new Immediate(
 				"#" + i)));
+		}
 		assemblyCode.add(new ARMInstruction(Instruc.MOV, r, Reg.R0));
 		setRegType(r, WACCVisitor.functions.get(ctx.IDENT().toString()).getReturnType());
 		return r;
@@ -122,8 +125,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		WACCVisitor.TOP_ST.calculateScope();
 		createSub();
 		visit(ctx.stat());
-		createAdd();
-		exitScope(assemblyCode);
 		exitScope(assemblyCode);
 		assemblyCode.add(Directives.LTORG);
 		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getParent().getParent();
@@ -146,6 +147,10 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	public Operand visitReturn_Stat(@NotNull BasicParser.Return_StatContext ctx) {
 		Reg reg = (Reg) visit(ctx.expr());
 		assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, (Reg) reg));
+		int i = WACCVisitor.TOP_ST.getTotalScope();
+		i += WACCVisitor.TOP_ST.getParent().getTotalScope();
+		assemblyCode.add(new ARMInstruction(Instruc.ADD, Reg.SP, Reg.SP, new Immediate("#" + i)));
+		exitScope(assemblyCode);
 		return null;
 	}
 
@@ -251,7 +256,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	public Operand visitIf_Stat(@NotNull BasicParser.If_StatContext ctx) {
 		Operand reg = visit(ctx.expr());
 		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getChildren().get(0);
-		
+		WACCVisitor.TOP_ST.calculateScope();
 		assemblyCode.add(new ARMInstruction(Instruc.CMP, reg, new Immediate(
 				"#0"))); // Add CMP reg 0 to code. Checks if ctx is false
 		// Add BEQ L0 to code. If ctx is false, code will go to label L0
