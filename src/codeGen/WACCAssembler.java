@@ -723,8 +723,8 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			for (i = 0; i < a.arrayliter().arglist().expr().size(); i++) {
 				Operand r = visit(a.arrayliter().arglist().expr(i));
 				availRegs.addReg((Reg) r);
-				assemblyCode.add(new ARMInstruction(Instruc.STR, r,
-						new Address(reg, (i + 1) * innerType.getSize())));
+				assemblyCode.add(new ARMInstruction(r.getType() == Types.BOOL || r.getType() == Types.CHAR ? Instruc.STRB : Instruc.STR, r,
+						new Address(reg,  4 + (i * innerType.getSize()))));
 			}
 		}
 		Reg r = availRegs.useRegs();
