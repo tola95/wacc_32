@@ -92,12 +92,20 @@ public class SymbolTable {
 		int n = 0;
 		SymbolTable st = this;
 		while (st != null) {
-			for (Map.Entry<String, Type> entry : st.getDictionary().entrySet()) {
+			List<Map.Entry<String, Type>> list = new ArrayList<>(st.getDictionary().entrySet());
+			for (int i = list.size() - 1; i >=0; i--) {
+				Map.Entry<String, Type> entry = list.get(i);
 				if (entry.getKey().equals(s)) {
 					return n;
 				}
 				n += entry.getValue().getSize();
 			}
+//			for (Map.Entry<String, Type> entry : st.getDictionary().entrySet()) {
+//				if (entry.getKey().equals(s)) {
+//					return n;
+//				}
+//				n += entry.getValue().getSize();
+//			}
 			st = st.getParent();
 		}
 		return n;

@@ -341,6 +341,11 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 					"p_print_string")));
 			p_print_statement("\"%.*s\\0\"");
 			break;
+		case BOOL:
+			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
+					"p_print_bool")));// Add BL p_print_bool to assembly code
+			p_print_bool();
+			break;
 		case ARRAY:
 		case NULL:
 		case PAIR:
@@ -348,6 +353,18 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 					"p_print_reference")));
 			p_print_reference();
 		}
+	}
+	
+	@Override
+	public Operand visitPrintln_Stat(
+			@NotNull BasicParser.Println_StatContext ctx) {
+		Operand r = visit(ctx.expr());
+		print(ctx.expr(), r);
+		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
+				"p_print_ln")));
+		p_print_ln("\"\\0\"", printedAlready);
+		printedAlready = true;
+		return r;
 	}
 
 	@Override
@@ -397,26 +414,6 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		}
 	}
 
-	@Override
-	public Operand visitPrintln_Stat(
-			@NotNull BasicParser.Println_StatContext ctx) {
-		Operand r = visit(ctx.expr());
-		Types type = r.getType();
-		if (type == Types.BOOL) {
-			assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R0, r));
-			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
-					"p_print_bool")));// Add BL p_print_bool to assembly code
-			p_print_bool();
-		} else {
-			print(ctx.expr(), r);
-		}
-		assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
-				"p_print_ln")));
-		p_print_ln("\"\\0\"", printedAlready);
-		printedAlready = true;
-		return r;
-	}
-
 	private void p_print_reference() {
 		if (!manage.print_array()) {
 			String str = "\"%p\\0\"";
@@ -460,12 +457,13 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			assemblyCode.add(new ARMInstruction(Instruc.MOV, Reg.R1, reg));
 			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
 					"p_check_array_bounds")));
-
 			assemblyCode.add(new ARMInstruction(Instruc.ADD, reg, reg,
 					new Immediate("#4")));
 			if (t / 2 > 1) {
 				assemblyCode.add(new ARMInstruction(Instruc.ADD, reg, reg, r,
 						new Immediate("LSL #" + t / 2)));
+			} else {
+				assemblyCode.add(new ARMInstruction(Instruc.ADD, reg, reg, r));
 			}
 			availRegs.addReg((Reg) r);
 			p_check_array_bounds();
@@ -489,7 +487,9 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	public Operand visitArrayElem_Expr(
 			@NotNull BasicParser.ArrayElem_ExprContext ctx) {
 		Operand r = visit(ctx.arrayelem());
-		assemblyCode.add(new ARMInstruction(Instruc.LDR, (Reg) r, new Address(
+		Types type = r.getType();
+		assemblyCode.add(new ARMInstruction(type == Types.BOOL || type == Types.CHAR ?
+				Instruc.LDRSB : Instruc.LDR, (Reg) r, new Address(
 				(Reg) r, 0)));
 		return r;
 	}
@@ -726,6 +726,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 				assemblyCode.add(new ARMInstruction(r.getType() == Types.BOOL || r.getType() == Types.CHAR ? Instruc.STRB : Instruc.STR, r,
 						new Address(reg,  4 + (i * innerType.getSize()))));
 			}
+			
 		}
 		Reg r = availRegs.useRegs();
 		assemblyCode.add(new ARMInstruction(Instruc.LDR, r, new Immediate("="
@@ -854,6 +855,17 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 		}
 		Operand reg = visit(ctx.assignrhs());
 		// switch on the type of the first node of ctx
+		Type type = WACCVisitor.TOP_ST.lookUpCurrLevelAndEnclosingLevels(ctx.IDENT().getText());
+		if (type.isOfType(new ArrayType(PrimType.ANY)) ||type.isOfType(new PairType(PrimType.ANY, PrimType.ANY))) {
+			if (offset == 0) {
+				assemblyCode.add(new ARMInstruction(Instruc.STR, reg,
+						new Address(Reg.SP, 0)));
+			} else {
+				assemblyCode.add(new ARMInstruction(Instruc.STR, reg,
+						new Address(Reg.SP, offset)));
+			}
+			return null;
+		}
 		switch (ctx.start.getType()) {
 		case BasicParser.CHAR:
 		case BasicParser.BOOL:
@@ -1118,6 +1130,9 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			break;
 		case "ARRAY":
 			avail.setType(Types.ARRAY);
+			if (((ArrayType) type).getType().isOfType(PrimType.CHAR)) {
+				avail.setType(Types.STRING);
+			}
 			assemblyCode.add(new ARMInstruction(Instruc.LDR, avail,
 					new Address(Reg.SP, offset)));
 			break;
