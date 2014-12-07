@@ -116,6 +116,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	public Operand visitFunc(@NotNull BasicParser.FuncContext ctx) {
 		assemblyCode.add(new Label("f_" + ctx.IDENT().getText()));
 		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getChildren().get(0);
+		WACCVisitor.TOP_ST.enableAll();
 		enterScope(assemblyCode);
 		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getChildren().get(0);
 		WACCVisitor.TOP_ST.calculateScope();
@@ -250,6 +251,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	public Operand visitIf_Stat(@NotNull BasicParser.If_StatContext ctx) {
 		Operand reg = visit(ctx.expr());
 		WACCVisitor.TOP_ST = WACCVisitor.TOP_ST.getChildren().get(0);
+		
 		assemblyCode.add(new ARMInstruction(Instruc.CMP, reg, new Immediate(
 				"#0"))); // Add CMP reg 0 to code. Checks if ctx is false
 		// Add BEQ L0 to code. If ctx is false, code will go to label L0

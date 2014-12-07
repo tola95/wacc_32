@@ -97,6 +97,12 @@ public class SymbolTable {
 		}
 	}
 
+	public void enableAll() {
+		for (String s : dictionary.keySet()) {
+			declared.add(s);
+		}
+	}
+	
 	public int calculateOffset(String s) {
 		int n = 0;
 		SymbolTable st = this;
