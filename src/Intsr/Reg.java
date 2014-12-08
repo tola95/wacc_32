@@ -26,6 +26,7 @@ public enum Reg implements Operand{
 	private final String reg;
 	private Types type = null;
 	
+	//Enum to represent the registers
 	private Reg(String reg) {
 		this.reg = reg;
 	}
@@ -39,6 +40,7 @@ public enum Reg implements Operand{
 		return type;
 	}
 	
+	//Geturns list of all registers
 	public static List<Reg> getRegs() {
 		List<Reg> regs = new ArrayList<>();
 		for (Reg r : Reg.values()) {

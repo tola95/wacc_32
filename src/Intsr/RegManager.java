@@ -6,6 +6,7 @@ public class RegManager {
 	
 	private List<Reg> regs = Reg.getRegs();
 	
+	//Returns next available register
 	public Reg useRegs() {
 		if (!hasNext()) {
 			return Reg.R10;

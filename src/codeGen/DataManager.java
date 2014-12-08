@@ -6,6 +6,7 @@ public enum DataManager {
 
 	STRING, INT, CHAR, BOOL, ARRAY, DIVIDE, OVERFLOW, ARRAYNEG, ARRAYLARGE, NULLREF;
 
+	//Booleans to representif the various types have been added
 	private static boolean nullAdded = false;
 	private static boolean stringAdded = false;
 	private static boolean intAdded = false;
@@ -18,6 +19,7 @@ public enum DataManager {
 	private static boolean arraylarge = false;
 	private static boolean nullref = false;
 
+	//Method to add characters for various types to data
 	public static void dataAdd(List<String> list, DataManager dm) {
 		switch (dm) {
 		case INT:
@@ -95,6 +97,7 @@ public enum DataManager {
 		}
 	}
 	
+	//Add the null character to data
 	private static void addNull(List<String> list) {
 		if (!nullAdded) {
 			list.add("\"\\0\"");

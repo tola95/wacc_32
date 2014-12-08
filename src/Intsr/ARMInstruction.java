@@ -9,11 +9,13 @@ public class ARMInstruction implements Instruction {
 	private Instruc instr;
 	List<Operand> operands = new ArrayList<Operand>();
 
+	//ARMInstructions take in Instrucs and an unfixed number of operands
 	public ARMInstruction(Instruc instr, Operand... operands) {
 		this.instr = instr;
 		this.operands = Arrays.asList(operands);
 	}
 
+	//If instr is push or pop, follow format
 	@Override
 	public String toString() {
 		StringBuilder string = new StringBuilder();
@@ -29,6 +31,7 @@ public class ARMInstruction implements Instruction {
 		return "\t" + string.toString() + "\n";
 	}
 
+	//Print repersentation of operands
 	public String printOperands() {
 		StringBuilder string = new StringBuilder();
 		for (int i = 0; i < operands.size(); i++) {

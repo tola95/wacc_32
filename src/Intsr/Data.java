@@ -1,12 +1,12 @@
 package Intsr;
 
-import java.util.List;
 
 public class Data implements Instruction{
 	
 	private int i;
 	private String str;
 	
+	//This class is very straightforward
 	public Data(int i, String str) {
 		this.i = i;
 		this.str = str;
