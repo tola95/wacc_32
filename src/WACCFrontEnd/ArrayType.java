@@ -18,6 +18,10 @@ public class ArrayType implements Type{
 		this.length = length;
 	}
 	
+	public int getLength() {
+		return length;
+	}
+	
 	public Type getType() {
 		return type;
 	}
