@@ -185,6 +185,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 //		} else {
 //			index = op1 * op2;
 //		}
+		
 		if (!expr1.isOfType(PrimType.INT)) {
 			System.err.println("Type error at line: " + ctx.start.getLine()
 					+ " Position: " + ctx.start.getCharPositionInLine()
