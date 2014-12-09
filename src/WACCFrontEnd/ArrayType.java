@@ -4,6 +4,7 @@ package WACCFrontEnd;
 public class ArrayType implements Type{
 	
 	private Type type;
+	private int length;
 	
 	public ArrayType() {
 		this.type = PrimType.ANY;
@@ -11,6 +12,10 @@ public class ArrayType implements Type{
 	
 	public ArrayType(Type t) {
 		type = t;
+	}
+	
+	public void setLength(int length) {
+		this.length = length;
 	}
 	
 	public Type getType() {

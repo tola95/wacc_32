@@ -36,7 +36,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	public static List<Instruction> assemblyCode = new ArrayList<>();
 	// Storing datas.
 	public static List<String> data = new ArrayList<>();
-	public static RegManager availRegs = new RegManager();
+	private static RegManager availRegs = new RegManager();
 	// static List<Reg> availRegs = Reg.getRegs();
 	// Instructions that come after the main code.
 	private List<Instruction> endInstruc = new ArrayList<>();

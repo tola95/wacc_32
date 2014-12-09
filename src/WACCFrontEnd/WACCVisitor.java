@@ -640,6 +640,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	@Override
 	public Type visitArrayliter(@NotNull BasicParser.ArrayliterContext ctx) {
 		if (ctx.arglist() != null) {
+			int length = ctx.arglist().expr().size();
 			Type type = visit(ctx.arglist().expr(0));
 			for (BasicParser.ExprContext expr : ctx.arglist().expr()) {
 				if (!visit(expr).isOfType(type)) {
@@ -651,7 +652,9 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 					System.exit(200);
 				}
 			}
-			return new ArrayType(type);
+			ArrayType array = new ArrayType(type);
+			array.setLength(length);
+			return array;
 		}
 		return new ArrayType(PrimType.ANY);
 	}
