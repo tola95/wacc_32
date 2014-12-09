@@ -178,13 +178,13 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		int op1 = index;
 		Type expr2 = visit(ctx.expr(1));
 		int op2 = index;
-		if (oper.equals("/")) {
-			index = op1 / op2;
-		} else if (oper.equals("%")) {
-			index = op1 % op2; 
-		} else {
-			index = op1 * op2;
-		}
+//		if (oper.equals("/")) {
+//			index = op1 / op2;           divide by zero
+//		} else if (oper.equals("%")) {
+//			index = op1 % op2; 
+//		} else {
+//			index = op1 * op2;
+//		}
 		if (!expr1.isOfType(PrimType.INT)) {
 			System.err.println("Type error at line: " + ctx.start.getLine()
 					+ " Position: " + ctx.start.getCharPositionInLine()
