@@ -315,7 +315,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		index = 0;
 		int length = 0;
 		Type t1 = visit(ctx.expr(0));
-		System.out.println(index);
 		Type t = TOP_ST
 				.lookUpCurrLevelAndEnclosingLevels(ctx.ident().getText());
 		if (!(t1 instanceof Int)) {
@@ -338,17 +337,13 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 			System.exit(200);
 		}
 		SymbolTable param = TOP_ST.getTopFunctionSymbolTable();
-		if (t != PrimType.STRING) {
-			if (TOP_ST.getParent() == null
-					|| !param.dictionary.containsKey(str1)) {
-				ArrayType array = (ArrayType) t;
-				length = array.getLength();
-				if (index >= length) {
-					System.err.println("ArrayBoundsError");
-				}
+		if (TOP_ST.getParent() == null || !param.dictionary.containsKey(str1)) {
+			ArrayType array = (ArrayType) t;
+			length = array.getLength();
+			if (index >= length) {
+				System.err.println("ArrayBoundsError");
 			}
 		}
-
 		return ((ArrayType) t2).getType();
 	}
 
@@ -398,6 +393,11 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		}
 		String id = ctx.IDENT().getText();
 		if (TOP_ST.lookUpCurrLevelOnly(id) == null) {
+			if (type2 == PrimType.STRING) {
+				int i = ctx.assignrhs().getText().length() - 2;
+				type2 = new ArrayType(PrimType.CHAR);
+				((ArrayType) type2).setLength(i);
+			}
 			TOP_ST.add(ctx.IDENT().getText(), type2);
 		} else {
 			System.err.println("Identifier " + id + " at line "
