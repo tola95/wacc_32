@@ -18,7 +18,7 @@ public class Int implements Type {
 
 	@Override
 	public boolean isOfType(Type t) {
-		return (t instanceof Int);
+		return (t instanceof Int || t == PrimType.ANY);
 	}
 
 	@Override

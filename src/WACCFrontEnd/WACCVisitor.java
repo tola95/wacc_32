@@ -180,13 +180,13 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		Type expr2 = visit(ctx.expr(1));
 		int op2 = index;
 		if (oper.equals("/") && op2 != 0) {
-			index = op1 / op2;          
+			index = op1 / op2;
 		} else if (oper.equals("%") && op2 != 0) {
-			index = op1 % op2; 
+			index = op1 % op2;
 		} else if (oper.equals("*")) {
 			index = op1 * op2;
 		}
-		
+
 		if (!(expr1 instanceof Int)) {
 			System.err.println("Type error at line: " + ctx.start.getLine()
 					+ " Position: " + ctx.start.getCharPositionInLine()
@@ -316,7 +316,8 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		int length = 0;
 		Type t1 = visit(ctx.expr(0));
 		System.out.println(index);
-		Type t = TOP_ST.lookUpCurrLevelAndEnclosingLevels(ctx.ident().getText());
+		Type t = TOP_ST
+				.lookUpCurrLevelAndEnclosingLevels(ctx.ident().getText());
 		if (!(t1 instanceof Int)) {
 			System.err.println("Needed index of type int. Got type " + t1
 					+ " at line " + ctx.expr(0).start.getLine()
@@ -337,13 +338,17 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 			System.exit(200);
 		}
 		SymbolTable param = TOP_ST.getTopFunctionSymbolTable();
-		if (TOP_ST.getParent() == null || !param.dictionary.containsKey(str1)) {
-			ArrayType array = (ArrayType) t;
-			length = array.getLength();
-			if (index >= length) {
-				System.err.println("ArrayBoundsError");
+		if (t != PrimType.STRING) {
+			if (TOP_ST.getParent() == null
+					|| !param.dictionary.containsKey(str1)) {
+				ArrayType array = (ArrayType) t;
+				length = array.getLength();
+				if (index >= length) {
+					System.err.println("ArrayBoundsError");
+				}
 			}
 		}
+
 		return ((ArrayType) t2).getType();
 	}
 
@@ -406,7 +411,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	@Override
 	public Type visitRead_Stat(@NotNull BasicParser.Read_StatContext ctx) {
 		Type t = visit(ctx.assignlhs());
-		switch(t.toString()) {
+		switch (t.toString()) {
 		case "INT":
 			DataManager.dataAdd(WACCAssembler.data, DataManager.INT);
 			break;
@@ -506,7 +511,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		helperPrint(ctx.expr());
 		return null;
 	}
-	
+
 	private void helperPrint(BasicParser.ExprContext ctx) {
 		Type t = visit(ctx);
 		switch (t.toString()) {
@@ -523,9 +528,9 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		case "PAIR":
 			DataManager.dataAdd(WACCAssembler.data, DataManager.ARRAY);
 			break;
-		}	
+		}
 	}
- 
+
 	@Override
 	public Type visitPrintln_Stat(@NotNull BasicParser.Println_StatContext ctx) {
 		helperPrint(ctx.expr());
