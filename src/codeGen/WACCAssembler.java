@@ -1,8 +1,8 @@
 package codeGen;
 
 import java.util.ArrayList;
-
 import java.util.List;
+
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -19,6 +19,7 @@ import Intsr.Reg;
 import Intsr.RegManager;
 import Intsr.Types;
 import WACCFrontEnd.ArrayType;
+import WACCFrontEnd.Int;
 import WACCFrontEnd.PairType;
 import WACCFrontEnd.PrimType;
 import WACCFrontEnd.Type;
@@ -498,7 +499,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 	}
 
 	private Reg setRegType(Reg reg, Type type) {
-		if (type.equals(PrimType.INT)) {
+		if (type instanceof Int) {
 			reg.setType(Types.INT);
 		} else if (type.equals(PrimType.BOOL)) {
 			reg.setType(Types.BOOL);

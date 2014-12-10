@@ -15,7 +15,7 @@ public class SymbolTable {
 	Map<String, Type> dictionary = new LinkedHashMap<String, Type>(); // Dictionary
 																		// of
 																		// Strings
-																		// to
+																		// //
 																		// types
 	public int totalScope = 0;
 	private List<String> declared = new ArrayList<>();
@@ -23,11 +23,11 @@ public class SymbolTable {
 	private List<SymbolTable> children = new ArrayList<>();
 	private boolean calculated = false;
 	private int cumulative = 0;
-	
+
 	public void add(int n) {
 		cumulative += n;
 	}
-	
+
 	public void resetCumulative() {
 		cumulative = 0;
 	}
@@ -90,6 +90,19 @@ public class SymbolTable {
 
 	public Type lookUpCurrLevelOnly(String str) {
 		return dictionary.get(str);
+	}
+
+	public SymbolTable getTopFunctionSymbolTable() {
+		SymbolTable curr = null;
+		SymbolTable prev = this;
+		if (this.getParent() != null) {
+			curr = this.getParent();
+			while (curr.getParent() != null) {
+				prev = curr;
+				curr = curr.getParent();
+			}
+		}
+		return prev;
 	}
 
 	public Type lookUpCurrLevelAndEnclosingLevels(String str) {

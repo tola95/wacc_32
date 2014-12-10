@@ -49,7 +49,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		if (ctx.paramlist() != null) {
 			visit(ctx.paramlist());
 		}
-		WACCVisitor.TOP_ST.getDictionary().put("1", PrimType.INT);
+		WACCVisitor.TOP_ST.getDictionary().put("1", new Int(0));
 		SymbolTable symboltable2 = new SymbolTable(symboltable1);
 		symboltable1.addChildren(symboltable2);
 		TOP_ST = symboltable2;
@@ -125,13 +125,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		}
 		return functions.get(function).getReturnType();
 	}
-	
-	public Type createIntType(int i) {
-		String str = Integer.toString(i);
-		PrimType type = PrimType.INT;
-		type.setValue(str);
-		return type;
-	}
 
 	@Override
 	public Type visitUnaryOper_Expr(
@@ -141,21 +134,21 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		if (exprType == PrimType.BOOL && unaryOperType == BasicParser.NOT) {
 			return PrimType.BOOL;
 		}
-		if (exprType == PrimType.INT && unaryOperType == BasicParser.MINUS) {
+		if (exprType instanceof Int && unaryOperType == BasicParser.MINUS) {
 			index *= -1;
-			return createIntType(index);
+			return new Int(index);
 		}
 		if (exprType instanceof ArrayType && unaryOperType == BasicParser.LEN) {
 			ArrayType a = (ArrayType) exprType;
 			index = a.getLength();
-			return createIntType(index);
+			return new Int(index);
 		}
 		if (exprType == PrimType.CHAR && unaryOperType == BasicParser.ORD) {
 			char chr = ctx.expr().getText().charAt(0);
 			index = (int) chr;
-			return createIntType(index);
+			return new Int(index);
 		}
-		if (exprType == PrimType.INT && unaryOperType == BasicParser.CHR) {
+		if (exprType instanceof Int && unaryOperType == BasicParser.CHR) {
 			return PrimType.CHAR;
 		}
 		System.err.println("UnaryOper and expr at line " + ctx.start.getLine()
@@ -183,6 +176,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		index = 0;
 		Type expr1 = visit(ctx.expr(0));
 		int op1 = index;
+		index = 0;
 		Type expr2 = visit(ctx.expr(1));
 		int op2 = index;
 		if (oper.equals("/") && op2 != 0) {
@@ -193,19 +187,19 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 			index = op1 * op2;
 		}
 		
-		if (!expr1.isOfType(PrimType.INT)) {
+		if (!(expr1 instanceof Int)) {
 			System.err.println("Type error at line: " + ctx.start.getLine()
 					+ " Position: " + ctx.start.getCharPositionInLine()
 					+ " Expected type: int \t Actual type: " + expr1);
 			System.exit(200);
 		}
-		if (!expr2.isOfType(PrimType.INT)) {
+		if (!(expr2 instanceof Int)) {
 			System.err.println("Type error at line: " + ctx.stop.getLine()
 					+ " Position: " + ctx.stop.getCharPositionInLine()
 					+ " Expected type: int \t Actual type: " + expr2);
 			System.exit(200);
 		}
-		return PrimType.INT;
+		return new Int(index);
 	}
 
 	@Override
@@ -224,26 +218,26 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		} else {
 			index = op1 - op2;
 		}
-		if (!expr1.isOfType(PrimType.INT)) {
+		if (!(expr1 instanceof Int)) {
 			System.err.println("Type error at line: " + ctx.start.getLine()
 					+ " Position: " + ctx.start.getCharPositionInLine()
 					+ " Expected type: int \t Actual type: " + expr1);
 			System.exit(200);
 		}
-		if (!expr2.isOfType(PrimType.INT)) {
+		if (!(expr2 instanceof Int)) {
 			System.err.println("Type error at line: " + ctx.stop.getLine()
 					+ " Position: " + ctx.stop.getCharPositionInLine()
 					+ " Expected type: int \t Actual type: " + expr2);
 			System.exit(200);
 		}
-		return PrimType.INT;
+		return new Int(index);
 	}
 
 	@Override
 	public Type visitCompare_Expr(@NotNull BasicParser.Compare_ExprContext ctx) {
 		Type expr1 = visit(ctx.expr(0));
 		Type expr2 = visit(ctx.expr(1));
-		if (expr1.isOfType(PrimType.INT) && expr2.isOfType(PrimType.INT)) {
+		if (expr1 instanceof Int && expr2 instanceof Int) {
 			return PrimType.BOOL;
 		}
 		if (expr1.isOfType(PrimType.CHAR) && expr2.isOfType(PrimType.CHAR)) {
@@ -317,11 +311,13 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		DataManager.dataAdd(WACCAssembler.data, DataManager.ARRAYNEG);
 		DataManager.dataAdd(WACCAssembler.data, DataManager.ARRAYLARGE);
 		DataManager.dataAdd(WACCAssembler.data, DataManager.STRING);
+		String str1 = ctx.ident().IDENT().getText();
 		index = 0;
 		int length = 0;
 		Type t1 = visit(ctx.expr(0));
+		System.out.println(index);
 		Type t = TOP_ST.lookUpCurrLevelAndEnclosingLevels(ctx.ident().getText());
-		if (t1 != PrimType.INT) {
+		if (!(t1 instanceof Int)) {
 			System.err.println("Needed index of type int. Got type " + t1
 					+ " at line " + ctx.expr(0).start.getLine()
 					+ " and position: "
@@ -340,10 +336,13 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 					+ " is not of array type" + " Actual type: " + t2);
 			System.exit(200);
 		}
-		ArrayType array = (ArrayType) t;
-		length = array.getLength();
-		if (index >= length) {
-			System.err.println("ArrayBoundsError");
+		SymbolTable param = TOP_ST.getTopFunctionSymbolTable();
+		if (TOP_ST.getParent() == null || !param.dictionary.containsKey(str1)) {
+			ArrayType array = (ArrayType) t;
+			length = array.getLength();
+			if (index >= length) {
+				System.err.println("ArrayBoundsError");
+			}
 		}
 		return ((ArrayType) t2).getType();
 	}
@@ -362,7 +361,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 
 	@Override
 	public Type visitInt_baseType(@NotNull BasicParser.Int_baseTypeContext ctx) {
-		return PrimType.INT;
+		return new Int(0);
 	}
 
 	@Override
@@ -414,7 +413,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		case "CHAR":
 			DataManager.dataAdd(WACCAssembler.data, DataManager.CHAR);
 		}
-		if (!(t.isOfType(PrimType.CHAR) || t.isOfType(PrimType.INT) || t
+		if (!(t.isOfType(PrimType.CHAR) || t instanceof Int || t
 				.isOfType(PrimType.STRING))) {
 			System.err.println("Cannot read at line " + ctx.start.getLine()
 					+ " and position " + ctx.start.getCharPositionInLine()
@@ -493,7 +492,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	@Override
 	public Type visitExit_Stat(@NotNull BasicParser.Exit_StatContext ctx) {
 		Type t = visit(ctx.expr());
-		if (t != PrimType.INT) {
+		if (!(t instanceof Int)) {
 			System.err.println("Unexpected type at line " + ctx.start.getLine()
 					+ " and position " + ctx.start.getCharPositionInLine()
 					+ "Expected type: Int, Actual type: " + t);
@@ -593,8 +592,7 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 	public Type visitIntLiter_Expr(@NotNull BasicParser.IntLiter_ExprContext ctx) {
 		String str = ctx.getText();
 		index = Integer.parseInt(str);
-		PrimType type = PrimType.INT;
-		type.setValue(str);
+		Int type = new Int(index);
 		return type;
 	}
 
@@ -625,9 +623,9 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 					+ ctx.start.getCharPositionInLine() + "is undefined.");
 			System.exit(200);
 		}
-		if (type.isOfType(PrimType.INT)) {
-			PrimType t = (PrimType) type;
-			index = Integer.parseInt(t.retValue());
+		if (type instanceof Int) {
+			Int t = (Int) type;
+			index = (t.getValue());
 		}
 		return type;
 	}
@@ -643,11 +641,11 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		case BasicParser.NOT:
 			return PrimType.BOOL;
 		case BasicParser.MINUS:
-			return PrimType.INT;
+			return new Int(0);
 		case BasicParser.LEN:
-			return PrimType.INT;
+			return new Int(0);
 		case BasicParser.ORD:
-			return PrimType.INT;
+			return new Int(0);
 		case BasicParser.CHR:
 			return PrimType.CHAR;
 		default:
