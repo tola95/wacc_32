@@ -311,10 +311,14 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		DataManager.dataAdd(WACCAssembler.data, DataManager.ARRAYLARGE);
 		DataManager.dataAdd(WACCAssembler.data, DataManager.STRING);
 		index = 0;
+		int length = 0;
 		Type t1 = visit(ctx.expr(0));
 		Type t = TOP_ST.lookUpCurrLevelAndEnclosingLevels(ctx.ident().getText());
-		ArrayType array = (ArrayType) t;
-		if (index > array.getLength()) {
+		if (t instanceof ArrayType) {
+			ArrayType array = (ArrayType) t;
+			length = array.getLength();
+		}////////////////////////////////////
+		if (index > length) {
 			System.err.println("ArrayBoundsError");
 		}
 		if (t1 != PrimType.INT) {
