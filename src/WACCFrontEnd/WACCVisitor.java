@@ -125,6 +125,13 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		}
 		return functions.get(function).getReturnType();
 	}
+	
+	public Type createIntType(int i) {
+		String str = Integer.toString(i);
+		PrimType type = PrimType.INT;
+		type.setValue(str);
+		return type;
+	}
 
 	@Override
 	public Type visitUnaryOper_Expr(
@@ -136,17 +143,17 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		}
 		if (exprType == PrimType.INT && unaryOperType == BasicParser.MINUS) {
 			index *= -1;
-			return PrimType.INT;
+			return createIntType(index);
 		}
 		if (exprType instanceof ArrayType && unaryOperType == BasicParser.LEN) {
 			ArrayType a = (ArrayType) exprType;
 			index = a.getLength();
-			return PrimType.INT;
+			return createIntType(index);
 		}
 		if (exprType == PrimType.CHAR && unaryOperType == BasicParser.ORD) {
 			char chr = ctx.expr().getText().charAt(0);
 			index = (int) chr;
-			return PrimType.INT;
+			return createIntType(index);
 		}
 		if (exprType == PrimType.INT && unaryOperType == BasicParser.CHR) {
 			return PrimType.CHAR;
@@ -314,13 +321,6 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 		int length = 0;
 		Type t1 = visit(ctx.expr(0));
 		Type t = TOP_ST.lookUpCurrLevelAndEnclosingLevels(ctx.ident().getText());
-		if (t instanceof ArrayType) {
-			ArrayType array = (ArrayType) t;
-			length = array.getLength();
-		}////////////////////////////////////
-		if (index > length) {
-			System.err.println("ArrayBoundsError");
-		}
 		if (t1 != PrimType.INT) {
 			System.err.println("Needed index of type int. Got type " + t1
 					+ " at line " + ctx.expr(0).start.getLine()
@@ -339,6 +339,11 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 					+ ctx.ident().IDENT().getSymbol().getCharPositionInLine()
 					+ " is not of array type" + " Actual type: " + t2);
 			System.exit(200);
+		}
+		ArrayType array = (ArrayType) t;
+		length = array.getLength();
+		if (index >= length) {
+			System.err.println("ArrayBoundsError");
 		}
 		return ((ArrayType) t2).getType();
 	}
@@ -586,8 +591,11 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 
 	@Override
 	public Type visitIntLiter_Expr(@NotNull BasicParser.IntLiter_ExprContext ctx) {
-		index = Integer.parseInt(ctx.getText());
-		return PrimType.INT;
+		String str = ctx.getText();
+		index = Integer.parseInt(str);
+		PrimType type = PrimType.INT;
+		type.setValue(str);
+		return type;
 	}
 
 	@Override
@@ -616,6 +624,10 @@ public class WACCVisitor extends BasicParserBaseVisitor<Type> {
 					+ ctx.start.getLine() + " and position "
 					+ ctx.start.getCharPositionInLine() + "is undefined.");
 			System.exit(200);
+		}
+		if (type.isOfType(PrimType.INT)) {
+			PrimType t = (PrimType) type;
+			index = Integer.parseInt(t.retValue());
 		}
 		return type;
 	}

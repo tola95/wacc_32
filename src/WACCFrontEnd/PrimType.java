@@ -3,7 +3,21 @@ package WACCFrontEnd;
 
 public enum PrimType implements Type{
 
-	INT, BOOL, CHAR, STRING, ANY;
+	INT (null), BOOL(null), CHAR(null), STRING(null), ANY(null);
+	
+	private String i;
+	
+	PrimType(String i) {
+		this.i = i;
+	}
+	
+	public String retValue() {
+		return i;
+	}
+	
+	public void setValue(String str) {
+		i = str; 
+	}
 
 	@Override
 	public boolean isOfType(Type t) {
