@@ -364,6 +364,7 @@ public class WACCAssembler extends BasicParserBaseVisitor<Operand> {
 			p_print_statement("\"%.*s\\0\"");
 			break;
 		case STRING:
+			DataManager.dataAdd(WACCAssembler.data, DataManager.STRING);
 			assemblyCode.add(new ARMInstruction(Instruc.BL, new Immediate(
 					"p_print_string")));
 			p_print_statement("\"%.*s\\0\"");
