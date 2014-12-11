@@ -55,8 +55,8 @@ basetype : INT                                   #int_baseType
 
 type : basetype                                
      | arraytype                                 
-     | pairtype                                
-     ;                            
+     | pairtype                            
+     ;
 
 arraytype : basetype OPEN_SQUAREB CLOSE_SQUAREB  
           | arraytype OPEN_SQUAREB CLOSE_SQUAREB    
@@ -70,24 +70,24 @@ pairelemtype : basetype                             #baseType_pairElemType
              | arraytype                            #arrayType_pairElemType
              ;
 
-expr : unaryoper expr                                 #unaryOper_Expr
-     | OPEN_PARENTHESES expr CLOSE_PARENTHESES        #parenth_Expr
-     | expr (MUL | DIV | MOD) expr                    #factor_Expr
-     | expr (PLUS | MINUS) expr                       #term_Expr
-     | expr (GRT | GRTEQ | SMT | SMTEQ) expr          #compare_Expr
-     | expr (EQEQ | NOTEQ) expr                       #equality_Expr
-     | expr AND expr                                  #and_Expr
-     | expr OR expr                                   #or_Expr
-     | INT_LITER                                      #intLiter_Expr
-     | bool_Liter                                     #boolLiter_Expr
-     | CHAR_LITER                                     #charLiter_Expr
-     | STR_LITER                                      #strLiter_Expr
-     | PAIR_LITER                                     #pairLiter_Expr
-     | ident                                          #ident_Expr
-     | arrayelem                                      #arrayElem_Expr
+expr : unaryoper expr                                          #unaryOper_Expr
+     | OPEN_PARENTHESES expr CLOSE_PARENTHESES                 #parenth_Expr
+     | expr (MUL | DIV | MOD) expr                             #factor_Expr
+     | expr (PLUS | MINUS) expr                                #term_Expr
+     | expr (GRT | GRTEQ | SMT | SMTEQ | ADDEQ | MINEQ) expr   #compare_Expr
+     | expr (EQEQ | NOTEQ) expr                                #equality_Expr
+     | expr AND expr                                           #and_Expr
+     | expr OR expr                                            #or_Expr
+     | INT_LITER                                               #intLiter_Expr
+     | bool_Liter                                              #boolLiter_Expr
+     | CHAR_LITER                                              #charLiter_Expr
+     | STR_LITER                                               #strLiter_Expr
+     | PAIR_LITER                                              #pairLiter_Expr
+     | ident                                                   #ident_Expr
+     | arrayelem                                               #arrayElem_Expr
      ;
 
-ident : IDENT ;
+ident : IDENT;      
 
 unaryoper : NOT | MINUS | LEN | ORD | CHR ;
 

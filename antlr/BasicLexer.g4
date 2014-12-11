@@ -25,6 +25,9 @@ CHR : 'chr' ;
 WS : [ \t\n\r\ ] -> skip ;
 INT : 'int' ;
 
+ADDEQ : '+=' ;
+MINEQ : '-=' ;
+
 CHAR : 'char' ;
 STRING : 'string' ;
 
