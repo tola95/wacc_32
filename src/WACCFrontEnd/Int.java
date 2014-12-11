@@ -25,5 +25,10 @@ public class Int implements Type {
 	public int getSize() {
 		return 4;
 	}
+	
+	@Override
+	public String toString() {
+		return "INT";
+	}
 
 }
