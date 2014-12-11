@@ -1394,9 +1394,7 @@ public class BasicParser extends Parser {
 		}
 	}
 	public static class Compare_ExprContext extends ExprContext {
-		public TerminalNode MINEQ() { return getToken(BasicParser.MINEQ, 0); }
 		public TerminalNode GRTEQ() { return getToken(BasicParser.GRTEQ, 0); }
-		public TerminalNode ADDEQ() { return getToken(BasicParser.ADDEQ, 0); }
 		public TerminalNode SMT() { return getToken(BasicParser.SMT, 0); }
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -1439,6 +1437,8 @@ public class BasicParser extends Parser {
 		}
 	}
 	public static class Term_ExprContext extends ExprContext {
+		public TerminalNode MINEQ() { return getToken(BasicParser.MINEQ, 0); }
+		public TerminalNode ADDEQ() { return getToken(BasicParser.ADDEQ, 0); }
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
 		}
@@ -1701,7 +1701,7 @@ public class BasicParser extends Parser {
 						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
 						setState(224);
 						_la = _input.LA(1);
-						if ( !(_la==PLUS || _la==MINUS) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << PLUS) | (1L << MINUS) | (1L << ADDEQ) | (1L << MINEQ))) != 0)) ) {
 						_errHandler.recoverInline(this);
 						}
 						consume();
@@ -1716,7 +1716,7 @@ public class BasicParser extends Parser {
 						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
 						setState(227);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << GRT) | (1L << GRTEQ) | (1L << SMT) | (1L << SMTEQ) | (1L << ADDEQ) | (1L << MINEQ))) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << GRT) | (1L << GRTEQ) | (1L << SMT) | (1L << SMTEQ))) != 0)) ) {
 						_errHandler.recoverInline(this);
 						}
 						consume();
@@ -2119,7 +2119,7 @@ public class BasicParser extends Parser {
 		"\24\3\24\3\24\6\24\u0101\n\24\r\24\16\24\u0102\3\25\3\25\5\25\u0107\n"+
 		"\25\3\25\3\25\3\26\7\26\u010c\n\26\f\26\16\26\u010f\13\26\3\26\3\26\3"+
 		"\26\2\5\n\30\36\27\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*\2\t\3"+
-		"\2\63\64\3\2\3\5\3\2\6\7\4\2\b\13\26\27\3\2\f\r\4\2\7\7\20\23\3\2:;\u012e"+
+		"\2\63\64\3\2\3\5\4\2\6\7\26\27\3\2\b\13\3\2\f\r\4\2\7\7\20\23\3\2:;\u012e"+
 		"\2,\3\2\2\2\4\67\3\2\2\2\6B\3\2\2\2\bJ\3\2\2\2\nv\3\2\2\2\f\u0083\3\2"+
 		"\2\2\16\u0096\3\2\2\2\20\u0098\3\2\2\2\22\u00a0\3\2\2\2\24\u00a7\3\2\2"+
 		"\2\26\u00ac\3\2\2\2\30\u00b7\3\2\2\2\32\u00c1\3\2\2\2\34\u00cb\3\2\2\2"+
